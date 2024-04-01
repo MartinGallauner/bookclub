@@ -10,6 +10,7 @@ func AddBook(cfg config, isbn string, userId int) (Book, error) {
 
 	//todo save to database
 	fmt.Println("saved to database")
+	cfg.Database.Collection[userId] = append(cfg.Database.Collection[userId], book)
 
 	return book, nil
 

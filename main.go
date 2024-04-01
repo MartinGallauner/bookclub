@@ -7,13 +7,15 @@ import (
 )
 
 type config struct {
-	Client Client
+	Client   Client
+	Database DB
 }
 
 func main() {
 	client := NewClient(5 * time.Second)
 	cfg := &config{
-		Client: client,
+		Client:   client,
+		Database: DB{Collection: map[int][]Book{}},
 	}
 
 	const port = "8080"
