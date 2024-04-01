@@ -26,6 +26,7 @@ const (
 	baseURL = "https://openlibrary.org/api/"
 )
 
+// Fetches a single book by it's ISBN from the OpenLibraryAPI
 func (c *Client) FetchBook(isbn string) (Book, error) {
 	url := baseURL + "books?jscmd=data&format=json&bibkeys=ISBN:" + isbn
 
