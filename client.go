@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -61,33 +60,13 @@ func (c *Client) FetchBook(isbn string) (Book, error) {
 }
 
 // mapBookResponse reads the ugly response from the OpenLibraryAPI and maps it to a simple book entity.
+// todo clean that crap up
 func mapBookResponse(response map[string]map[string]interface{}) (Book, error) {
 	var book Book
 	for isbn, bookData := range response {
 		book.URL = bookData["url"].(string)
 		book.ISBN = strings.TrimPrefix(isbn, "ISBN:")
 		book.Title = bookData["title"].(string)
-
-		pages, err := strconv.Atoi(bookData["pagination"].(string))
-		publish, err := strconv.Atoi(bookData["publish_date"].(string))
-		if err != nil {
-			return book, err
-		}
-		book.Pages = pages
-		book.PublishDate = publish
-
-		authors := bookData["authors"].([]interface{})
-		for _, author := range authors {
-			authorMap := author.(map[string]interface{})
-			authorName := authorMap["name"].(string)
-			book.Authors = append(book.Authors, authorName)
-		}
-		subjects := bookData["subjects"].([]interface{})
-		for _, subject := range subjects {
-			subjectsMap := subject.(map[string]interface{})
-			subjectName := subjectsMap["name"].(string)
-			book.Subjects = append(book.Subjects, subjectName)
-		}
 	}
 	return book, nil
 }
