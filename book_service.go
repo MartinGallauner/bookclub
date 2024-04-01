@@ -2,11 +2,15 @@ package main
 
 import "fmt"
 
-func AddBook(isbn string) {
-	//todo fetch book
-	fmt.Println("loaded book")
+func AddBook(cfg config, isbn string, userId int) (Book, error) {
+	book, err := cfg.Client.FetchBook(isbn)
+	if err != nil {
+		return Book{}, err
+	}
 
-	//todo saved to database
-	fmt.Println("saved book to collection")
+	//todo save to database
+	fmt.Println("saved to database")
+
+	return book, nil
 
 }

@@ -19,6 +19,7 @@ func main() {
 	const port = "8080"
 
 	mux := http.NewServeMux()
+	mux.HandleFunc("POST /api/collection/{isbn}", cfg.handlerAddBook)
 	mux.HandleFunc("GET /api/books/{isbn}", cfg.handlerGetBookByISBN)
 
 	srv := &http.Server{
