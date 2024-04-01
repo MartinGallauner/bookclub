@@ -3,7 +3,7 @@ version: '3.7'
 services:
   postgres:
     image: postgres:13
-    container_name: my-postgres
+    container_name: bookclub-db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password

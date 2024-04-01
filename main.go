@@ -1,6 +1,8 @@
 package main
 
 import (
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"time"
@@ -8,14 +10,24 @@ import (
 
 type config struct {
 	Client   Client
-	Database DB
+	Database *gorm.DB
 }
 
 func main() {
+	dsn := "host=localhost user=postgres password=password dbname=postgres port=5432 sslmode=disable TimeZone=Europe/Vienna"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = db.AutoMigrate(Book{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	client := NewClient(5 * time.Second)
 	cfg := &config{
 		Client:   client,
-		Database: DB{Collection: map[int][]Book{}},
+		Database: db,
 	}
 
 	const port = "8080"
