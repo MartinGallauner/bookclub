@@ -1,8 +1,7 @@
 package main
 
 type Book struct {
-	ID    uint
-	ISBN  string
+	ISBN  string `gorm:"primaryKey"`
 	URL   string `json:"url"`
 	Title string `json:"title"`
 }

@@ -19,7 +19,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = db.AutoMigrate(Book{})
+	err = db.AutoMigrate(&User{}, &Book{})
 	if err != nil {
 		log.Fatal(err)
 	}

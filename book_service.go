@@ -1,15 +1,21 @@
 package main
 
-type Mock struct {
-	ID   uint
-	Name string
+import "gorm.io/gorm"
+
+type User struct {
+	gorm.Model
+	Books []Book `gorm:"foreignKey:ISBN"`
 }
 
-func AddBook(cfg config, isbn string, userId int) (Book, error) {
+func (cfg *config) AddBook(isbn string, userId int) (Book, error) {
+	//todo check if book already exists, if yes load existing.
+	//The book table could become a cache in the future
+
 	book, err := cfg.Client.FetchBook(isbn)
 	if err != nil {
 		return Book{}, err
 	}
-	err = cfg.Database.Table("books").Create(&book).Error
+	err = cfg.Database.Table("books").Save(&book).Error
+
 	return book, nil
 }
