@@ -1,21 +1,45 @@
 package main
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type User struct {
 	gorm.Model
-	Books []Book `gorm:"foreignKey:ISBN"`
+	Name  string
+	Books []Book `gorm:"many2many:user_books"`
 }
 
+type Book struct {
+	ISBN  string `gorm:"primaryKey"`
+	URL   string `json:"url"`
+	Title string `json:"title"`
+}
+
+//type UserBooks struct {
+//	UserId    int    `gorm:"primaryKey"`
+//	BookISBN  string `gorm:"primaryKey"`
+//	CreatedAt time.Time
+//	DeletedAt gorm.DeletedAt
+//}
+
 func (cfg *config) AddBook(isbn string, userId int) (Book, error) {
-	//todo check if book already exists, if yes load existing.
-	//The book table could become a cache in the future
+	var user User
+	cfg.Database.Table("users").Find(&user, userId)
 
-	book, err := cfg.Client.FetchBook(isbn)
-	if err != nil {
-		return Book{}, err
+	var err error
+	var book Book
+	cfg.Database.Table("books").Find(&book, isbn)
+	if book.ISBN == "" {
+		book, err = cfg.Client.FetchBook(isbn)
+		if err != nil {
+			return Book{}, err //todo return sentinel error instead empty book
+		}
 	}
-	err = cfg.Database.Table("books").Save(&book).Error
-
+	user.Books = append(user.Books, book)
+	err = cfg.Database.Table("users").Save(&user).Error
+	if err != nil {
+		return Book{}, err //todo return sentinel error instead empty book
+	}
 	return book, nil
 }

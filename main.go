@@ -20,6 +20,7 @@ func main() {
 		log.Fatal(err)
 	}
 	err = db.AutoMigrate(&User{}, &Book{})
+	//err = db.SetupJoinTable(&User{}, "Books", &UserBooks{})
 	if err != nil {
 		log.Fatal(err)
 	}
