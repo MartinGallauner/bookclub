@@ -2,6 +2,7 @@ package main
 
 import (
 	"gorm.io/gorm"
+	"time"
 )
 
 type User struct {
@@ -16,12 +17,12 @@ type Book struct {
 	Title string `json:"title"`
 }
 
-//type UserBooks struct {
-//	UserId    int    `gorm:"primaryKey"`
-//	BookISBN  string `gorm:"primaryKey"`
-//	CreatedAt time.Time
-//	DeletedAt gorm.DeletedAt
-//}
+type UserBooks struct {
+	UserId    int    `gorm:"primaryKey"`
+	BookISBN  string `gorm:"primaryKey"`
+	CreatedAt time.Time
+	DeletedAt gorm.DeletedAt
+}
 
 func (cfg *config) AddBook(isbn string, userId int) (Book, error) {
 	var user User
