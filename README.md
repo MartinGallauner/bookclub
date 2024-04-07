@@ -3,8 +3,9 @@ Connect your physical bookshelf with your friends!
 
 
 ## How to run
-- Checkout the project and using the terminal, navigate to its folder
-- Run `go build && ./bookclub`
+- Checkout the project and using the terminal, navigate to its folder.
+- Run `docker compose up -d` to startup the database.
+- Run `go build && ./bookclub`.
 
 ## API
 
