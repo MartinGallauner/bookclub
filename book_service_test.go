@@ -2,14 +2,14 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/magiconair/properties/assert"
 	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
-	"gorm.io/driver/postgres"
+	gpostgres "gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
 	"testing"
+	"time"
 )
 
 var (
@@ -17,14 +17,15 @@ var (
 	dbName = "test_db"
 )
 
-func TestAddBookExistingBook(t *testing.T) {
-	host, port, err := testWithPostgres(t)
-	if err != nil {
-		t.Fatal(err)
-	}
+type PostgresContainer struct {
+	*postgres.PostgresContainer
+	ConnectionString string
+}
 
-	connString := fmt.Sprintf("host=%s port=%d user=%s password=password dbname=%s sslmode=disable", host, port, "postgres", dbName)
-	db, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
+func TestAddBookExistingBook(t *testing.T) {
+	container, err := CreatePostgresContainer()
+
+	db, err := gorm.Open(gpostgres.Open(container.ConnectionString), &gorm.Config{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -42,42 +43,27 @@ func TestAddBookExistingBook(t *testing.T) {
 	assert.Equal(t, mockBook, book, "Added book should match existing book")
 }
 
-func testWithPostgres(t *testing.T) (host string, portNumber int, error error) {
-	ctx := context.Background()
-
-	req := testcontainers.ContainerRequest{
-		Image:        "postgres:latest",
-		ExposedPorts: []string{"5432/tcp"},
-		WaitingFor:   wait.ForLog("database system is ready to accept connections"),
-		Env: map[string]string{
-			"POSTGRES_USER":     "postgres",
-			"POSTGRES_PASSWORD": "password",
-			"POSTGRES_DB":       dbName,
-		},
-	}
-	postgres, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
-		ContainerRequest: req,
-		Started:          true,
-	})
-
+func CreatePostgresContainer() (*PostgresContainer, error) {
+	postgresContainer, err := postgres.RunContainer(ctx,
+		testcontainers.WithImage("docker.io/postgres:15.2-alpine"),
+		postgres.WithDatabase("bookclub-db"),
+		postgres.WithUsername("postgres"),
+		postgres.WithPassword("password"),
+		testcontainers.WithWaitStrategy(
+			wait.ForLog("database system is ready to accept connections").
+				WithOccurrence(2).
+				WithStartupTimeout(5*time.Second)),
+	)
 	if err != nil {
-		log.Fatal("Could not start postgres")
+		return nil, err
 	}
 
-	host, err = postgres.Host(ctx)
+	connStr, err := postgresContainer.ConnectionString(ctx, "sslmode=disable")
 	if err != nil {
-		return "", 0, err
+		return nil, err
 	}
-
-	port, err := postgres.MappedPort(ctx, "5432")
-	if err != nil {
-		return "", 0, err
-	}
-
-	defer func() {
-		if err := postgres.Terminate(ctx); err != nil {
-			log.Fatal("Could not stop postgres:")
-		}
-	}()
-	return host, port.Int(), nil
+	return &PostgresContainer{
+		PostgresContainer: postgresContainer,
+		ConnectionString:  connStr,
+	}, nil
 }
