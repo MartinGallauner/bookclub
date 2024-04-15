@@ -26,6 +26,7 @@ type PostgresContainer struct {
 func TestAddBookExistingBook(t *testing.T) {
 	container, err := CreatePostgresContainer()
 
+	//todo extract setup
 	db, err := gorm.Open(gpostgres.Open(container.ConnectionString), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
@@ -50,6 +51,7 @@ func TestAddBookExistingBook(t *testing.T) {
 	assert.Equal(t, mockBook, book, "Added book should match existing book")
 }
 
+// todo extract setup
 func CreatePostgresContainer() (*PostgresContainer, error) {
 	postgresContainer, err := postgres.RunContainer(ctx,
 		testcontainers.WithImage("docker.io/postgres:15.2-alpine"),
