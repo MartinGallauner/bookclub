@@ -8,6 +8,7 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 	gpostgres "gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"log"
 	"testing"
 	"time"
 )
@@ -27,12 +28,18 @@ func TestAddBookExistingBook(t *testing.T) {
 
 	db, err := gorm.Open(gpostgres.Open(container.ConnectionString), &gorm.Config{})
 	if err != nil {
-		t.Fatal(err)
+		log.Fatal(err)
+	}
+	err = db.AutoMigrate(&User{}, &Book{}, &UserBooks{})
+	err = db.SetupJoinTable(&User{}, "Books", &UserBooks{})
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
 	mockUser := User{Name: "John Doe"}
 	mockUser.ID = 1
+	db.Table("books").Save(mockBook)
 
 	cfg := &config{
 		Database: db,
