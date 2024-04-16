@@ -41,6 +41,7 @@ func main() {
 		Addr:    ":" + port,
 		Handler: mux,
 	}
+
 	log.Printf("Starting bookclub on port: %s\n", port)
 	log.Fatal(srv.ListenAndServe())
 
