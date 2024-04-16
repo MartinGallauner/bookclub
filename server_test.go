@@ -31,6 +31,7 @@ func TestPOSTBookToCollection(t *testing.T) {
 
 		want := "{1234 url title}"
 		assertResponseBody(t, response.Body.String(), want)
+		assertStatus(t, response.Code, http.StatusOK)
 	})
 }
 
@@ -38,5 +39,12 @@ func assertResponseBody(t testing.TB, got, want string) {
 	t.Helper()
 	if got != want {
 		t.Errorf("response body is wrong, got %q want %q", got, want)
+	}
+}
+
+func assertStatus(t testing.TB, got, want int) {
+	t.Helper()
+	if got != want {
+		t.Errorf("did not get correct status, got %d, want %d", got, want)
 	}
 }

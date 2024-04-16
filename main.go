@@ -9,8 +9,19 @@ import (
 )
 
 type config struct {
-	Client   Client
+	Client         Client
+	Database       *gorm.DB
+	BookRepository GormBookRepository
+}
+
+type GormBookRepository struct {
 	Database *gorm.DB
+}
+
+func (r *GormBookRepository) GetBook(isbn string) Book {
+	var book Book
+	r.Database.Table("books").Find(&book, isbn)
+	return book
 }
 
 func main() {
@@ -27,8 +38,9 @@ func main() {
 
 	client := NewClient(5 * time.Second)
 	cfg := &config{
-		Client:   client,
-		Database: db,
+		Client:         client,
+		Database:       db,
+		BookRepository: GormBookRepository{Database: db},
 	}
 
 	const port = "8080"
