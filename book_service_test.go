@@ -14,8 +14,7 @@ import (
 )
 
 var (
-	ctx    = context.Background()
-	dbName = "test_db"
+	ctx = context.Background()
 )
 
 type PostgresContainer struct {
