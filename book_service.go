@@ -26,7 +26,7 @@ type UserBooks struct {
 
 func (cfg *config) AddBook(isbn string, userId int) (Book, error) {
 	var user User
-	cfg.Database.Table("users").Find(&user, userId)
+	cfg.UserRepository.Get(userId)
 
 	var err error
 	var book Book

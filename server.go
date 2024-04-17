@@ -5,7 +5,8 @@ import (
 )
 
 type UserRepository interface {
-	GetUser(userId int) string //todo which case is expected? snake case vs camel case?
+	Get(id int) User //todo which case is expected? snake case vs camel case?
+	Save(user User) error
 }
 
 type BookRepository interface {

@@ -12,6 +12,7 @@ type config struct {
 	Client         Client
 	Database       *gorm.DB
 	BookRepository BookRepository
+	UserRepository UserRepository
 }
 
 type GormBookRepository struct { //todo I'm not sure about the name
@@ -24,6 +25,16 @@ func (r *GormBookRepository) GetBook(isbn string) Book {
 	return book
 }
 
+type GormUserRepository struct {
+	Database *gorm.DB
+}
+
+func (g *GormUserRepository) Get(id int) User {
+	var user User
+	g.Database.Table("users").Find(&user, id)
+	return user
+}
+
 func main() {
 	db := SetupDatabase()
 
@@ -32,6 +43,7 @@ func main() {
 		Client:         client,
 		Database:       db,
 		BookRepository: &GormBookRepository{Database: db},
+		UserRepository: &GormUserRepository{Database: db},
 	}
 	handler := http.HandlerFunc(cfg.handlerAddBook)
 	log.Fatal(http.ListenAndServe(":8080", handler))
