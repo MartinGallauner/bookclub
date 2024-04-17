@@ -35,6 +35,11 @@ func (g *GormUserRepository) Get(id int) User {
 	return user
 }
 
+func (g *GormUserRepository) Save(user User) error {
+	err := g.Database.Table("users").Save(&user).Error
+	return err
+}
+
 func main() {
 	db := SetupDatabase()
 

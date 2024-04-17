@@ -24,6 +24,7 @@ type UserBooks struct {
 	DeletedAt gorm.DeletedAt
 }
 
+// Adds book to user's collection
 func (cfg *config) AddBook(isbn string, userId int) (Book, error) {
 	var user User
 	cfg.UserRepository.Get(userId)
@@ -38,7 +39,7 @@ func (cfg *config) AddBook(isbn string, userId int) (Book, error) {
 		}
 	}
 	user.Books = append(user.Books, book)
-	err = cfg.Database.Table("users").Save(&user).Error
+	err = cfg.UserRepository.Save(user)
 	if err != nil {
 		return Book{}, err //todo return sentinel error instead empty book
 	}

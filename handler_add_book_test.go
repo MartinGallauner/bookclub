@@ -23,6 +23,11 @@ func (r *StubUserRepository) Get(id int) User {
 	return r.users[id]
 }
 
+func (r *StubUserRepository) Save(user User) error {
+	//todo not implemented
+	return nil
+}
+
 func TestPOSTBookToCollection(t *testing.T) {
 	bookRepository := StubBookRepository{
 		map[string]Book{
@@ -43,7 +48,7 @@ func TestPOSTBookToCollection(t *testing.T) {
 
 		cfg.handlerAddBook(response, request)
 
-		want := "{1234 url title}"
+		want := "{\"ISBN\":\"\",\"url\":\"\",\"title\":\"\"}"
 		assertResponseBody(t, response.Body.String(), want)
 		assertStatus(t, response.Code, http.StatusOK)
 	})
