@@ -43,12 +43,12 @@ func TestPOSTBookToCollection(t *testing.T) {
 	cfg := config{BookRepository: &bookRepository, UserRepository: &userRepository}
 
 	t.Run("Add book to user's book collection", func(t *testing.T) {
-		request, _ := http.NewRequest(http.MethodPost, "/api/collections", strings.NewReader(`{"user_id": 1234, "isbn": "url"}`))
+		request, _ := http.NewRequest(http.MethodPost, "/api/collections", strings.NewReader(`{"user_id": 1, "isbn": "1234"}`))
 		response := httptest.NewRecorder()
 
 		cfg.handlerAddBook(response, request)
 
-		want := "{\"ISBN\":\"\",\"url\":\"\",\"title\":\"\"}"
+		want := "{\"ISBN\":\"1234\",\"url\":\"https://openlibrary.org/books/OL28151326M/The_Wednesday_surprise\",\"title\":\"The Wednesday surprise\"}"
 		assertResponseBody(t, response.Body.String(), want)
 		assertStatus(t, response.Code, http.StatusOK)
 	})

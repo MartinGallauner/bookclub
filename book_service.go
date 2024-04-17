@@ -27,7 +27,7 @@ type UserBooks struct {
 // Adds book to user's collection
 func (cfg *config) AddBook(isbn string, userId int) (Book, error) {
 	var user User
-	cfg.UserRepository.Get(userId)
+	user = cfg.UserRepository.Get(userId)
 
 	var err error
 	var book Book
