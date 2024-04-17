@@ -4,7 +4,6 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
-	"net/http"
 	"time"
 )
 
@@ -43,18 +42,20 @@ func main() {
 		BookRepository: GormBookRepository{Database: db},
 	}
 
-	const port = "8080"
+	StartServer(cfg)
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("POST /api/collections", cfg.handlerAddBook)
-	mux.HandleFunc("GET /api/books/{isbn}", cfg.handlerGetBookByISBN)
-
-	srv := &http.Server{
-		Addr:    ":" + port,
-		Handler: mux,
-	}
-
-	log.Printf("Starting bookclub on port: %s\n", port)
-	log.Fatal(srv.ListenAndServe())
+	//const port = "8080"
+	//
+	//mux := http.NewServeMux()
+	//mux.HandleFunc("POST /api/collections", cfg.handlerAddBook)
+	//mux.HandleFunc("GET /api/books/{isbn}", cfg.handlerGetBookByISBN)
+	//
+	//srv := &http.Server{
+	//	Addr:    ":" + port,
+	//	Handler: mux,
+	//}
+	//
+	//log.Printf("Starting bookclub on port: %s\n", port)
+	//log.Fatal(srv.ListenAndServe())
 
 }
