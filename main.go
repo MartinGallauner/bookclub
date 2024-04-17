@@ -4,16 +4,17 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
+	"net/http"
 	"time"
 )
 
 type config struct {
 	Client         Client
 	Database       *gorm.DB
-	BookRepository GormBookRepository
+	BookRepository BookRepository
 }
 
-type GormBookRepository struct {
+type GormBookRepository struct { //todo I'm not sure about the name
 	Database *gorm.DB
 }
 
@@ -24,6 +25,19 @@ func (r *GormBookRepository) GetBook(isbn string) Book {
 }
 
 func main() {
+	db := SetupDatabase()
+
+	client := NewClient(5 * time.Second)
+	cfg := &config{
+		Client:         client,
+		Database:       db,
+		BookRepository: &GormBookRepository{Database: db},
+	}
+	handler := http.HandlerFunc(cfg.handlerAddBook)
+	log.Fatal(http.ListenAndServe(":8080", handler))
+}
+
+func SetupDatabase() *gorm.DB {
 	dsn := "host=localhost user=postgres password=password dbname=postgres port=5432 sslmode=disable TimeZone=Europe/Vienna"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -34,28 +48,5 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	client := NewClient(5 * time.Second)
-	cfg := &config{
-		Client:         client,
-		Database:       db,
-		BookRepository: GormBookRepository{Database: db},
-	}
-
-	StartServer(cfg)
-
-	//const port = "8080"
-	//
-	//mux := http.NewServeMux()
-	//mux.HandleFunc("POST /api/collections", cfg.handlerAddBook)
-	//mux.HandleFunc("GET /api/books/{isbn}", cfg.handlerGetBookByISBN)
-	//
-	//srv := &http.Server{
-	//	Addr:    ":" + port,
-	//	Handler: mux,
-	//}
-	//
-	//log.Printf("Starting bookclub on port: %s\n", port)
-	//log.Fatal(srv.ListenAndServe())
-
+	return db
 }

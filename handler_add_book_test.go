@@ -21,13 +21,13 @@ func TestPOSTBookToCollection(t *testing.T) {
 			"1234": {ISBN: "1234", URL: "url", Title: "title"},
 		},
 	}
-	server := &BookclubServer{&bookRepository}
+	cfg := config{BookRepository: &bookRepository}
 
 	t.Run("Add book to user's book collection", func(t *testing.T) {
 		request, _ := http.NewRequest(http.MethodPost, "/api/collections", strings.NewReader(`{"user_id": 1234, "isbn": "url"}`))
 		response := httptest.NewRecorder()
 
-		server.ServeHTTP(response, request)
+		cfg.handlerAddBook(response, request)
 
 		want := "{1234 url title}"
 		assertResponseBody(t, response.Body.String(), want)

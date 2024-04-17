@@ -30,7 +30,7 @@ func (cfg *config) AddBook(isbn string, userId int) (Book, error) {
 
 	var err error
 	var book Book
-	cfg.BookRepository.Database.Table("books").Find(&book, isbn) //todo abstract
+	cfg.BookRepository.GetBook(isbn)
 	if book.ISBN == "" {
 		book, err = cfg.Client.FetchBook(isbn)
 		if err != nil {
