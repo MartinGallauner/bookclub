@@ -42,7 +42,9 @@ func TestAddBookExistingBook(t *testing.T) {
 	db.Table("books").Save(mockBook)
 
 	cfg := &config{
-		Database: db,
+		Database:       db,
+		BookRepository: &PostgresBookRepository{Database: db},
+		UserRepository: &PostgresUserRepository{Database: db},
 	}
 
 	book, _ := cfg.AddBook(mockBook.ISBN, int(mockUser.ID))

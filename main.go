@@ -15,17 +15,17 @@ type config struct {
 	UserRepository UserRepository
 }
 
-type PostBookRepository struct { //todo I'm not sure about the name
+type PostgresBookRepository struct {
 	Database *gorm.DB
 }
 
-func (r *PostBookRepository) GetBook(isbn string) Book {
+func (r *PostgresBookRepository) GetBook(isbn string) Book {
 	var book Book
 	r.Database.Table("books").Find(&book, isbn)
 	return book
 }
 
-type PostgresUserRepository struct { //todo naming?
+type PostgresUserRepository struct {
 	Database *gorm.DB
 }
 
@@ -47,7 +47,7 @@ func main() {
 	cfg := &config{
 		Client:         client,
 		Database:       db,
-		BookRepository: &PostBookRepository{Database: db},
+		BookRepository: &PostgresBookRepository{Database: db},
 		UserRepository: &PostgresUserRepository{Database: db},
 	}
 	handler := http.HandlerFunc(cfg.handlerAddBook)
