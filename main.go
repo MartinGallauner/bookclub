@@ -25,7 +25,7 @@ func (r *GormBookRepository) GetBook(isbn string) Book {
 	return book
 }
 
-type GormUserRepository struct {
+type GormUserRepository struct { //todo naming?
 	Database *gorm.DB
 }
 

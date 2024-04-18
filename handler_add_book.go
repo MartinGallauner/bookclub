@@ -20,7 +20,7 @@ func (cfg *config) handlerAddBook(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, 400, "Unable to add the requested book")
 		return
 	}
-	respondWithJSON(w, 200, book) //todo reconsider response
+	respondWithJSON(w, 200, book) //todo reconsider response body
 	return
 }
 

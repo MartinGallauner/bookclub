@@ -24,7 +24,8 @@ func (r *StubUserRepository) Get(id int) User {
 }
 
 func (r *StubUserRepository) Save(user User) error {
-	//todo not implemented
+	len := len(r.users) //todo this stub is crap
+	r.users[len+1] = user
 	return nil
 }
 
