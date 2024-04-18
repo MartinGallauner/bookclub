@@ -6,8 +6,6 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
-	gpostgres "gorm.io/driver/postgres"
-	"gorm.io/gorm"
 	"log"
 	"testing"
 	"time"
@@ -24,14 +22,11 @@ type PostgresContainer struct {
 
 func TestAddBookExistingBook(t *testing.T) {
 	container, err := CreatePostgresContainer()
-
-	//todo extract setup
-	db, err := gorm.Open(gpostgres.Open(container.ConnectionString), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = db.AutoMigrate(&User{}, &Book{}, &UserBooks{})
-	err = db.SetupJoinTable(&User{}, "Books", &UserBooks{})
+
+	db, err := SetupDatabase(container.ConnectionString)
 	if err != nil {
 		log.Fatal(err)
 	}

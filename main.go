@@ -1,7 +1,6 @@
 package main
 
 import (
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
 	"net/http"
@@ -41,7 +40,10 @@ func (g *PostgresUserRepository) Save(user User) error {
 }
 
 func main() {
-	db := SetupDatabase()
+	db, err := SetupDatabase("\"host=localhost user=postgres password=password dbname=postgres port=5432 sslmode=disable TimeZone=Europe/Vienna\"")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	client := NewClient(5 * time.Second)
 	cfg := &config{
@@ -52,18 +54,4 @@ func main() {
 	}
 	handler := http.HandlerFunc(cfg.handlerAddBook)
 	log.Fatal(http.ListenAndServe(":8080", handler))
-}
-
-func SetupDatabase() *gorm.DB {
-	dsn := "host=localhost user=postgres password=password dbname=postgres port=5432 sslmode=disable TimeZone=Europe/Vienna"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = db.AutoMigrate(&User{}, &Book{}, &UserBooks{})
-	err = db.SetupJoinTable(&User{}, "Books", &UserBooks{})
-	if err != nil {
-		log.Fatal(err)
-	}
-	return db
 }
