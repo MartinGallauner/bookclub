@@ -30,6 +30,7 @@ func (r *StubUserRepository) Save(user User) error {
 }
 
 func TestPOSTBookToCollection(t *testing.T) {
+	//given
 	bookRepository := StubBookRepository{
 		map[string]Book{
 			"1234": {ISBN: "1234", URL: "url", Title: "title"},
@@ -40,9 +41,9 @@ func TestPOSTBookToCollection(t *testing.T) {
 			1: {Name: "Anna"},
 		},
 	}
-
 	cfg := config{BookRepository: &bookRepository, UserRepository: &userRepository}
 
+	//when
 	t.Run("Add book to user's book collection", func(t *testing.T) {
 		request, _ := http.NewRequest(http.MethodPost, "/api/collections", strings.NewReader(`{"user_id": 1, "isbn": "1234"}`))
 		response := httptest.NewRecorder()

@@ -15,27 +15,27 @@ type config struct {
 	UserRepository UserRepository
 }
 
-type GormBookRepository struct { //todo I'm not sure about the name
+type PostBookRepository struct { //todo I'm not sure about the name
 	Database *gorm.DB
 }
 
-func (r *GormBookRepository) GetBook(isbn string) Book {
+func (r *PostBookRepository) GetBook(isbn string) Book {
 	var book Book
 	r.Database.Table("books").Find(&book, isbn)
 	return book
 }
 
-type GormUserRepository struct { //todo naming?
+type PostgresUserRepository struct { //todo naming?
 	Database *gorm.DB
 }
 
-func (g *GormUserRepository) Get(id int) User {
+func (g *PostgresUserRepository) Get(id int) User {
 	var user User
 	g.Database.Table("users").Find(&user, id)
 	return user
 }
 
-func (g *GormUserRepository) Save(user User) error {
+func (g *PostgresUserRepository) Save(user User) error {
 	err := g.Database.Table("users").Save(&user).Error
 	return err
 }
@@ -47,8 +47,8 @@ func main() {
 	cfg := &config{
 		Client:         client,
 		Database:       db,
-		BookRepository: &GormBookRepository{Database: db},
-		UserRepository: &GormUserRepository{Database: db},
+		BookRepository: &PostBookRepository{Database: db},
+		UserRepository: &PostgresUserRepository{Database: db},
 	}
 	handler := http.HandlerFunc(cfg.handlerAddBook)
 	log.Fatal(http.ListenAndServe(":8080", handler))
