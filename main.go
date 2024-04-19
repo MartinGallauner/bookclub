@@ -40,7 +40,7 @@ func (g *PostgresUserRepository) Save(user User) error {
 }
 
 func main() {
-	db, err := SetupDatabase("\"host=localhost user=postgres password=password dbname=postgres port=5432 sslmode=disable TimeZone=Europe/Vienna\"")
+	db, err := SetupDatabase("host=localhost user=postgres password=password dbname=postgres port=5432 sslmode=disable TimeZone=Europe/Vienna")
 	if err != nil {
 		log.Fatal(err)
 	}

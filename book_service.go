@@ -27,7 +27,7 @@ type UserBooks struct {
 // Adds book to user's collection
 func (cfg *config) AddBook(isbn string, userId int) (Book, error) {
 	var user User
-	user = cfg.UserRepository.Get(userId)
+	user = cfg.UserRepository.Get(userId) // todo return error when user not exists, sentinel error?
 
 	var err error
 	var book Book
