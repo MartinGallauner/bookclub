@@ -24,6 +24,11 @@ func (r *PostgresBookRepository) GetBook(isbn string) Book {
 	return book
 }
 
+func (r *PostgresBookRepository) Save(book Book) error {
+	err := r.Database.Table("books").Save(&book).Error
+	return err
+}
+
 type PostgresUserRepository struct {
 	Database *gorm.DB
 }

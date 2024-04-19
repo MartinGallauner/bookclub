@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -15,12 +16,18 @@ func (r *StubBookRepository) GetBook(isbn string) Book {
 	return r.books[isbn]
 }
 
+func (r *StubBookRepository) Save(book Book) error {
+	len := len(r.books) //todo this stub is crap
+	r.books[strconv.Itoa(len+1)] = book
+	return nil
+}
+
 type StubUserRepository struct {
 	users map[int]User
 }
 
-func (r *StubUserRepository) Get(id int) User {
-	return r.users[id]
+func (r *StubUserRepository) Get(id int) (User, error) {
+	return r.users[id], nil
 }
 
 func (r *StubUserRepository) Save(user User) error {

@@ -11,6 +11,7 @@ type UserRepository interface {
 
 type BookRepository interface {
 	GetBook(isbn string) Book
+	Save(book Book) error
 }
 
 func StartServer(cfg *config) error {

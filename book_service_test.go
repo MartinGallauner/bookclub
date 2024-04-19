@@ -32,13 +32,19 @@ func TestAddBookExistingBook(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
-	db.Table("books").Save(mockBook)
-
 	cfg := &config{
 		Database:       db,
 		BookRepository: &PostgresBookRepository{Database: db},
 		UserRepository: &PostgresUserRepository{Database: db},
+	}
+
+	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
+	cfg.BookRepository.Save(mockBook)
+	mockUser := User{Name: "Test User"}
+	mockUser.ID = 1
+	err = cfg.UserRepository.Save(mockUser)
+	if err != nil {
+		return
 	}
 
 	book, _ := cfg.AddBook(mockBook.ISBN, 1)
