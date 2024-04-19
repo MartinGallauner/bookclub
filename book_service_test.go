@@ -20,7 +20,8 @@ type PostgresContainer struct {
 	ConnectionString string
 }
 
-func TestAddBookExistingBook(t *testing.T) {
+// Tests if a saved book can be linked to an existing user.
+func TestLinkBookToUser(t *testing.T) {
 	//todo extract into setup method
 	container, err := CreatePostgresContainer()
 	if err != nil {
@@ -52,7 +53,36 @@ func TestAddBookExistingBook(t *testing.T) {
 	assert.Equal(t, mockBook, book, "Added book should match existing book")
 }
 
-// todo extract setup
+func TestLinkBookToUnknownUser(t *testing.T) {
+	//todo extract into setup method
+	container, err := CreatePostgresContainer()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db, err := SetupDatabase(container.ConnectionString)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cfg := &config{
+		Database:       db,
+		BookRepository: &PostgresBookRepository{Database: db},
+		UserRepository: &PostgresUserRepository{Database: db},
+	}
+
+	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
+	cfg.BookRepository.Save(mockBook)
+
+	if err != nil {
+		return
+	}
+
+	_, err = cfg.AddBook(mockBook.ISBN, 1)
+
+	assert.Equal(t, err.Error(), "record not found", "Expecting record not found error")
+}
+
 func CreatePostgresContainer() (*PostgresContainer, error) {
 	postgresContainer, err := postgres.RunContainer(ctx,
 		testcontainers.WithImage("docker.io/postgres:15.2-alpine"),
