@@ -28,14 +28,17 @@ type PostgresUserRepository struct {
 	Database *gorm.DB
 }
 
-func (g *PostgresUserRepository) Get(id int) User {
+func (r *PostgresUserRepository) Get(id int) (User, error) {
 	var user User
-	g.Database.Table("users").Find(&user, id)
-	return user
+	err := r.Database.Table("users").First(&user, id).Error
+	if err != nil {
+		return User{}, err
+	}
+	return user, nil
 }
 
-func (g *PostgresUserRepository) Save(user User) error {
-	err := g.Database.Table("users").Save(&user).Error
+func (r *PostgresUserRepository) Save(user User) error {
+	err := r.Database.Table("users").Save(&user).Error
 	return err
 }
 

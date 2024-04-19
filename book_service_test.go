@@ -21,6 +21,7 @@ type PostgresContainer struct {
 }
 
 func TestAddBookExistingBook(t *testing.T) {
+	//todo extract into setup method
 	container, err := CreatePostgresContainer()
 	if err != nil {
 		log.Fatal(err)
@@ -32,8 +33,6 @@ func TestAddBookExistingBook(t *testing.T) {
 	}
 
 	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
-	mockUser := User{Name: "John Doe"}
-	mockUser.ID = 1
 	db.Table("books").Save(mockBook)
 
 	cfg := &config{
@@ -42,7 +41,7 @@ func TestAddBookExistingBook(t *testing.T) {
 		UserRepository: &PostgresUserRepository{Database: db},
 	}
 
-	book, _ := cfg.AddBook(mockBook.ISBN, int(mockUser.ID))
+	book, _ := cfg.AddBook(mockBook.ISBN, 1)
 
 	assert.Equal(t, mockBook, book, "Added book should match existing book")
 }
