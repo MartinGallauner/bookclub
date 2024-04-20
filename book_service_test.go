@@ -45,6 +45,7 @@ func TestLinkBookToUser(t *testing.T) {
 	if err != nil {
 		return
 	}
+	//todo extract setup code
 
 	book, _ := cfg.AddBookToCollection(mockBook.ISBN, 1)
 
@@ -73,6 +74,7 @@ func TestLinkBookToUnknownUser(t *testing.T) {
 	if err != nil {
 		return
 	}
+	//todo extract setup code
 
 	_, err = cfg.AddBookToCollection(mockBook.ISBN, 1)
 
