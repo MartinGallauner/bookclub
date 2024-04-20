@@ -6,10 +6,24 @@ import (
 	"time"
 )
 
-type config struct {
+type BookclubServer struct {
 	Client         Client
 	BookRepository BookRepository
 	UserRepository UserRepository
+	http.Handler
+}
+
+func NewBookclubServer(client Client, repository BookRepository, userRepository UserRepository) *BookclubServer {
+	s := new(BookclubServer)
+	s.BookRepository = repository
+	s.UserRepository = userRepository
+
+	router := http.NewServeMux()
+	router.Handle("/api/collections", http.HandlerFunc(s.handlerAddBook))
+	//router.Handle("/api/books/{isbn}", http.HandlerFunc(s.addToCollectionHandler))
+
+	s.Handler = router
+	return s
 }
 
 func main() {
@@ -19,11 +33,7 @@ func main() {
 	}
 
 	client := NewClient(5 * time.Second)
-	cfg := &config{
-		Client:         client,
-		BookRepository: &PostgresBookRepository{Database: db},
-		UserRepository: &PostgresUserRepository{Database: db},
-	}
-	handler := http.HandlerFunc(cfg.handlerAddBook)
-	log.Fatal(http.ListenAndServe(":8080", handler))
+
+	server := NewBookclubServer(client, &PostgresBookRepository{Database: db}, &PostgresUserRepository{Database: db})
+	StartServer(server)
 }

@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func (cfg *config) handlerAddBook(w http.ResponseWriter, r *http.Request) {
+func (cfg *BookclubServer) handlerAddBook(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	body := AddBookRequest{}
 	err := decoder.Decode(&body)

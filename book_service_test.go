@@ -32,7 +32,7 @@ func TestLinkBookToUser(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	cfg := &config{
+	cfg := &BookclubServer{
 		BookRepository: &PostgresBookRepository{Database: db},
 		UserRepository: &PostgresUserRepository{Database: db},
 	}
@@ -62,7 +62,7 @@ func TestLinkBookToUnknownUser(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	cfg := &config{
+	cfg := &BookclubServer{
 		BookRepository: &PostgresBookRepository{Database: db},
 		UserRepository: &PostgresUserRepository{Database: db},
 	}

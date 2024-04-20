@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 )
 
@@ -14,13 +15,12 @@ type BookRepository interface {
 	Save(book Book) error
 }
 
-func StartServer(cfg *config) error {
-	const port = "8080"
+func StartServer(cfg *BookclubServer) {
+	router := http.NewServeMux()
+	router.HandleFunc("POST /api/collections", cfg.handlerAddBook)
+	router.HandleFunc("GET /api/books/{isbn}", cfg.handlerGetBookByISBN)
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("POST /api/collections", cfg.handlerAddBook)
-	mux.HandleFunc("GET /api/books/{isbn}", cfg.handlerGetBookByISBN)
-
-	return nil
-
+	log.Print("Starting bookclub on port: 8080")
+	log.Fatal(http.ListenAndServe(":8080", router))
+	//todo not sure if I should return an error here
 }

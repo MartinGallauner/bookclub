@@ -48,7 +48,7 @@ func TestPOSTBookToCollection(t *testing.T) {
 			1: {Name: "Anna"},
 		},
 	}
-	cfg := config{BookRepository: &bookRepository, UserRepository: &userRepository}
+	cfg := BookclubServer{BookRepository: &bookRepository, UserRepository: &userRepository}
 
 	//when
 	t.Run("Add book to user's book collection", func(t *testing.T) {
