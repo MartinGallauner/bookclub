@@ -22,7 +22,6 @@ type PostgresContainer struct {
 
 // Tests if a saved book can be linked to an existing user.
 func TestLinkBookToUser(t *testing.T) {
-	//todo extract into setup method
 	container, err := CreatePostgresContainer()
 	if err != nil {
 		log.Fatal(err)
@@ -54,7 +53,6 @@ func TestLinkBookToUser(t *testing.T) {
 }
 
 func TestLinkBookToUnknownUser(t *testing.T) {
-	//todo extract into setup method
 	container, err := CreatePostgresContainer()
 	if err != nil {
 		log.Fatal(err)
