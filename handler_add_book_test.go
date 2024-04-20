@@ -48,14 +48,14 @@ func TestPOSTBookToCollection(t *testing.T) {
 			1: {Name: "Anna"},
 		},
 	}
-	cfg := BookclubServer{BookRepository: &bookRepository, UserRepository: &userRepository}
+	server := NewBookclubServer(Client{}, &bookRepository, &userRepository)
 
 	//when
 	t.Run("Add book to user's book collection", func(t *testing.T) {
 		request, _ := http.NewRequest(http.MethodPost, "/api/collections", strings.NewReader(`{"user_id": 1, "isbn": "1234"}`))
 		response := httptest.NewRecorder()
 
-		cfg.handlerAddBook(response, request)
+		server.ServeHTTP(response, request)
 
 		want := "{\"ISBN\":\"1234\",\"url\":\"url\",\"title\":\"title\"}"
 		assertResponseBody(t, response.Body.String(), want)

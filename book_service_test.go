@@ -46,7 +46,7 @@ func TestLinkBookToUser(t *testing.T) {
 		return
 	}
 
-	book, _ := cfg.AddBook(mockBook.ISBN, 1)
+	book, _ := cfg.AddBookToCollection(mockBook.ISBN, 1)
 
 	assert.Equal(t, mockBook, book, "Added book should match existing book")
 }
@@ -74,7 +74,7 @@ func TestLinkBookToUnknownUser(t *testing.T) {
 		return
 	}
 
-	_, err = cfg.AddBook(mockBook.ISBN, 1)
+	_, err = cfg.AddBookToCollection(mockBook.ISBN, 1)
 
 	assert.Equal(t, err.Error(), "record not found", "Expecting record not found error")
 }
