@@ -16,11 +16,22 @@ type BookRepository interface {
 }
 
 func StartServer(cfg *BookclubServer) {
-	router := http.NewServeMux()
-	router.HandleFunc("POST /api/collections", cfg.handlerAddBook)
-	router.HandleFunc("GET /api/books/{isbn}", cfg.handlerGetBookByISBN)
-
 	log.Print("Starting bookclub on port: 8080")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":8080", cfg.Handler))
 	//todo not sure if I should return an error here
+}
+
+func NewBookclubServer(client Client, repository BookRepository, userRepository UserRepository) *BookclubServer {
+	s := new(BookclubServer)
+	s.BookRepository = repository
+	s.UserRepository = userRepository
+	s.Client = client
+
+	router := http.NewServeMux()
+	router.Handle("/api/search", http.HandlerFunc(s.handlerSearch))
+	router.Handle("/api/collections", http.HandlerFunc(s.handlerAddBook))
+	//router.Handle("/api/books/{isbn}", http.HandlerFunc(s.addToCollectionHandler))
+
+	s.Handler = router
+	return s
 }

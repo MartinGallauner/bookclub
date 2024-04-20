@@ -11,7 +11,7 @@ func TestSearchNetwork(t *testing.T) {
 	server := NewBookclubServer(Client{}, &StubBookRepository{}, &StubUserRepository{})
 
 	t.Run("returns 200 on /search", func(t *testing.T) {
-		request, _ := http.NewRequest(http.MethodGet, "/search", nil)
+		request, _ := http.NewRequest(http.MethodGet, "/api/search", nil)
 		response := httptest.NewRecorder()
 
 		server.ServeHTTP(response, request)
