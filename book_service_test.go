@@ -33,7 +33,6 @@ func TestLinkBookToUser(t *testing.T) {
 	}
 
 	cfg := &config{
-		Database:       db,
 		BookRepository: &PostgresBookRepository{Database: db},
 		UserRepository: &PostgresUserRepository{Database: db},
 	}
@@ -64,7 +63,6 @@ func TestLinkBookToUnknownUser(t *testing.T) {
 	}
 
 	cfg := &config{
-		Database:       db,
 		BookRepository: &PostgresBookRepository{Database: db},
 		UserRepository: &PostgresUserRepository{Database: db},
 	}

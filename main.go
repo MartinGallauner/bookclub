@@ -9,7 +9,6 @@ import (
 
 type config struct {
 	Client         Client
-	Database       *gorm.DB
 	BookRepository BookRepository
 	UserRepository UserRepository
 }
@@ -56,7 +55,6 @@ func main() {
 	client := NewClient(5 * time.Second)
 	cfg := &config{
 		Client:         client,
-		Database:       db,
 		BookRepository: &PostgresBookRepository{Database: db},
 		UserRepository: &PostgresUserRepository{Database: db},
 	}
