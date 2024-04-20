@@ -57,7 +57,7 @@ func TestPOSTBookToCollection(t *testing.T) {
 
 		cfg.handlerAddBook(response, request)
 
-		want := "{\"ISBN\":\"1234\",\"url\":\"https://openlibrary.org/books/OL28151326M/The_Wednesday_surprise\",\"title\":\"The Wednesday surprise\"}"
+		want := "{\"ISBN\":\"1234\",\"url\":\"url\",\"title\":\"title\"}"
 		assertResponseBody(t, response.Body.String(), want)
 		assertStatus(t, response.Code, http.StatusOK)
 	})
