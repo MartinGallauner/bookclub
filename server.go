@@ -28,7 +28,7 @@ func NewBookclubServer(client Client, repository BookRepository, userRepository 
 	s.Client = client
 
 	router := http.NewServeMux()
-	router.Handle("/api/search", http.HandlerFunc(s.handlerSearch))
+	router.Handle("/api/search/{isbn}", http.HandlerFunc(s.handlerSearch))
 	router.Handle("/api/collections", http.HandlerFunc(s.handlerAddBook))
 	//router.Handle("/api/books/{isbn}", http.HandlerFunc(s.addToCollectionHandler))
 
