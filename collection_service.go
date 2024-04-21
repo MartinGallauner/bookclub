@@ -46,3 +46,8 @@ func (cfg *BookclubServer) AddBookToCollection(isbn string, userId int) (Book, e
 	}
 	return book, nil
 }
+
+func (cfg *BookclubServer) SearchBookInNetwork(isbn string) ([]User, error) {
+	return []User{}, gorm.ErrRecordNotFound
+
+}

@@ -8,16 +8,14 @@ import (
 func (cfg *BookclubServer) handlerSearch(w http.ResponseWriter, r *http.Request) {
 	isbn := r.PathValue("isbn")
 
-	//book, err := cfg.Client.FetchBook(isbn)
-	//if err != nil {
-	//	respondWithError(w, 400, "Unable to fetch the requested book")
-	//	return
-	//}
-	book := Book{ISBN: isbn, Title: "title", URL: "url"}
-	user := User{Name: "Tester", Books: []Book{book}}
-	response := SearchResponse{Isbn: isbn, Users: []User{user}}
+	users, err := cfg.SearchBookInNetwork(isbn)
+	if err != nil {
+		respondWithError(w, 404, "Book not available in network.")
+	}
 
-	respondWithJSON(w, 200, response)
+	searchResponse := SearchResponse{isbn, users}
+
+	respondWithJSON(w, 200, searchResponse)
 	return
 }
 
