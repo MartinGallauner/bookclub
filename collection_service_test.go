@@ -47,9 +47,15 @@ func TestLinkBookToUser(t *testing.T) {
 	}
 	//todo extract setup code
 
-	book, _ := cfg.AddBookToCollection(mockBook.ISBN, 1)
+	cfg.AddBookToCollection(mockBook.ISBN, 1)
+	user, err := cfg.UserRepository.Get(1)
 
-	assert.Equal(t, mockBook, book, "Added book should match existing book")
+	if len(user.Books) == 0 {
+		t.Errorf("User has no books")
+		t.FailNow()
+	}
+	addedBook := user.Books[0]
+	assert.Equal(t, addedBook, mockBook, "Added book should match existing book")
 }
 
 func TestLinkBookToUnknownUser(t *testing.T) {
