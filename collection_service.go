@@ -36,13 +36,13 @@ func (cfg *BookclubServer) AddBookToCollection(isbn string, userId int) (Book, e
 	if book.ISBN == "" {
 		book, err = cfg.Client.FetchBook(isbn)
 		if err != nil {
-			return Book{}, err //todo return sentinel error instead empty book
+			return Book{}, err
 		}
 	}
 	user.Books = append(user.Books, book)
 	err = cfg.UserRepository.Save(user)
 	if err != nil {
-		return Book{}, err //todo return sentinel error instead empty book
+		return Book{}, err
 	}
 	return book, nil
 }

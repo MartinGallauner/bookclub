@@ -16,6 +16,10 @@ func TestSearchNetwork(t *testing.T) {
 
 		server.ServeHTTP(response, request)
 
+		want := "{\"ISBN\":\"1234\",\"url\":\"url\",\"title\":\"title\"}"
+
+		assertResponseBody(t, response.Body.String(), want)
+
 		assertStatus(t, response.Code, http.StatusOK)
 
 	})
