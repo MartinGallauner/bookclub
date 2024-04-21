@@ -6,8 +6,10 @@ import (
 )
 
 type UserRepository interface {
-	Get(id int) (User, error) //todo which case is expected? snake case vs camel case?
+	Get(id int) (User, error)
 	Save(user User) error
+
+	Find(isbn string) ([]User, error)
 }
 
 type BookRepository interface {

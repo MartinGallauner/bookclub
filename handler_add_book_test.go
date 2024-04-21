@@ -26,13 +26,18 @@ type StubUserRepository struct {
 	users map[int]User
 }
 
+func (r *StubUserRepository) Find(isbn string) ([]User, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (r *StubUserRepository) Get(id int) (User, error) {
 	return r.users[id], nil
 }
 
 func (r *StubUserRepository) Save(user User) error {
 	len := len(r.users) //todo this stub is crap
-	r.users[len+1] = user
+	r.users[len] = user
 	return nil
 }
 

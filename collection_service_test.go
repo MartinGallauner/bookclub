@@ -88,6 +88,41 @@ func TestLinkBookToUnknownUser(t *testing.T) {
 	assert.Equal(t, err.Error(), "record not found", "Expecting record not found error")
 }
 
+// Tests if a saved book can be linked to an existing user.
+func TestSearchBookInNetwork(t *testing.T) {
+	container, err := CreatePostgresContainer()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db, err := SetupDatabase(container.ConnectionString)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cfg := &BookclubServer{
+		BookRepository: &PostgresBookRepository{Database: db},
+		UserRepository: &PostgresUserRepository{Database: db},
+	}
+
+	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
+	mockUser := User{Name: "Test User", Books: []Book{mockBook}}
+	mockUser.ID = 1
+
+	err = cfg.UserRepository.Save(mockUser)
+	if err != nil {
+		return
+	}
+	users, err := cfg.SearchBookInNetwork("1234567890")
+	assert.Equal(t, len(users), 1)
+	assert.Equal(t, users[0].Name, "Test User")
+	assert.Equal(t, len(users[0].Books), 1)
+	assert.Equal(t, users[0].Books[0].Title, "Test Book")
+	assert.Equal(t, users[0].Books[0].URL, "https://...")
+	assert.Equal(t, users[0].Books[0].ISBN, "1234567890")
+
+}
+
 func CreatePostgresContainer() (*PostgresContainer, error) {
 	postgresContainer, err := postgres.RunContainer(ctx,
 		testcontainers.WithImage("docker.io/postgres:15.2-alpine"),
