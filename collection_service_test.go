@@ -48,6 +48,7 @@ func TestLinkBookToUser(t *testing.T) {
 	//todo extract setup code
 
 	cfg.AddBookToCollection(mockBook.ISBN, 1)
+
 	user, err := cfg.UserRepository.Get(1)
 
 	if len(user.Books) == 0 {

@@ -15,5 +15,7 @@ func SetupDatabase(connString string) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	var user User
+	db.Preload("books").Find(&user)
 	return db, nil
 }

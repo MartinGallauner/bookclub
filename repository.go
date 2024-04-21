@@ -23,7 +23,7 @@ type PostgresUserRepository struct {
 
 func (r *PostgresUserRepository) Get(id int) (User, error) {
 	var user User
-	err := r.Database.Table("users").First(&user, id).Error
+	err := r.Database.Table("users").Preload("Books").First(&user, id).Error
 	if err != nil {
 		return User{}, err
 	}
