@@ -1,6 +1,6 @@
 module github.com/martingallauner/bookclub
 
-go 1.22.0
+go 1.22
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
