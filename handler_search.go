@@ -10,7 +10,7 @@ func (cfg *BookclubServer) handlerSearch(w http.ResponseWriter, r *http.Request)
 
 	users, err := cfg.SearchBookInNetwork(isbn)
 	if err != nil {
-		respondWithError(w, 404, "Book not available in network.")
+		respondWithError(w, 404, "Book is not available in the users network.")
 	}
 
 	searchResponse := SearchResponse{isbn, users}
