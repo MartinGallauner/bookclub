@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/magiconair/properties/assert"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
@@ -50,13 +51,12 @@ func TestLinkBookToUser(t *testing.T) {
 		t.FailNow()
 	}
 	addedBook := user.Books[0]
-
 	assert.Equal(t, addedBook, mockBook, "Added book should match existing book")
 }
 
 func TestAddBookToUnknownUser(t *testing.T) {
+	//given
 	s, err := setupTestcontainer()
-
 	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
 	s.BookRepository.Save(mockBook)
 
@@ -64,17 +64,19 @@ func TestAddBookToUnknownUser(t *testing.T) {
 		return
 	}
 
+	//when
 	request, _ := http.NewRequest(http.MethodPost, "/api/collections", strings.NewReader(`{"user_id": 99, "isbn": "1234567890"}`))
 	response := httptest.NewRecorder()
 	s.ServeHTTP(response, request)
 
+	//then
 	assertStatus(t, response.Code, http.StatusBadRequest)
 }
 
 // Tests if a saved book can be linked to an existing user.
 func TestSearchBookInNetwork(t *testing.T) {
+	//given
 	s, err := setupTestcontainer()
-
 	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
 	mockUser := User{Name: "Test User", Books: []Book{mockBook}}
 	mockUser.ID = 1
@@ -83,13 +85,30 @@ func TestSearchBookInNetwork(t *testing.T) {
 	if err != nil {
 		return
 	}
-	users, err := s.SearchBookInNetwork("1234567890")
-	assert.Equal(t, len(users), 1)
-	assert.Equal(t, users[0].Name, "Test User")
-	assert.Equal(t, len(users[0].Books), 1)
-	assert.Equal(t, users[0].Books[0].Title, "Test Book")
-	assert.Equal(t, users[0].Books[0].URL, "https://...")
-	assert.Equal(t, users[0].Books[0].ISBN, "1234567890")
+
+	//when
+	request, _ := http.NewRequest(http.MethodGet, "/api/search/1234567890", nil)
+	response := httptest.NewRecorder()
+	s.ServeHTTP(response, request)
+
+	//then
+	var got SearchResponse
+	err = json.NewDecoder(response.Body).Decode(&got)
+	if err != nil {
+		t.Fatalf("Unable to parse response from server %q into slice of Player, '%v'", response.Body, err)
+	}
+
+	assert.Equal(t, got.Isbn, "1234567890")
+	assertStatus(t, response.Code, http.StatusOK)
+
+	//
+	//
+	//assert.Equal(t, len(users), 1)
+	//assert.Equal(t, users[0].Name, "Test User")
+	//assert.Equal(t, len(users[0].Books), 1)
+	//assert.Equal(t, users[0].Books[0].Title, "Test Book")
+	//assert.Equal(t, users[0].Books[0].URL, "https://...")
+	//assert.Equal(t, users[0].Books[0].ISBN, "1234567890")
 
 }
 
