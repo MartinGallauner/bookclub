@@ -7,6 +7,9 @@ import (
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"log"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 )
@@ -22,6 +25,7 @@ type PostgresContainer struct {
 
 // Tests if a saved book can be linked to an existing user.
 func TestLinkBookToUser(t *testing.T) {
+	//given
 	container, err := CreatePostgresContainer()
 	if err != nil {
 		log.Fatal(err)
@@ -37,6 +41,8 @@ func TestLinkBookToUser(t *testing.T) {
 		UserRepository: &PostgresUserRepository{Database: db},
 	}
 
+	s := NewBookclubServer(Client{}, &PostgresBookRepository{Database: db}, &PostgresUserRepository{Database: db})
+
 	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
 	cfg.BookRepository.Save(mockBook)
 	mockUser := User{Name: "Test User"}
@@ -46,9 +52,13 @@ func TestLinkBookToUser(t *testing.T) {
 		return
 	}
 	//todo extract setup code
+	//when
+	request, _ := http.NewRequest(http.MethodPost, "/api/collections", strings.NewReader(`{"user_id": 1, "isbn": "1234567890"}`))
+	response := httptest.NewRecorder()
+	s.ServeHTTP(response, request)
 
-	cfg.AddBookToCollection(mockBook.ISBN, 1)
-
+	//then
+	assertStatus(t, response.Code, http.StatusOK)
 	user, err := cfg.UserRepository.Get(1)
 
 	if len(user.Books) == 0 {
@@ -56,6 +66,7 @@ func TestLinkBookToUser(t *testing.T) {
 		t.FailNow()
 	}
 	addedBook := user.Books[0]
+
 	assert.Equal(t, addedBook, mockBook, "Added book should match existing book")
 }
 
