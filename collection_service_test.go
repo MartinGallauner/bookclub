@@ -73,7 +73,7 @@ func TestAddBookToUnknownUser(t *testing.T) {
 	assertStatus(t, response.Code, http.StatusBadRequest)
 }
 
-// Tests if a saved book can be linked to an existing user.
+// Tests search function when one user has the book
 func TestSearchBookInNetwork(t *testing.T) {
 	//given
 	s, err := setupTestcontainer()
@@ -100,21 +100,11 @@ func TestSearchBookInNetwork(t *testing.T) {
 
 	assert.Equal(t, got.Isbn, "1234567890")
 	assertStatus(t, response.Code, http.StatusOK)
-
-	//
-	//
-	//assert.Equal(t, len(users), 1)
-	//assert.Equal(t, users[0].Name, "Test User")
-	//assert.Equal(t, len(users[0].Books), 1)
-	//assert.Equal(t, users[0].Books[0].Title, "Test Book")
-	//assert.Equal(t, users[0].Books[0].URL, "https://...")
-	//assert.Equal(t, users[0].Books[0].ISBN, "1234567890")
-
 }
 
 // helper method to run for each test //todo please don't start a new container for each test
 func setupTestcontainer() (*BookclubServer, error) {
-	container, err := CreatePostgresContainer()
+	container, err := createPostgresContainer()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -128,7 +118,7 @@ func setupTestcontainer() (*BookclubServer, error) {
 	return s, err
 }
 
-func CreatePostgresContainer() (*PostgresContainer, error) {
+func createPostgresContainer() (*PostgresContainer, error) {
 	postgresContainer, err := postgres.RunContainer(ctx,
 		testcontainers.WithImage("docker.io/postgres:15.2-alpine"),
 		postgres.WithDatabase("bookclub-db"),
