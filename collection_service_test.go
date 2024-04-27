@@ -12,7 +12,7 @@ import (
 // Tests if a saved book can be linked to an existing user.
 func TestLinkBookToUser(t *testing.T) {
 	//given
-	s, err := setupTestcontainer()
+	s, err := setupTest()
 
 	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
 	s.BookRepository.Save(mockBook)
@@ -41,7 +41,7 @@ func TestLinkBookToUser(t *testing.T) {
 
 func TestAddBookToUnknownUser(t *testing.T) {
 	//given
-	s, err := setupTestcontainer()
+	s, err := setupTest()
 	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
 	s.BookRepository.Save(mockBook)
 
@@ -61,7 +61,7 @@ func TestAddBookToUnknownUser(t *testing.T) {
 // Tests search function when one user has the book
 func TestSearchBookInNetwork(t *testing.T) {
 	//given
-	s, err := setupTestcontainer()
+	s, err := setupTest()
 	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
 	mockUser := User{Name: "Test User", Books: []Book{mockBook}}
 	mockUser.ID = 1

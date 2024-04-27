@@ -30,7 +30,7 @@ type PostgresContainer struct {
 }
 
 // helper method to run for each test //todo please don't start a new container for each test
-func setupTestcontainer() (*BookclubServer, error) {
+func setupTest() (*BookclubServer, error) {
 	container, err := CreatePostgresContainer()
 	if err != nil {
 		log.Fatal(err)
