@@ -1,6 +1,7 @@
 package main
 
 import (
+	"gorm.io/gorm"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -27,8 +28,7 @@ type StubUserRepository struct {
 }
 
 func (r *StubUserRepository) Find(isbn string) ([]User, error) {
-	//TODO implement me
-	panic("implement me")
+	return []User{}, gorm.ErrRecordNotFound
 }
 
 func (r *StubUserRepository) Get(id int) (User, error) {
