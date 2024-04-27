@@ -9,14 +9,14 @@ import (
 	"testing"
 )
 
-// Tests if a saved book can be linked to an existing user.
-func TestLinkBookToUser(t *testing.T) {
+// Tests if a saved book can be added to the collection of an existing user.
+func TestAddBookToUser(t *testing.T) {
 	//given
 	s, err := setupTest()
 
 	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
 	s.BookRepository.Save(mockBook)
-	mockUser := User{Name: "Test User"}
+	mockUser := &User{Name: "Test User"}
 	mockUser.ID = 1
 	err = s.UserRepository.Save(mockUser)
 	if err != nil {
@@ -39,6 +39,7 @@ func TestLinkBookToUser(t *testing.T) {
 	assert.Equal(t, addedBook, mockBook, "Added book should match existing book")
 }
 
+// Add Book to an unknown user
 func TestAddBookToUnknownUser(t *testing.T) {
 	//given
 	s, err := setupTest()
@@ -62,8 +63,8 @@ func TestAddBookToUnknownUser(t *testing.T) {
 func TestSearchBookInNetwork(t *testing.T) {
 	//given
 	s, err := setupTest()
-	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
-	mockUser := User{Name: "Test User", Books: []Book{mockBook}}
+	mockBook := &Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
+	mockUser := &User{Name: "Test User", Books: []Book{*mockBook}}
 	mockUser.ID = 1
 
 	err = s.UserRepository.Save(mockUser)
