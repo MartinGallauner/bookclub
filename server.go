@@ -40,6 +40,7 @@ func NewBookclubServer(client Client, repository BookRepository, userRepository 
 	router.Handle("/api/search/{isbn}", http.HandlerFunc(s.handlerSearch))
 	router.Handle("/api/collections", http.HandlerFunc(s.handlerAddBook))
 	router.Handle("/api/users", http.HandlerFunc(s.handlerCreateUser))
+	router.Handle("/api/links", http.HandlerFunc(s.handlerLinkUser))
 
 	s.Handler = router
 	return s
