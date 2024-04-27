@@ -23,6 +23,13 @@ func StartServer(cfg *BookclubServer) {
 	//todo not sure if I should return an error here
 }
 
+type BookclubServer struct {
+	Client         Client
+	BookRepository BookRepository
+	UserRepository UserRepository
+	http.Handler
+}
+
 func NewBookclubServer(client Client, repository BookRepository, userRepository UserRepository) *BookclubServer {
 	s := new(BookclubServer)
 	s.BookRepository = repository
