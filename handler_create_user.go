@@ -14,6 +14,12 @@ func (cfg *BookclubServer) handlerCreateUser(w http.ResponseWriter, r *http.Requ
 		respondWithError(w, 400, fmt.Sprintf("Error decoding parameters: %s", err))
 		return
 	}
+
+	if request.Name == "" {
+		respondWithError(w, 400, "Empty username is not accepted.")
+		return
+	}
+
 	user, err := cfg.CreateUser(request.Name)
 
 	if err != nil {
