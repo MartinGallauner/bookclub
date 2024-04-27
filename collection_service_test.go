@@ -26,32 +26,16 @@ type PostgresContainer struct {
 // Tests if a saved book can be linked to an existing user.
 func TestLinkBookToUser(t *testing.T) {
 	//given
-	container, err := CreatePostgresContainer()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	db, err := SetupDatabase(container.ConnectionString)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cfg := &BookclubServer{
-		BookRepository: &PostgresBookRepository{Database: db},
-		UserRepository: &PostgresUserRepository{Database: db},
-	}
-
-	s := NewBookclubServer(Client{}, &PostgresBookRepository{Database: db}, &PostgresUserRepository{Database: db})
+	s, err := setupTestcontainer()
 
 	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
-	cfg.BookRepository.Save(mockBook)
+	s.BookRepository.Save(mockBook)
 	mockUser := User{Name: "Test User"}
 	mockUser.ID = 1
-	err = cfg.UserRepository.Save(mockUser)
+	err = s.UserRepository.Save(mockUser)
 	if err != nil {
 		return
 	}
-	//todo extract setup code
 	//when
 	request, _ := http.NewRequest(http.MethodPost, "/api/collections", strings.NewReader(`{"user_id": 1, "isbn": "1234567890"}`))
 	response := httptest.NewRecorder()
@@ -59,7 +43,7 @@ func TestLinkBookToUser(t *testing.T) {
 
 	//then
 	assertStatus(t, response.Code, http.StatusOK)
-	user, err := cfg.UserRepository.Get(1)
+	user, err := s.UserRepository.Get(1)
 
 	if len(user.Books) == 0 {
 		t.Errorf("User has no books")
@@ -70,61 +54,36 @@ func TestLinkBookToUser(t *testing.T) {
 	assert.Equal(t, addedBook, mockBook, "Added book should match existing book")
 }
 
-func TestLinkBookToUnknownUser(t *testing.T) {
-	container, err := CreatePostgresContainer()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	db, err := SetupDatabase(container.ConnectionString)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cfg := &BookclubServer{
-		BookRepository: &PostgresBookRepository{Database: db},
-		UserRepository: &PostgresUserRepository{Database: db},
-	}
+func TestAddBookToUnknownUser(t *testing.T) {
+	s, err := setupTestcontainer()
 
 	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
-	cfg.BookRepository.Save(mockBook)
+	s.BookRepository.Save(mockBook)
 
 	if err != nil {
 		return
 	}
-	//todo extract setup code
 
-	_, err = cfg.AddBookToCollection(mockBook.ISBN, 1)
+	request, _ := http.NewRequest(http.MethodPost, "/api/collections", strings.NewReader(`{"user_id": 99, "isbn": "1234567890"}`))
+	response := httptest.NewRecorder()
+	s.ServeHTTP(response, request)
 
-	assert.Equal(t, err.Error(), "record not found", "Expecting record not found error")
+	assertStatus(t, response.Code, http.StatusBadRequest)
 }
 
 // Tests if a saved book can be linked to an existing user.
 func TestSearchBookInNetwork(t *testing.T) {
-	container, err := CreatePostgresContainer()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	db, err := SetupDatabase(container.ConnectionString)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cfg := &BookclubServer{
-		BookRepository: &PostgresBookRepository{Database: db},
-		UserRepository: &PostgresUserRepository{Database: db},
-	}
+	s, err := setupTestcontainer()
 
 	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
 	mockUser := User{Name: "Test User", Books: []Book{mockBook}}
 	mockUser.ID = 1
 
-	err = cfg.UserRepository.Save(mockUser)
+	err = s.UserRepository.Save(mockUser)
 	if err != nil {
 		return
 	}
-	users, err := cfg.SearchBookInNetwork("1234567890")
+	users, err := s.SearchBookInNetwork("1234567890")
 	assert.Equal(t, len(users), 1)
 	assert.Equal(t, users[0].Name, "Test User")
 	assert.Equal(t, len(users[0].Books), 1)
@@ -132,6 +91,22 @@ func TestSearchBookInNetwork(t *testing.T) {
 	assert.Equal(t, users[0].Books[0].URL, "https://...")
 	assert.Equal(t, users[0].Books[0].ISBN, "1234567890")
 
+}
+
+// helper method to run for each test //todo please don't start a new container for each test
+func setupTestcontainer() (*BookclubServer, error) {
+	container, err := CreatePostgresContainer()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db, err := SetupDatabase(container.ConnectionString)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	s := NewBookclubServer(Client{}, &PostgresBookRepository{Database: db}, &PostgresUserRepository{Database: db})
+	return s, err
 }
 
 func CreatePostgresContainer() (*PostgresContainer, error) {
