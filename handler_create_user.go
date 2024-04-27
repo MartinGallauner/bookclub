@@ -23,7 +23,7 @@ func (cfg *BookclubServer) handlerCreateUser(w http.ResponseWriter, r *http.Requ
 	user, err := cfg.CreateUser(request.Name)
 
 	if err != nil {
-		respondWithError(w, 400, "Unable to add the requested book")
+		respondWithError(w, 400, "Unable to create the user")
 		return
 	}
 	respondWithJSON(w, 200, user)
