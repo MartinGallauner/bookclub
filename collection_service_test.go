@@ -80,7 +80,7 @@ func TestSearchBookInNetwork(t *testing.T) {
 	var got SearchResponse
 	err = json.NewDecoder(response.Body).Decode(&got)
 	if err != nil {
-		t.Fatalf("Unable to parse response from server %q into slice of Player, '%v'", response.Body, err)
+		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
 	}
 
 	assert.Equal(t, got.Isbn, "1234567890")

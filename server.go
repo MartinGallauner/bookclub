@@ -9,7 +9,7 @@ type UserRepository interface {
 	Get(id int) (User, error)
 	Save(user User) error
 
-	Find(isbn string) ([]User, error)
+	SearchBook(isbn string) ([]User, error)
 }
 
 type BookRepository interface {
@@ -39,7 +39,7 @@ func NewBookclubServer(client Client, repository BookRepository, userRepository 
 	router := http.NewServeMux()
 	router.Handle("/api/search/{isbn}", http.HandlerFunc(s.handlerSearch))
 	router.Handle("/api/collections", http.HandlerFunc(s.handlerAddBook))
-	//router.Handle("/api/books/{isbn}", http.HandlerFunc(s.addToCollectionHandler))
+	router.Handle("/api/users", http.HandlerFunc(s.handlerCreateUser))
 
 	s.Handler = router
 	return s

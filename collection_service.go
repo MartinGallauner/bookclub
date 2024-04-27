@@ -52,7 +52,7 @@ type SearchUseCase interface { //todo I created that to make testing easier, rev
 }
 
 func (cfg *BookclubServer) SearchBookInNetwork(isbn string) ([]User, error) {
-	users, err := cfg.UserRepository.Find(isbn)
+	users, err := cfg.UserRepository.SearchBook(isbn)
 	if err != nil {
 		return nil, err
 	}

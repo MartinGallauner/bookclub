@@ -35,7 +35,7 @@ func (r *PostgresUserRepository) Save(user User) error {
 	return err
 }
 
-func (r *PostgresUserRepository) Find(isbn string) ([]User, error) {
+func (r *PostgresUserRepository) SearchBook(isbn string) ([]User, error) {
 	var users []User
 	err := r.Database.Preload("Books", "isbn = ?", isbn).Find(&users).Error
 	if err != nil {
