@@ -17,6 +17,7 @@ func TestCreateNewUser(t *testing.T) {
 		return
 	}
 	//when
+
 	requestBody := CreateUserRequest{Name: "Mocki"}
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {
@@ -34,6 +35,7 @@ func TestCreateNewUser(t *testing.T) {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
 	}
 	assert.Equal(t, got.Name, "Mocki")
+	assert.Equal(t, got.ID, uint(1))
 
 	assertStatus(t, response.Code, http.StatusOK)
 }

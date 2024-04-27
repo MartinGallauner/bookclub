@@ -30,7 +30,7 @@ func (r *PostgresUserRepository) Get(id int) (User, error) {
 	return user, nil
 }
 
-func (r *PostgresUserRepository) Save(user User) error {
+func (r *PostgresUserRepository) Save(user *User) error {
 	err := r.Database.Table("users").Save(&user).Error
 	return err
 }

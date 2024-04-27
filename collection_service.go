@@ -40,7 +40,7 @@ func (cfg *BookclubServer) AddBookToCollection(isbn string, userId int) (Book, e
 		}
 	}
 	user.Books = append(user.Books, book)
-	err = cfg.UserRepository.Save(user)
+	err = cfg.UserRepository.Save(&user)
 	if err != nil {
 		return Book{}, err
 	}

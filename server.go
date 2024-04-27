@@ -7,7 +7,7 @@ import (
 
 type UserRepository interface {
 	Get(id int) (User, error)
-	Save(user User) error
+	Save(user *User) error
 
 	SearchBook(isbn string) ([]User, error)
 }
