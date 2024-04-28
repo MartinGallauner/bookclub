@@ -49,7 +49,7 @@ func TestRequestLink(t *testing.T) {
 	}
 	//when
 
-	requestBody := CreateUserRequest{Name: "Mocki"}
+	requestBody := LinkRequest{SenderId: uint(1), ReceiverId: uint(2)}
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {
 		return
@@ -60,10 +60,12 @@ func TestRequestLink(t *testing.T) {
 	s.ServeHTTP(response, request)
 
 	//then
-	/*var got User
+	var got LinkResponse
 	err = json.NewDecoder(response.Body).Decode(&got)
 	if err != nil {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
-	}*/
+	}
 	assertStatus(t, response.Code, http.StatusOK)
+	assert.Equal(t, got.SenderId, uint(1))
+	assert.Equal(t, got.ReceiverId, uint(2))
 }
