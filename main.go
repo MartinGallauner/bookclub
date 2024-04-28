@@ -13,6 +13,6 @@ func main() {
 
 	client := NewClient(5 * time.Second)
 
-	server := NewBookclubServer(client, &PostgresBookRepository{Database: db}, &PostgresUserRepository{Database: db})
+	server := NewBookclubServer(client, &PostgresBookRepository{Database: db}, &PostgresUserRepository{Database: db}, &PostgresLinkRepository{Database: db})
 	StartServer(server)
 }

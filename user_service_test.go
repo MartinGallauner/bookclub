@@ -16,8 +16,8 @@ func TestCreateNewUser(t *testing.T) {
 	if err != nil {
 		return
 	}
-	//when
 
+	//when
 	requestBody := CreateUserRequest{Name: "Mocki"}
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {
@@ -47,9 +47,16 @@ func TestRequestLink(t *testing.T) {
 	if err != nil {
 		return
 	}
-	//when
 
-	requestBody := LinkRequest{SenderId: uint(1), ReceiverId: uint(2)}
+	user1, _ := s.CreateUser("Alpha")
+	user2, _ := s.CreateUser("Bravo")
+
+	if err != nil {
+		t.Fatalf("Unable to prepare users needed for the test %v", err)
+	}
+
+	//when
+	requestBody := LinkRequest{SenderId: user1.ID, ReceiverId: user2.ID}
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {
 		return
@@ -66,6 +73,9 @@ func TestRequestLink(t *testing.T) {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
 	}
 	assertStatus(t, response.Code, http.StatusOK)
-	assert.Equal(t, got.SenderId, uint(1))
-	assert.Equal(t, got.ReceiverId, uint(2))
+	assert.Equal(t, got.SenderId, user1.ID)
+	assert.Equal(t, got.ReceiverId, user2.ID)
+	savedLink, err := s.LinkRepository.Get(user1.ID, user2.ID)
+	assert.Equal(t, savedLink.SenderId, user1.ID)
+	assert.Equal(t, savedLink.ReceiverId, user2.ID)
 }

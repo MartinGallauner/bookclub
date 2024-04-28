@@ -41,7 +41,7 @@ func setupTest() (*BookclubServer, error) {
 		log.Fatal(err)
 	}
 
-	s := NewBookclubServer(Client{}, &PostgresBookRepository{Database: db}, &PostgresUserRepository{Database: db})
+	s := NewBookclubServer(Client{}, &PostgresBookRepository{Database: db}, &PostgresUserRepository{Database: db}, &PostgresLinkRepository{Database: db})
 	return s, err
 }
 

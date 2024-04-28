@@ -13,8 +13,13 @@ type UserRepository interface {
 }
 
 type BookRepository interface {
-	GetBook(isbn string) Book
+	GetBook(isbn string) (Book, error)
 	Save(book Book) error
+}
+
+type LinkRepository interface {
+	Get(senderId uint, receiverId uint) (Link, error)
+	Save(link *Link) error
 }
 
 func StartServer(cfg *BookclubServer) {
@@ -27,13 +32,15 @@ type BookclubServer struct {
 	Client         Client
 	BookRepository BookRepository
 	UserRepository UserRepository
+	LinkRepository LinkRepository
 	http.Handler
 }
 
-func NewBookclubServer(client Client, repository BookRepository, userRepository UserRepository) *BookclubServer {
+func NewBookclubServer(client Client, repository BookRepository, userRepository UserRepository, linkRepository LinkRepository) *BookclubServer {
 	s := new(BookclubServer)
 	s.BookRepository = repository
 	s.UserRepository = userRepository
+	s.LinkRepository = linkRepository
 	s.Client = client
 
 	router := http.NewServeMux()

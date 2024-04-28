@@ -6,10 +6,13 @@ type PostgresBookRepository struct {
 	Database *gorm.DB
 }
 
-func (r *PostgresBookRepository) GetBook(isbn string) Book {
+func (r *PostgresBookRepository) GetBook(isbn string) (Book, error) {
 	var book Book
-	r.Database.Table("books").Find(&book, isbn)
-	return book
+	err := r.Database.Table("books").Find(&book, isbn).Error
+	if err != nil {
+		return Book{}, nil
+	}
+	return book, nil
 }
 
 func (r *PostgresBookRepository) Save(book Book) error {
@@ -42,4 +45,22 @@ func (r *PostgresUserRepository) SearchBook(isbn string) ([]User, error) {
 		return nil, err
 	}
 	return users, nil
+}
+
+type PostgresLinkRepository struct {
+	Database *gorm.DB
+}
+
+func (r *PostgresLinkRepository) Get(senderId uint, receiverId uint) (Link, error) {
+	var link Link
+	err := r.Database.Table("links").First(&link, senderId).Error //todo incorrect
+	if err != nil {
+		return Link{}, err
+	}
+	return link, nil
+}
+
+func (r *PostgresLinkRepository) Save(link *Link) error {
+	err := r.Database.Table("links").Save(&link).Error
+	return err
 }

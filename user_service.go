@@ -1,6 +1,8 @@
 package main
 
-import "gorm.io/gorm"
+import (
+	"time"
+)
 
 func (cfg *BookclubServer) CreateUser(name string) (User, error) {
 	user := &User{Name: name}
@@ -12,12 +14,17 @@ func (cfg *BookclubServer) CreateUser(name string) (User, error) {
 }
 
 func (cfg *BookclubServer) LinkUsers(senderId uint, receiverId uint) (Link, error) {
+	link := &Link{SenderId: senderId, ReceiverId: receiverId}
+	err := cfg.LinkRepository.Save(link)
+	if err != nil {
+		return Link{}, err
+	}
 	return Link{SenderId: senderId, ReceiverId: receiverId}, nil
-
 }
 
 type Link struct {
-	SenderId   uint
-	ReceiverId uint
-	gorm.Model
+	SenderId   uint `gorm:"primaryKey"`
+	ReceiverId uint `gorm:"primaryKey"`
+	CreatedAt  time.Time
+	AcceptedAt time.Time
 }
