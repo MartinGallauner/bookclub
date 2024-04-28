@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 )
 
 func (cfg *BookclubServer) handlerLinkUser(w http.ResponseWriter, r *http.Request) {
@@ -16,9 +15,13 @@ func (cfg *BookclubServer) handlerLinkUser(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	Link, err := cfg.LinkUsers(request.SenderId, request.ReceiverId)
+	link, err := cfg.LinkUsers(request.SenderId, request.ReceiverId)
 
-	linkResponse := LinkResponse{SenderId: Link.SenderId, ReceiverId: Link.ReceiverId}
+	//todo extract?
+	linkResponse := LinkResponse{SenderId: link.SenderId, ReceiverId: link.ReceiverId}
+	if link.DeletedAt.Before(link.AcceptedAt) {
+		linkResponse.isLinked = true
+	}
 
 	if err != nil {
 		respondWithError(w, 400, "Unable to create user link")
@@ -36,6 +39,5 @@ type LinkRequest struct {
 type LinkResponse struct {
 	SenderId   uint
 	ReceiverId uint
-	CreatedAt  time.Time
-	AcceptedAt time.Time
+	isLinked   bool
 }
