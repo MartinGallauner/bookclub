@@ -57,11 +57,3 @@ func (cfg *BookclubServer) GetLinks(userId string) ([]Link, error) {
 	}
 	return links, nil
 }
-
-type Link struct {
-	SenderId   uint `gorm:"primaryKey"` //todo the concept of sender/receiver id is crap
-	ReceiverId uint `gorm:"primaryKey"`
-	CreatedAt  time.Time
-	AcceptedAt time.Time
-	DeletedAt  time.Time
-}

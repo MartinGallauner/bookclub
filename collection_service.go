@@ -1,29 +1,5 @@
 package main
 
-import (
-	"gorm.io/gorm"
-	"time"
-)
-
-type User struct {
-	gorm.Model
-	Name  string
-	Books []Book `gorm:"many2many:user_books"`
-}
-
-type Book struct {
-	ISBN  string `gorm:"primaryKey"`
-	URL   string `json:"url"`
-	Title string `json:"title"`
-}
-
-type UserBooks struct {
-	UserId    int    `gorm:"primaryKey"`
-	BookISBN  string `gorm:"primaryKey"`
-	CreatedAt time.Time
-	DeletedAt gorm.DeletedAt
-}
-
 // Adds book to user's collection
 func (cfg *BookclubServer) AddBookToCollection(isbn string, userId uint) (Book, error) {
 	user, err := cfg.UserRepository.Get(userId)
@@ -48,6 +24,11 @@ func (cfg *BookclubServer) AddBookToCollection(isbn string, userId uint) (Book, 
 }
 
 func (cfg *BookclubServer) SearchBookInNetwork(userId uint, isbn string) ([]User, error) {
+
+	//get linked users
+
+	// filter user for searched book
+
 	users, err := cfg.UserRepository.SearchBook(isbn)
 	if err != nil {
 		return nil, err
