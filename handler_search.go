@@ -21,13 +21,23 @@ func (cfg *BookclubServer) handlerSearch(w http.ResponseWriter, r *http.Request)
 		respondWithError(w, 404, "Book is not available in the users network.")
 	}
 
-	searchResponse := SearchResponse{body.ISBN, users}
+	var responseBody []UserResponse
+	for _, user := range users {
+		responseBody = append(responseBody, UserResponse{Name: user.Name, Books: user.Books})
+	}
+
+	searchResponse := SearchResponse{body.ISBN, responseBody}
 
 	respondWithJSON(w, 200, searchResponse)
 	return
 }
 
 type SearchResponse struct {
-	Isbn  string `json:"ISBN"`
-	Users []User `json:"users"`
+	Isbn  string         `json:"ISBN"`
+	Users []UserResponse `json:"users"`
+}
+
+type UserResponse struct {
+	Name  string
+	Books []Book
 }
