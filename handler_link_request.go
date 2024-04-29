@@ -15,10 +15,7 @@ func (cfg *BookclubServer) handlerCreateLink(w http.ResponseWriter, r *http.Requ
 		return
 	}
 	link, err := cfg.LinkUsers(request.SenderId, request.ReceiverId)
-	linkResponse := LinkResponse{SenderId: link.SenderId, ReceiverId: link.ReceiverId}
-	if link.DeletedAt.Before(link.AcceptedAt) {
-		linkResponse.isLinked = true
-	}
+	linkResponse := mapLinkResponse(link)
 	if err != nil {
 		respondWithError(w, 400, "Unable to create user link")
 		return
@@ -28,13 +25,21 @@ func (cfg *BookclubServer) handlerCreateLink(w http.ResponseWriter, r *http.Requ
 
 }
 
+func mapLinkResponse(link Link) LinkResponse {
+	linkResponse := LinkResponse{SenderId: link.SenderId, ReceiverId: link.ReceiverId, isLinked: false}
+	if link.DeletedAt.Before(link.AcceptedAt) {
+		linkResponse.isLinked = true
+	}
+	return linkResponse
+}
+
 type LinkRequest struct {
-	SenderId   uint
-	ReceiverId uint
+	SenderId   uint `json:"sender_id"`
+	ReceiverId uint `json:"receiver_id"`
 }
 
 type LinkResponse struct {
-	SenderId   uint
-	ReceiverId uint
-	isLinked   bool
+	SenderId   uint `json:"sender_id"`
+	ReceiverId uint `json:"receiver_id"`
+	isLinked   bool `json:"is_linked"`
 }
