@@ -26,9 +26,9 @@ func (cfg *BookclubServer) handlerCreateLink(w http.ResponseWriter, r *http.Requ
 }
 
 func mapLinkResponse(link Link) LinkResponse {
-	linkResponse := LinkResponse{SenderId: link.SenderId, ReceiverId: link.ReceiverId, isLinked: false}
+	linkResponse := LinkResponse{SenderId: link.SenderId, ReceiverId: link.ReceiverId, IsLinked: false}
 	if link.DeletedAt.Before(link.AcceptedAt) {
-		linkResponse.isLinked = true
+		linkResponse.IsLinked = true
 	}
 	return linkResponse
 }
@@ -41,5 +41,5 @@ type LinkRequest struct {
 type LinkResponse struct {
 	SenderId   uint `json:"sender_id"`
 	ReceiverId uint `json:"receiver_id"`
-	isLinked   bool `json:"is_linked"`
+	IsLinked   bool `json:"is_linked"`
 }
