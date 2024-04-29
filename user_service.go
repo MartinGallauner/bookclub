@@ -25,6 +25,15 @@ func (cfg *BookclubServer) LinkUsers(senderId uint, receiverId uint) (Link, erro
 	return Link{SenderId: senderId, ReceiverId: receiverId}, nil
 }
 
+// Returns all link requests concerning the specified user
+func (cfg *BookclubServer) GetLinks(userId string) ([]Link, error) {
+	links, err := cfg.LinkRepository.GetById(userId)
+	if err != nil {
+		return nil, err
+	}
+	return links, nil
+}
+
 type Link struct {
 	SenderId   uint `gorm:"primaryKey"`
 	ReceiverId uint `gorm:"primaryKey"`

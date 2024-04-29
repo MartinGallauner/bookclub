@@ -1,6 +1,8 @@
 package main
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type PostgresBookRepository struct {
 	Database *gorm.DB
@@ -58,6 +60,19 @@ func (r *PostgresLinkRepository) Get(senderId uint, receiverId uint) (Link, erro
 		return Link{}, err
 	}
 	return link, nil
+}
+
+func (r *PostgresLinkRepository) GetById(userId string) ([]Link, error) { //todo
+	var links []Link
+
+	// Build the query with OR condition
+	result := r.Database.Where("sender_id = ? OR receiver_id = ?", userId, userId).Find(&links)
+
+	if result.Error != nil {
+		// handle error
+		return nil, result.Error
+	}
+	return links, nil
 }
 
 func (r *PostgresLinkRepository) Save(link *Link) error {

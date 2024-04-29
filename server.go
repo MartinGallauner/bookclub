@@ -18,7 +18,13 @@ type BookRepository interface {
 }
 
 type LinkRepository interface {
+	//Returns specific Link between two users
 	Get(senderId uint, receiverId uint) (Link, error)
+
+	//Returns all links concerned with the user
+	GetById(userId string) ([]Link, error)
+
+	//Persists link.
 	Save(link *Link) error
 }
 
@@ -47,7 +53,8 @@ func NewBookclubServer(client Client, repository BookRepository, userRepository 
 	router.Handle("/api/search/{isbn}", http.HandlerFunc(s.handlerSearch))
 	router.Handle("/api/collections", http.HandlerFunc(s.handlerAddBook))
 	router.Handle("/api/users", http.HandlerFunc(s.handlerCreateUser))
-	router.Handle("/api/links", http.HandlerFunc(s.handlerLinkUser))
+	router.Handle("/api/links/{id}", http.HandlerFunc(s.handlerGetLinks))
+	router.Handle("/api/links", http.HandlerFunc(s.handlerCreateLink))
 
 	s.Handler = router
 	return s
