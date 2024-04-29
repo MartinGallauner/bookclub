@@ -25,7 +25,7 @@ type UserBooks struct {
 }
 
 // Adds book to user's collection
-func (cfg *BookclubServer) AddBookToCollection(isbn string, userId int) (Book, error) {
+func (cfg *BookclubServer) AddBookToCollection(isbn string, userId uint) (Book, error) {
 	user, err := cfg.UserRepository.Get(userId)
 	if err != nil {
 		return Book{}, err
@@ -47,7 +47,7 @@ func (cfg *BookclubServer) AddBookToCollection(isbn string, userId int) (Book, e
 	return book, nil
 }
 
-func (cfg *BookclubServer) SearchBookInNetwork(userId int, isbn string) ([]User, error) {
+func (cfg *BookclubServer) SearchBookInNetwork(userId uint, isbn string) ([]User, error) {
 	users, err := cfg.UserRepository.SearchBook(isbn)
 	if err != nil {
 		return nil, err

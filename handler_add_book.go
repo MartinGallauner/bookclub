@@ -25,6 +25,6 @@ func (cfg *BookclubServer) handlerAddBook(w http.ResponseWriter, r *http.Request
 }
 
 type AddBookRequest struct { //todo what is the best location for this struct definition?
-	UserId int    `json:"user_id"` //todo this needs to be changed later when auth is in place
+	UserId uint   `json:"user_id"` //todo this needs to be changed later when auth is in place
 	ISBN   string `json:"isbn"`
 }

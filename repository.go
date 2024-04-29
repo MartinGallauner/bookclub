@@ -26,7 +26,7 @@ type PostgresUserRepository struct {
 	Database *gorm.DB
 }
 
-func (r *PostgresUserRepository) Get(id int) (User, error) {
+func (r *PostgresUserRepository) Get(id uint) (User, error) {
 	var user User
 	err := r.Database.Table("users").Preload("Books").First(&user, id).Error
 	if err != nil {

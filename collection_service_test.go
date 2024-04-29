@@ -64,13 +64,19 @@ func TestAddBookToUnknownUser(t *testing.T) {
 func TestSearchBookInNetwork(t *testing.T) {
 	//given
 	s, err := setupTest()
-	mockBook := &Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
-	mockUser := &User{Name: "Test User", Books: []Book{*mockBook}}
-	mockUser.ID = 1
 
-	err = s.UserRepository.Save(mockUser)
+	userWithBook, err := s.CreateUser("Book Owner")
+	book := &Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
+	s.BookRepository.Save(*book)
+	_, err = s.AddBookToCollection(book.ISBN, userWithBook.ID)
+
+	userWithoutBooks, err := s.CreateUser("Reader")
+
+	s.LinkUsers(userWithBook.ID, userWithoutBooks.ID)
+	s.LinkUsers(userWithoutBooks.ID, userWithBook.ID)
+
 	if err != nil {
-		return
+		t.Fatalf("Unable to setup test.")
 	}
 
 	//when
@@ -92,5 +98,6 @@ func TestSearchBookInNetwork(t *testing.T) {
 	}
 
 	assert.Equal(t, got.Isbn, "1234567890")
+	assert.Equal(t, len(got.Users), 1)
 	assertStatus(t, response.Code, http.StatusOK)
 }
