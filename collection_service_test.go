@@ -97,7 +97,7 @@ func TestSearchBookInNetwork(t *testing.T) {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
 	}
 
-	assert.Equal(t, got.Isbn, "1234567890")
-	assert.Equal(t, len(got.Users), 1)
+	assert.Equal(t, got.Isbn, "1234567890", "Did we search for the wrong book?")
+	assert.Equal(t, len(got.Users), 1, ". Expected a different number of book owners.")
 	assertStatus(t, response.Code, http.StatusOK)
 }

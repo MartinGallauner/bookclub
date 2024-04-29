@@ -17,9 +17,6 @@ func (cfg *BookclubServer) CreateUser(name string) (User, error) {
 
 // Creates a link request betweem two users
 func (cfg *BookclubServer) LinkUsers(senderId uint, receiverId uint) (Link, error) {
-	//todo what if request already exists?
-	//todo accept request when sender and receiver are inverted
-
 	//ask if request already exists, if yes exit
 	existingLink, err := cfg.LinkRepository.Get(senderId, receiverId)
 
@@ -44,7 +41,6 @@ func (cfg *BookclubServer) LinkUsers(senderId uint, receiverId uint) (Link, erro
 	}
 
 	//if request not exists -> create new
-
 	link := &Link{SenderId: senderId, ReceiverId: receiverId}
 	err = cfg.LinkRepository.Save(link)
 	if err != nil {
