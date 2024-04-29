@@ -47,15 +47,15 @@ func (cfg *BookclubServer) AddBookToCollection(isbn string, userId int) (Book, e
 	return book, nil
 }
 
-type SearchUseCase interface { //todo I created that to make testing easier, review if smart?
-	SearchBookInNetwork(isbn string) ([]User, error)
-}
-
-func (cfg *BookclubServer) SearchBookInNetwork(isbn string) ([]User, error) {
+func (cfg *BookclubServer) SearchBookInNetwork(userId int, isbn string) ([]User, error) {
 	users, err := cfg.UserRepository.SearchBook(isbn)
 	if err != nil {
 		return nil, err
 	}
 	return users, nil
+}
 
+type SearchRequest struct {
+	UserId uint   `json:"user_id"`
+	ISBN   string `json:"isbn"`
 }

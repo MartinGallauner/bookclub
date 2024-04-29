@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"github.com/magiconair/properties/assert"
 	"net/http"
@@ -73,7 +74,13 @@ func TestSearchBookInNetwork(t *testing.T) {
 	}
 
 	//when
-	request, _ := http.NewRequest(http.MethodGet, "/api/search/1234567890", nil)
+	requestBody := SearchRequest{UserId: uint(1), ISBN: "1234567890"}
+	jsonBody, err := json.Marshal(requestBody)
+	if err != nil {
+		return
+	}
+
+	request, _ := http.NewRequest(http.MethodPost, "/api/search", bytes.NewReader(jsonBody))
 	response := httptest.NewRecorder()
 	s.ServeHTTP(response, request)
 
