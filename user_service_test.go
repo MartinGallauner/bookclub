@@ -91,7 +91,10 @@ func TestGetLinks(t *testing.T) {
 
 	user1, _ := s.CreateUser("Alpha")
 	user2, _ := s.CreateUser("Bravo")
+	user3, _ := s.CreateUser("Charlie")
+
 	link, err := s.LinkUsers(user1.ID, user2.ID)
+	_, err = s.LinkUsers(user2.ID, user3.ID)
 
 	if err != nil {
 		t.Fatalf("Unable to prepare users needed for the test %v", err)
@@ -110,7 +113,11 @@ func TestGetLinks(t *testing.T) {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
 	}
 	assert.Equal(t, len(got), 1)
-	fmt.Println(link)
+	for _, link = range got {
+		if link.SenderId == user3.ID || link.ReceiverId == user3.ID {
+			t.Errorf("User 1 is not supposed to have any link to user 3")
+		}
+	}
 	assertStatus(t, response.Code, http.StatusOK)
 
 }
