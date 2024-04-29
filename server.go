@@ -24,6 +24,9 @@ type LinkRepository interface {
 	//Returns all links concerned with the user
 	GetById(userId string) ([]Link, error)
 
+	//Returns all links concerned with the user that are accepted
+	GetAcceptedById(userId uint) ([]Link, error)
+
 	//Persists link.
 	Save(link *Link) error
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -42,9 +43,9 @@ func (r *PostgresUserRepository) Save(user *User) error {
 
 func (r *PostgresUserRepository) SearchBook(isbn string) ([]User, error) {
 	var users []User
-	err := r.Database.Preload("Books", "isbn = ?", isbn).Find(&users).Error
-	if err != nil {
-		return nil, err
+	result := r.Database.Raw(fmt.Sprintf("SELECT * FROM users\nJOIN user_books ON users.id = user_books.user_id\nWHERE book_isbn = '%v'", isbn)).Scan(&users)
+	if result.Error != nil {
+		return nil, result.Error
 	}
 	return users, nil
 }
@@ -71,6 +72,19 @@ func (r *PostgresLinkRepository) GetById(userId string) ([]Link, error) { //todo
 
 	// Build the query with OR condition
 	result := r.Database.Where("sender_id = ? OR receiver_id = ?", userId, userId).Find(&links)
+
+	if result.Error != nil {
+		// handle error
+		return nil, result.Error
+	}
+	return links, nil
+}
+
+func (r *PostgresLinkRepository) GetAcceptedById(userId uint) ([]Link, error) { //todo
+	var links []Link
+
+	// Build the query with OR condition
+	result := r.Database.Where("sender_id = ? OR receiver_id = ?", userId, userId).Where("accepted_at > created_at").Find(&links)
 
 	if result.Error != nil {
 		// handle error

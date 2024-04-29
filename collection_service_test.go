@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/magiconair/properties/assert"
 	"net/http"
 	"net/http/httptest"
@@ -74,6 +75,9 @@ func TestSearchBookInNetwork(t *testing.T) {
 
 	s.LinkUsers(userWithBook.ID, userWithoutBooks.ID)
 	s.LinkUsers(userWithoutBooks.ID, userWithBook.ID)
+
+	link, err := s.LinkRepository.Get(userWithBook.ID, userWithoutBooks.ID)
+	fmt.Println(link)
 
 	if err != nil {
 		t.Fatalf("Unable to setup test.")

@@ -15,7 +15,7 @@ func (cfg *BookclubServer) handlerSearch(w http.ResponseWriter, r *http.Request)
 		respondWithError(w, 400, fmt.Sprintf("Error decoding parameters: %s", err))
 		return
 	}
-
+	//todo remove ID from user response
 	users, err := cfg.SearchBookInNetwork(body.UserId, body.ISBN)
 	if err != nil {
 		respondWithError(w, 404, "Book is not available in the users network.")

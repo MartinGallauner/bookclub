@@ -14,3 +14,7 @@ Connect your physical bookshelf with your friends!
 
 
 
+## Trade offs
+- I regret adding Gorm as the ORM library.
+- The search implementation is not okay.
+

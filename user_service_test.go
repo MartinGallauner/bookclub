@@ -155,5 +155,12 @@ func TestAcceptLink(t *testing.T) {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
 	}
 	assertStatus(t, response.Code, http.StatusOK)
+
+	fetchLink, _ := s.LinkRepository.Get(user1.ID, user2.ID)
+
+	//persisted
+	assert.Equal(t, fetchLink.AcceptedAt.After(fetchLink.CreatedAt), true)
+
+	//response
 	assert.Equal(t, got.IsLinked, true)
 }

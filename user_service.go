@@ -20,7 +20,7 @@ func (cfg *BookclubServer) LinkUsers(senderId uint, receiverId uint) (Link, erro
 	//ask if request already exists, if yes exit
 	existingLink, err := cfg.LinkRepository.Get(senderId, receiverId)
 
-	if existingLink.SenderId == senderId && existingLink.ReceiverId == receiverId {
+	if existingLink.SenderId == senderId && existingLink.ReceiverId == receiverId { //if already exists, return that right away
 		return existingLink, err
 	}
 
@@ -36,7 +36,10 @@ func (cfg *BookclubServer) LinkUsers(senderId uint, receiverId uint) (Link, erro
 	existingRequest, err := cfg.LinkRepository.Get(receiverId, senderId)
 	if err != gorm.ErrRecordNotFound {
 		existingRequest.AcceptedAt = time.Now()
-		cfg.LinkRepository.Save(&existingLink)
+		err := cfg.LinkRepository.Save(&existingRequest)
+		if err != nil {
+			return Link{}, err
+		}
 		return existingRequest, nil
 	}
 
