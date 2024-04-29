@@ -55,9 +55,13 @@ type PostgresLinkRepository struct {
 
 func (r *PostgresLinkRepository) Get(senderId uint, receiverId uint) (Link, error) {
 	var link Link
-	err := r.Database.Table("links").First(&link, senderId).Error //todo incorrect
+	err := r.Database.Where("sender_id = ? AND receiver_id = ?", senderId, receiverId).First(&link).Error
 	if err != nil {
 		return Link{}, err
+	}
+
+	if link.SenderId == 0 && link.ReceiverId == 0 { //todo I feel like that check is bad
+		return Link{}, gorm.ErrRecordNotFound
 	}
 	return link, nil
 }

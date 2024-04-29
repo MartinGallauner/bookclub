@@ -119,5 +119,41 @@ func TestGetLinks(t *testing.T) {
 		}
 	}
 	assertStatus(t, response.Code, http.StatusOK)
+}
 
+// Tests to accept an existing link request
+func TestAcceptLink(t *testing.T) {
+	//given
+	s, err := setupTest()
+	if err != nil {
+		return
+	}
+
+	user1, err := s.CreateUser("Alpha")
+	user2, err := s.CreateUser("Bravo")
+	_, err = s.LinkUsers(user1.ID, user2.ID)
+
+	if err != nil {
+		t.Fatalf("Unable to prepare users needed for the test %v", err)
+	}
+
+	//when
+	requestBody := LinkRequest{SenderId: user2.ID, ReceiverId: user1.ID}
+	jsonBody, err := json.Marshal(requestBody)
+	if err != nil {
+		return
+	}
+
+	request, _ := http.NewRequest(http.MethodPost, "/api/links", bytes.NewReader(jsonBody))
+	response := httptest.NewRecorder()
+	s.ServeHTTP(response, request)
+
+	//then
+	var got LinkResponse
+	err = json.NewDecoder(response.Body).Decode(&got)
+	if err != nil {
+		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
+	}
+	assertStatus(t, response.Code, http.StatusOK)
+	assert.Equal(t, got.IsLinked, true)
 }

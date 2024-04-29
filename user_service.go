@@ -1,6 +1,8 @@
 package main
 
 import (
+	"gorm.io/gorm"
+	"log"
 	"time"
 )
 
@@ -17,8 +19,34 @@ func (cfg *BookclubServer) CreateUser(name string) (User, error) {
 func (cfg *BookclubServer) LinkUsers(senderId uint, receiverId uint) (Link, error) {
 	//todo what if request already exists?
 	//todo accept request when sender and receiver are inverted
+
+	//ask if request already exists, if yes exit
+	existingLink, err := cfg.LinkRepository.Get(senderId, receiverId)
+
+	if existingLink.SenderId == senderId && existingLink.ReceiverId == receiverId {
+		return existingLink, err
+	}
+
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			log.Printf("Creating new link request for users with id %v and %v", senderId, receiverId)
+		} else {
+			return Link{}, err
+		}
+	}
+
+	//if opposite request exists -> accept
+	existingRequest, err := cfg.LinkRepository.Get(receiverId, senderId)
+	if err != gorm.ErrRecordNotFound {
+		existingRequest.AcceptedAt = time.Now()
+		cfg.LinkRepository.Save(&existingLink)
+		return existingRequest, nil
+	}
+
+	//if request not exists -> create new
+
 	link := &Link{SenderId: senderId, ReceiverId: receiverId}
-	err := cfg.LinkRepository.Save(link)
+	err = cfg.LinkRepository.Save(link)
 	if err != nil {
 		return Link{}, err
 	}
@@ -35,7 +63,7 @@ func (cfg *BookclubServer) GetLinks(userId string) ([]Link, error) {
 }
 
 type Link struct {
-	SenderId   uint `gorm:"primaryKey"`
+	SenderId   uint `gorm:"primaryKey"` //todo the concept of sender/receiver id is crap
 	ReceiverId uint `gorm:"primaryKey"`
 	CreatedAt  time.Time
 	AcceptedAt time.Time
