@@ -61,7 +61,6 @@ func NewBookclubServer(client Client, repository BookRepository, userRepository 
 	router.Handle("/auth/{provider}/callback", http.HandlerFunc(s.handlerCallback))
 	router.Handle("/auth/{provider}/logout", http.HandlerFunc(s.handlerLogout))
 	router.Handle("/auth/{provider}", http.HandlerFunc(s.handlerLogin))
-	router.Handle("/auth", http.HandlerFunc(s.handlerProviders))
 
 	s.Handler = router
 	return s

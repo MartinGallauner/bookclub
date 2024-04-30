@@ -16,15 +16,19 @@ func (cfg *BookclubServer) handlerCallback(w http.ResponseWriter, r *http.Reques
 		fmt.Fprintln(w, err)
 		return
 	}
-	fmt.Println(user) //todo delete
-	t, _ := template.New("foo").Parse(userTemplate)
-	t.Execute(w, user)
+	fmt.Println("logging in user: ", user.Email)
+
+	http.Redirect(w, r, "http://localhost:5173", http.StatusFound)
 }
 
 func (cfg *BookclubServer) handlerLogout(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("loggin out user")
+
 	gothic.Logout(w, r)
-	w.Header().Set("Location", "/")
+	w.Header().Set("Location", "http://localhost:5173")
 	w.WriteHeader(http.StatusTemporaryRedirect)
+
+	//http.Redirect(w, r, "http://localhost:5173", http.StatusFound)
 }
 
 func (cfg *BookclubServer) handlerLogin(w http.ResponseWriter, r *http.Request) {
@@ -36,14 +40,6 @@ func (cfg *BookclubServer) handlerLogin(w http.ResponseWriter, r *http.Request) 
 	} else {
 		gothic.BeginAuthHandler(w, r)
 	}
-}
-
-func (cfg *BookclubServer) handlerProviders(w http.ResponseWriter, r *http.Request) {
-
-	//providerIndex := &ProviderIndex{Providers: keys, ProvidersMap: m}
-
-	t, _ := template.New("foo").Parse(indexTemplate)
-	t.Execute(w, ProviderIndex{})
 }
 
 type ProviderIndex struct {
