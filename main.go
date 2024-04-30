@@ -1,11 +1,15 @@
 package main
 
 import (
+	"github.com/martingallauner/bookclub/internal/auth"
 	"log"
 	"time"
 )
 
 func main() {
+
+	auth.NewAuth()
+
 	db, err := SetupDatabase("host=localhost user=postgres password=password dbname=postgres port=5432 sslmode=disable TimeZone=Europe/Vienna")
 	if err != nil {
 		log.Fatal(err)
