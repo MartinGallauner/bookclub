@@ -5,6 +5,31 @@ import (
 	"gorm.io/gorm"
 )
 
+type UserRepository interface {
+	Get(id uint) (User, error)
+	Save(user *User) error
+	SearchBook(isbn string) ([]User, error)
+}
+
+type BookRepository interface {
+	GetBook(isbn string) (Book, error)
+	Save(book Book) error
+}
+
+type LinkRepository interface {
+	//Returns specific Link between two users
+	Get(senderId uint, receiverId uint) (Link, error)
+
+	//Returns all links concerned with the user
+	GetById(userId string) ([]Link, error)
+
+	//Returns all links concerned with the user that are accepted
+	GetAcceptedById(userId uint) ([]Link, error)
+
+	//Persists link.
+	Save(link *Link) error
+}
+
 type PostgresBookRepository struct {
 	Database *gorm.DB
 }

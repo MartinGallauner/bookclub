@@ -1,35 +1,11 @@
 package main
 
 import (
+	_ "github.com/martingallauner/bookclub/docs" // which is the generated folder after swag init
+	"github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
 )
-
-type UserRepository interface {
-	Get(id uint) (User, error)
-	Save(user *User) error
-
-	SearchBook(isbn string) ([]User, error)
-}
-
-type BookRepository interface {
-	GetBook(isbn string) (Book, error)
-	Save(book Book) error
-}
-
-type LinkRepository interface {
-	//Returns specific Link between two users
-	Get(senderId uint, receiverId uint) (Link, error)
-
-	//Returns all links concerned with the user
-	GetById(userId string) ([]Link, error)
-
-	//Returns all links concerned with the user that are accepted
-	GetAcceptedById(userId uint) ([]Link, error)
-
-	//Persists link.
-	Save(link *Link) error
-}
 
 func StartServer(cfg *BookclubServer) {
 	log.Print("Starting bookclub on port: 8080")
@@ -61,6 +37,7 @@ func NewBookclubServer(client Client, repository BookRepository, userRepository 
 	router.Handle("/auth/{provider}/callback", http.HandlerFunc(s.handlerCallback))
 	router.Handle("/auth/{provider}/logout", http.HandlerFunc(s.handlerLogout))
 	router.Handle("/auth/{provider}", http.HandlerFunc(s.handlerLogin))
+	router.Handle("/swagger/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8080/swagger/doc.json")))
 
 	s.Handler = router
 	return s
