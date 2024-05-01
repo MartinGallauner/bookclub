@@ -6,6 +6,10 @@ import (
 	"time"
 )
 
+// @title Bookclub API
+// @version 0.1
+// license.name MIT license
+
 func main() {
 
 	auth.NewAuth()

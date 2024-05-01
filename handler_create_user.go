@@ -6,6 +6,8 @@ import (
 	"net/http"
 )
 
+// @Description test test test
+// @Summary create a new uer
 func (cfg *BookclubServer) handlerCreateUser(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	request := CreateUserRequest{}
