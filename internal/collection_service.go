@@ -1,4 +1,4 @@
-package main
+package internal
 
 // Adds book to user's collection
 func (cfg *BookclubServer) AddBookToCollection(isbn string, userId uint) (Book, error) {

@@ -1,26 +1,23 @@
 package main
 
 import (
+	"github.com/martingallauner/bookclub/internal"
 	"github.com/martingallauner/bookclub/internal/auth"
 	"log"
 	"time"
 )
 
-// @title Bookclub API
-// @version 0.1
-// license.name MIT license
-
 func main() {
 
 	auth.NewAuth()
 
-	db, err := SetupDatabase("host=localhost user=postgres password=password dbname=postgres port=5432 sslmode=disable TimeZone=Europe/Vienna")
+	db, err := internal.SetupDatabase("host=localhost user=postgres password=password dbname=postgres port=5432 sslmode=disable TimeZone=Europe/Vienna")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	client := NewClient(5 * time.Second)
+	client := internal.NewClient(5 * time.Second)
 
-	server := NewBookclubServer(client, &PostgresBookRepository{Database: db}, &PostgresUserRepository{Database: db}, &PostgresLinkRepository{Database: db})
-	StartServer(server)
+	server := internal.NewBookclubServer(client, &internal.PostgresBookRepository{Database: db}, &internal.PostgresUserRepository{Database: db}, &internal.PostgresLinkRepository{Database: db})
+	internal.StartServer(server)
 }

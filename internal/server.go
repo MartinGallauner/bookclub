@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	_ "github.com/martingallauner/bookclub/docs" // which is the generated folder after swag init
