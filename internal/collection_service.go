@@ -23,6 +23,7 @@ func (cfg *BookclubServer) AddBookToCollection(isbn string, userId uint) (Book, 
 	return book, nil
 }
 
+// Searches for the given book within the network of the given user.
 func (cfg *BookclubServer) SearchBookInNetwork(userId uint, isbn string) ([]User, error) {
 
 	//get linked users
