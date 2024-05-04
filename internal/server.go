@@ -1,7 +1,7 @@
 package internal
 
 import (
-	_ "github.com/martingallauner/bookclub/docs" // which is the generated folder after swag init
+	//_ "github.com/martingallauner/bookclub/docs" // which is the generated folder after swag init
 	"github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
