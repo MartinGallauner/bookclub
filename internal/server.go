@@ -1,7 +1,7 @@
 package internal
 
 import (
-	//_ "github.com/martingallauner/bookclub/docs" // todo this import is needed for swagger docs, but breaks the pipeline
+	_ "github.com/martingallauner/bookclub/docs"
 	"github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
