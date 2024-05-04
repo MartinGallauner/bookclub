@@ -36,7 +36,7 @@ func setupTest() (*BookclubServer, error) {
 		log.Fatal(err)
 	}
 
-	db, err := SetupDatabase(container.ConnectionString)
+	db, err := SetupDatabaseWithDSN(container.ConnectionString)
 	if err != nil {
 		log.Fatal(err)
 	}

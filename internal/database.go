@@ -1,11 +1,17 @@
 package internal
 
 import (
+	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func SetupDatabase(connString string) (*gorm.DB, error) {
+func SetupDatabase(host, dbUser, password, dbname, port, sslmode, timezone string) (*gorm.DB, error) {
+	connString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s", host, dbUser, password, dbname, port, sslmode, timezone)
+	return SetupDatabaseWithDSN(connString)
+}
+
+func SetupDatabaseWithDSN(connString string) (*gorm.DB, error) {
 	db, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {
 		return nil, err
