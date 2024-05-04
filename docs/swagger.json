@@ -1,0 +1,9 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Bookclub API",
+        "contact": {},
+        "version": "0.1"
+    },
+    "paths": {}
+}
