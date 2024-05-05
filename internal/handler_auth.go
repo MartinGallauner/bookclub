@@ -11,7 +11,7 @@ import (
 func (cfg *BookclubServer) handlerCallback(w http.ResponseWriter, r *http.Request) {
 	r = r.WithContext(context.WithValue(context.Background(), "provider", "google")) //todo I don't understand that tbh
 
-	user, err := gothic.CompleteUserAuth(w, r)
+	user, err := cfg.AuthService.CompleteUserAuth(w, r)
 	if err != nil {
 		fmt.Fprintln(w, err)
 		return
@@ -34,7 +34,8 @@ func (cfg *BookclubServer) handlerLogout(w http.ResponseWriter, r *http.Request)
 func (cfg *BookclubServer) handlerLogin(w http.ResponseWriter, r *http.Request) {
 	r = r.WithContext(context.WithValue(context.Background(), "provider", "google")) //todo I don't understand that tbh
 	// try to get the user without re-authenticating
-	if gothUser, err := gothic.CompleteUserAuth(w, r); err == nil {
+	gothUser, err := cfg.AuthService.CompleteUserAuth(w, r)
+	if err == nil {
 		t, _ := template.New("foo").Parse(userTemplate)
 		t.Execute(w, gothUser)
 	} else {

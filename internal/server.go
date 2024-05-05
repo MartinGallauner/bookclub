@@ -18,6 +18,7 @@ type BookclubServer struct {
 	BookRepository BookRepository
 	UserRepository UserRepository
 	LinkRepository LinkRepository
+	AuthService    AuthService
 	http.Handler
 }
 
@@ -34,6 +35,7 @@ func NewBookclubServer(client Client, repository BookRepository, userRepository 
 	s.UserRepository = userRepository
 	s.LinkRepository = linkRepository
 	s.Client = client
+	s.AuthService = &GothicAuthService{}
 
 	router := http.NewServeMux()
 	router.Handle("/api/search", http.HandlerFunc(s.handlerSearch))
