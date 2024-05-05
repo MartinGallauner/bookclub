@@ -2,10 +2,12 @@ package internal
 
 import (
 	"context"
+	"github.com/markbates/goth"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"log"
+	"net/http"
 	"testing"
 	"time"
 )
@@ -41,8 +43,16 @@ func setupTest() (*BookclubServer, error) {
 		log.Fatal(err)
 	}
 
-	s := NewBookclubServer(Client{}, &PostgresBookRepository{Database: db}, &PostgresUserRepository{Database: db}, &PostgresLinkRepository{Database: db})
+	s := NewBookclubServer(Client{}, &PostgresBookRepository{Database: db}, &PostgresUserRepository{Database: db}, &PostgresLinkRepository{Database: db}, &MockAuthService{})
 	return s, err
+}
+
+type MockAuthService struct{}
+
+func (svc *MockAuthService) CompleteUserAuth(w http.ResponseWriter, r *http.Request) (goth.User, error) {
+
+	user := goth.User{Name: "Mocki", Email: "mock@gmail.com"}
+	return user, nil
 }
 
 var (

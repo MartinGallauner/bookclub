@@ -29,13 +29,13 @@ type UseCases interface {
 	LinkUsers(senderId uint, receiverId uint) (Link, error)
 }
 
-func NewBookclubServer(client Client, repository BookRepository, userRepository UserRepository, linkRepository LinkRepository) *BookclubServer {
+func NewBookclubServer(client Client, repository BookRepository, userRepository UserRepository, linkRepository LinkRepository, authService AuthService) *BookclubServer {
 	s := new(BookclubServer)
 	s.BookRepository = repository
 	s.UserRepository = userRepository
 	s.LinkRepository = linkRepository
 	s.Client = client
-	s.AuthService = &GothicAuthService{}
+	s.AuthService = authService
 
 	router := http.NewServeMux()
 	router.Handle("/api/search", http.HandlerFunc(s.handlerSearch))

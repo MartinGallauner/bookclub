@@ -4,12 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/markbates/goth/gothic"
-	"html/template"
 	"net/http"
 )
 
 func (cfg *BookclubServer) handlerCallback(w http.ResponseWriter, r *http.Request) {
-	r = r.WithContext(context.WithValue(context.Background(), "provider", "google")) //todo I don't understand that tbh
+	r = r.WithContext(context.WithValue(context.Background(), "provider", "google"))
 
 	user, err := cfg.AuthService.CompleteUserAuth(w, r)
 	if err != nil {
@@ -32,36 +31,19 @@ func (cfg *BookclubServer) handlerLogout(w http.ResponseWriter, r *http.Request)
 }
 
 func (cfg *BookclubServer) handlerLogin(w http.ResponseWriter, r *http.Request) {
-	r = r.WithContext(context.WithValue(context.Background(), "provider", "google")) //todo I don't understand that tbh
+	r = r.WithContext(context.WithValue(context.Background(), "provider", "google")) //todo I don't fully understand that tbh
 	// try to get the user without re-authenticating
 	gothUser, err := cfg.AuthService.CompleteUserAuth(w, r)
-	if err == nil {
-		t, _ := template.New("foo").Parse(userTemplate)
-		t.Execute(w, gothUser)
-	} else {
+	if err != nil {
 		gothic.BeginAuthHandler(w, r)
 	}
+	//check if user exists, if not, create
+	cfg.UserRepository.GetByEmail(gothUser.Email) //todo validate
+
+	respondWithJSON(w, 200, gothUser) //todo return jwt
 }
 
 type ProviderIndex struct {
 	Providers    []string
 	ProvidersMap map[string]string
 }
-
-var indexTemplate = `{{range $key,$value:=.Providers}}
-    <p><a href="/auth/{{$value}}">Log in with {{index $.ProvidersMap $value}}</a></p>
-{{end}}`
-
-var userTemplate = `
-<p><a href="/logout/{{.Provider}}">logout</a></p>
-<p>Name: {{.Name}} [{{.LastName}}, {{.FirstName}}]</p>
-<p>Email: {{.Email}}</p>
-<p>NickName: {{.NickName}}</p>
-<p>Location: {{.Location}}</p>
-<p>AvatarURL: {{.AvatarURL}} <img src="{{.AvatarURL}}"></p>
-<p>Description: {{.Description}}</p>
-<p>UserID: {{.UserID}}</p>
-<p>AccessToken: {{.AccessToken}}</p>
-<p>ExpiresAt: {{.ExpiresAt}}</p>
-<p>RefreshToken: {{.RefreshToken}}</p>
-`

@@ -164,3 +164,34 @@ func TestAcceptLink(t *testing.T) {
 	//response
 	assert.Equal(t, got.IsLinked, true)
 }
+
+// Tests to login an unknown user
+func TestLogin(t *testing.T) {
+	//given
+	s, err := setupTest()
+	if err != nil {
+		return
+	}
+
+	//when
+
+	request, _ := http.NewRequest(http.MethodPost, "/auth/login", nil)
+	response := httptest.NewRecorder()
+	s.ServeHTTP(response, request)
+
+	//then
+	var got UserResponse
+	err = json.NewDecoder(response.Body).Decode(&got)
+	if err != nil {
+		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
+	}
+	assertStatus(t, response.Code, http.StatusOK)
+
+	//persisted
+	user, err := s.UserRepository.Get(1)
+	assert.Equal(t, user.Name, "Mocki")
+
+	//response
+	assert.Equal(t, got.Name, "Mocki")
+	assert.Equal(t, got.Email, "mock@gmail.com")
+}

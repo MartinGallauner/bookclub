@@ -7,6 +7,7 @@ import (
 
 type UserRepository interface {
 	Get(id uint) (User, error)
+	GetByEmail(email string) (User, error)
 	Save(user *User) error
 	SearchBook(isbn string) ([]User, error)
 }
@@ -55,6 +56,15 @@ type PostgresUserRepository struct {
 func (r *PostgresUserRepository) Get(id uint) (User, error) {
 	var user User
 	err := r.Database.Table("users").Preload("Books").First(&user, id).Error
+	if err != nil {
+		return User{}, err
+	}
+	return user, nil
+}
+
+func (r *PostgresUserRepository) GetByEmail(email string) (User, error) {
+	var user User
+	err := r.Database.Table("users").Preload("Books").First(&user, email).Error
 	if err != nil {
 		return User{}, err
 	}
