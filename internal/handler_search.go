@@ -32,6 +32,37 @@ func (cfg *BookclubServer) handlerSearch(w http.ResponseWriter, r *http.Request)
 	return
 }
 
+// Search a book in the database //todo filter for connected users
+func handleSearch2(linkRepository *LinkRepository, userRepository *UserRepository) http.Handler {
+
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			decoder := json.NewDecoder(r.Body)
+			body := AddBookRequest{}
+			err := decoder.Decode(&body)
+			if err != nil {
+				respondWithError(w, 400, fmt.Sprintf("Error decoding parameters: %s", err))
+				return
+			}
+			//todo remove ID from user response
+			users, err := SearchBookInNetwork(body.UserId, body.ISBN, *linkRepository, *userRepository)
+			if err != nil {
+				respondWithError(w, 404, "Book is not available in the users network.")
+			}
+
+			var responseBody []UserResponse
+			for _, user := range users {
+				responseBody = append(responseBody, UserResponse{Name: user.Name})
+			}
+
+			searchResponse := SearchResponse{body.ISBN, responseBody}
+
+			respondWithJSON(w, 200, searchResponse)
+
+		})
+
+}
+
 type SearchResponse struct {
 	Isbn  string         `json:"ISBN"`
 	Users []UserResponse `json:"users"`
