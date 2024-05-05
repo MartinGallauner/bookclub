@@ -22,7 +22,7 @@ func (cfg *BookclubServer) handlerCreateUser(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	user, err := cfg.CreateUser(request.Name)
+	user, err := cfg.CreateUser(request.Name, request.Email)
 
 	if err != nil {
 		respondWithError(w, 400, "Unable to create the user")
@@ -33,5 +33,6 @@ func (cfg *BookclubServer) handlerCreateUser(w http.ResponseWriter, r *http.Requ
 }
 
 type CreateUserRequest struct {
-	Name string
+	Name  string
+	Email string
 }

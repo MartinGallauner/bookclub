@@ -66,12 +66,12 @@ func TestSearchBookInNetwork(t *testing.T) {
 	//given
 	s, err := setupTest()
 
-	userWithBook, err := s.CreateUser("Book Owner")
+	userWithBook, err := s.CreateUser("Book Owner", "owner@gmail.com")
 	book := &Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
 	s.BookRepository.Save(*book)
 	_, err = s.AddBookToCollection(book.ISBN, userWithBook.ID)
 
-	userWithoutBooks, err := s.CreateUser("Reader")
+	userWithoutBooks, err := s.CreateUser("Reader", "reader@gmail.com")
 
 	s.LinkUsers(userWithBook.ID, userWithoutBooks.ID)
 	s.LinkUsers(userWithoutBooks.ID, userWithBook.ID)

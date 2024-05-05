@@ -23,7 +23,7 @@ func (cfg *BookclubServer) handlerSearch(w http.ResponseWriter, r *http.Request)
 
 	var responseBody []UserResponse
 	for _, user := range users {
-		responseBody = append(responseBody, UserResponse{Name: user.Name})
+		responseBody = append(responseBody, UserResponse{Name: user.Name, Email: user.Email})
 	}
 
 	searchResponse := SearchResponse{body.ISBN, responseBody}
@@ -38,5 +38,6 @@ type SearchResponse struct {
 }
 
 type UserResponse struct {
-	Name string
+	Name  string
+	Email string
 }

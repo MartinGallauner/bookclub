@@ -49,8 +49,8 @@ func TestRequestLink(t *testing.T) {
 		return
 	}
 
-	user1, _ := s.CreateUser("Alpha")
-	user2, _ := s.CreateUser("Bravo")
+	user1, _ := s.CreateUser("Alpha", "alpha@gmail.com")
+	user2, _ := s.CreateUser("Bravo", "bravo@gmail.com")
 
 	if err != nil {
 		t.Fatalf("Unable to prepare users needed for the test %v", err)
@@ -89,9 +89,9 @@ func TestGetLinks(t *testing.T) {
 		return
 	}
 
-	user1, _ := s.CreateUser("Alpha")
-	user2, _ := s.CreateUser("Bravo")
-	user3, _ := s.CreateUser("Charlie")
+	user1, _ := s.CreateUser("Alpha", "alpha@gmail.com")
+	user2, _ := s.CreateUser("Bravo", "bravo@gmail.com")
+	user3, _ := s.CreateUser("Charlie", "bravo@gmail.com")
 
 	_, err = s.LinkUsers(user1.ID, user2.ID)
 	_, err = s.LinkUsers(user2.ID, user3.ID)
@@ -129,8 +129,8 @@ func TestAcceptLink(t *testing.T) {
 		return
 	}
 
-	user1, err := s.CreateUser("Alpha")
-	user2, err := s.CreateUser("Bravo")
+	user1, _ := s.CreateUser("Alpha", "alpha@gmail.com")
+	user2, _ := s.CreateUser("Bravo", "bravo@gmail.com")
 	_, err = s.LinkUsers(user1.ID, user2.ID)
 
 	if err != nil {

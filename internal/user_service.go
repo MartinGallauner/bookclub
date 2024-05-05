@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-func (cfg *BookclubServer) CreateUser(name string) (User, error) {
-	user := &User{Name: name}
+func (cfg *BookclubServer) CreateUser(name, email string) (User, error) {
+	user := &User{Name: name, Email: email}
 	err := cfg.UserRepository.Save(user)
 	if err != nil {
 		return User{}, nil
