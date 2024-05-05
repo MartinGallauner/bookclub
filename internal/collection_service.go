@@ -55,38 +55,6 @@ func (cfg *BookclubServer) SearchBookInNetwork(userId uint, isbn string) ([]User
 	return result, nil
 }
 
-// Searches for the given book within the network of the given user.
-func SearchBookInNetwork(userId uint, isbn string, linkRepository LinkRepository, userRepository UserRepository) ([]User, error) {
-
-	//get linked users
-	links, err := linkRepository.GetAcceptedById(userId)
-	if err != nil {
-		return nil, err
-	}
-
-	// filter user for searched book
-	users, err := userRepository.SearchBook(isbn)
-	if err != nil {
-		return nil, err
-	}
-
-	var collection = make(map[uint]User)
-	for _, user := range users {
-		for _, link := range links {
-			if user.ID == link.SenderId || user.ID == link.ReceiverId {
-				collection[user.ID] = user
-			}
-		}
-	}
-
-	result := make([]User, 0, len(collection))
-	for _, value := range collection {
-		result = append(result, value)
-	}
-
-	return result, nil
-}
-
 type SearchRequest struct {
 	UserId uint   `json:"user_id"`
 	ISBN   string `json:"isbn"`

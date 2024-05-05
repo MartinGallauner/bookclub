@@ -1,13 +1,10 @@
 package internal
 
 import (
-	"fmt"
 	_ "github.com/martingallauner/bookclub/docs"
 	"github.com/swaggo/http-swagger"
 	"log"
-	"net"
 	"net/http"
-	"os"
 )
 
 func StartServer(cfg *BookclubServer) {
@@ -51,25 +48,4 @@ func NewBookclubServer(client Client, repository BookRepository, userRepository 
 
 	s.Handler = router
 	return s
-}
-
-func NewServer(
-	bookRepository *BookRepository, userRepository *UserRepository, linkRepository *LinkRepository) http.Handler {
-	mux := http.NewServeMux()
-	addRoutes(mux, bookRepository, userRepository, linkRepository)
-	var handler http.Handler = mux
-	return handler
-
-}
-
-func StartFreshServer(bookRepository BookRepository, userRepository UserRepository, linkRepository LinkRepository) {
-	srv := NewServer(&bookRepository, &userRepository, &linkRepository)
-	httpServer := &http.Server{
-		Addr:    net.JoinHostPort("localhost", "8080"),
-		Handler: srv,
-	}
-	log.Printf("listening on %s\n", httpServer.Addr)
-	if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		fmt.Fprintf(os.Stderr, "error listening and serving: %s\n", err)
-	}
 }

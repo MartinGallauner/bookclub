@@ -6,6 +6,7 @@ import (
 	"github.com/martingallauner/bookclub/internal/auth"
 	"log"
 	"os"
+	"time"
 )
 
 func main() {
@@ -28,10 +29,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	//client := internal.NewClient(5 * time.Second)
+	client := internal.NewClient(5 * time.Second)
 
-	internal.StartFreshServer(&internal.PostgresBookRepository{Database: db}, &internal.PostgresUserRepository{Database: db}, &internal.PostgresLinkRepository{Database: db})
-
-	//server := internal.NewBookclubServer(client, &internal.PostgresBookRepository{Database: db}, &internal.PostgresUserRepository{Database: db}, &internal.PostgresLinkRepository{Database: db})
-	//internal.StartServer(server)
+	server := internal.NewBookclubServer(client, &internal.PostgresBookRepository{Database: db}, &internal.PostgresUserRepository{Database: db}, &internal.PostgresLinkRepository{Database: db})
+	internal.StartServer(server)
 }
