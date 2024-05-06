@@ -165,13 +165,16 @@ func TestAcceptLink(t *testing.T) {
 	assert.Equal(t, got.IsLinked, true)
 }
 
-// Tests to login an unknown user
+// Tests to login an known user
 func TestLogin(t *testing.T) {
 	//given
 	s, err := setupTest()
 	if err != nil {
 		return
 	}
+
+	testuser := &User{Name: "Alfred", Email: "alfred@gmail.com"}
+	err = s.UserRepository.Save(testuser)
 
 	//when
 
@@ -188,10 +191,11 @@ func TestLogin(t *testing.T) {
 	assertStatus(t, response.Code, http.StatusOK)
 
 	//persisted
-	user, err := s.UserRepository.Get(1)
-	assert.Equal(t, user.Name, "Mocki")
+	persistedUser, err := s.UserRepository.GetByEmail(testuser.Email)
+	assert.Equal(t, persistedUser.Name, "Alfred")
+	assert.Equal(t, persistedUser.Email, "alfred@gmail.com")
 
 	//response
-	assert.Equal(t, got.Name, "Mocki")
-	assert.Equal(t, got.Email, "mock@gmail.com")
+	assert.Equal(t, got.Name, "Alfred")
+	assert.Equal(t, got.Email, "alfred@gmail.com")
 }

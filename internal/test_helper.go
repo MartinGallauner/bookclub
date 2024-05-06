@@ -51,7 +51,7 @@ type MockAuthService struct{}
 
 func (svc *MockAuthService) CompleteUserAuth(w http.ResponseWriter, r *http.Request) (goth.User, error) {
 
-	user := goth.User{Name: "Mocki", Email: "mock@gmail.com"}
+	user := goth.User{Name: "Alfred", Email: "alfred@gmail.com"}
 	return user, nil
 }
 

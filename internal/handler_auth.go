@@ -38,7 +38,8 @@ func (cfg *BookclubServer) handlerLogin(w http.ResponseWriter, r *http.Request) 
 		gothic.BeginAuthHandler(w, r)
 	}
 	//check if user exists, if not, create
-	cfg.UserRepository.GetByEmail(gothUser.Email) //todo validate
+	persisted, err := cfg.UserRepository.GetByEmail(gothUser.Email) //todo validate
+	fmt.Println(persisted)
 
 	respondWithJSON(w, 200, gothUser) //todo return jwt
 }
