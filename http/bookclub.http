@@ -1,0 +1,76 @@
+###
+# @name add book to collection
+POST http://localhost:8080/api/collections
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "isbn": "9781617299896"
+}
+
+###
+# @name add user
+POST http://localhost:8080/api/collections
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "isbn": "9781617299896"
+}
+
+###
+# @name get book by isbn
+GET http://localhost:8080/api/books/9781098139292
+
+###
+# @name get links
+GET http://localhost:8080/api/links/1
+Content-Type: application/json
+
+{
+  "senderId": 1,
+  "receiverId": 2
+}
+
+###
+# @name link user
+POST http://localhost:8080/api/links
+Content-Type: application/json
+
+{
+  "sender_id": 22,
+  "receiver_id": 1
+}
+
+###
+# @name search in collection
+GET http://localhost:8080/api/search
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "isbn": "0008350450"
+}
+
+###
+# group: OpenLibrary
+# @name OpenLibrary
+GET https://openlibrary.org/api/books?
+    jscmd=data&
+    format=json&
+    bibkeys=ISBN:1492077216
+
+###
+# group: auth
+# @name callback
+GET localhost:8080/auth/callback
+
+###
+# group: auth
+# @name login
+GET http://localhost:8080/auth/callback
+
+###
+# group: auth
+# @name logout
+GET http://localhost:8080/auth/google/logout
