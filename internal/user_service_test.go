@@ -165,7 +165,7 @@ func TestAcceptLink(t *testing.T) {
 	assert.Equal(t, got.IsLinked, true)
 }
 
-// Tests to login a known user
+// Tests to login off a known user
 func TestLogin(t *testing.T) {
 	//given
 	s, err := setupTest()

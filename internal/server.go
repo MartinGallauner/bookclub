@@ -41,6 +41,7 @@ func NewBookclubServer(client Client, repository BookRepository, userRepository 
 	router := http.NewServeMux()
 	router.Handle("/api/search", http.HandlerFunc(s.handlerSearch))
 	router.Handle("/api/collections", http.HandlerFunc(s.handlerAddBook))
+	router.Handle("/api/books/{isbn}", http.HandlerFunc(s.handlerGetBookByISBN))
 	router.Handle("/api/users", http.HandlerFunc(s.handlerCreateUser))
 	router.Handle("/api/links/{id}", http.HandlerFunc(s.handlerGetLinks))
 	router.Handle("/api/links", http.HandlerFunc(s.handlerCreateLink))
