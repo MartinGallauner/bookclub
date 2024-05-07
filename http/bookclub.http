@@ -68,7 +68,7 @@ GET localhost:8080/auth/callback
 ###
 # group: auth
 # @name login
-GET http://localhost:8080/auth/callback
+GET http://localhost:8080/auth/google
 
 ###
 # group: auth

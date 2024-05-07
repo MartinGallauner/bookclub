@@ -67,7 +67,7 @@ func (r *PostgresUserRepository) GetByEmail(email string) (User, error) {
 	err := r.Database.Table("users").Preload("Books").First(&user).Where("email = ?", email).Error
 	if err != nil {
 		return User{}, err
-	}
+	} //todo return ErrNotFound
 	return user, nil
 }
 

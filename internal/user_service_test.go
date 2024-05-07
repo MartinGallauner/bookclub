@@ -173,8 +173,10 @@ func TestLogin(t *testing.T) {
 		return
 	}
 
-	testuser := &User{Name: "Alfred", Email: "alfred@gmail.com"}
-	err = s.UserRepository.Save(testuser)
+	testUser := &User{Name: "Alfred", Email: "alfred@gmail.com"}
+	err = s.UserRepository.Save(testUser)
+	extraUser := &User{Name: "Bert", Email: "bert@gmail.com"}
+	err = s.UserRepository.Save(extraUser)
 
 	//when
 
@@ -191,7 +193,7 @@ func TestLogin(t *testing.T) {
 	assertStatus(t, response.Code, http.StatusOK)
 
 	//persisted
-	persistedUser, err := s.UserRepository.GetByEmail(testuser.Email)
+	persistedUser, err := s.UserRepository.GetByEmail(testUser.Email)
 	assert.Equal(t, persistedUser.Name, "Alfred")
 	assert.Equal(t, persistedUser.Email, "alfred@gmail.com")
 
