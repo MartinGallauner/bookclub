@@ -19,6 +19,7 @@ type BookclubServer struct {
 	UserRepository UserRepository
 	LinkRepository LinkRepository
 	AuthService    AuthService
+	JwtService     JwtService
 	http.Handler
 }
 
@@ -29,14 +30,14 @@ type UseCases interface {
 	LinkUsers(senderId uint, receiverId uint) (Link, error)
 }
 
-func NewBookclubServer(client Client, repository BookRepository, userRepository UserRepository, linkRepository LinkRepository, authService AuthService) *BookclubServer {
+func NewBookclubServer(client Client, repository BookRepository, userRepository UserRepository, linkRepository LinkRepository, authService AuthService, jwtService JwtService) *BookclubServer {
 	s := new(BookclubServer)
 	s.BookRepository = repository
 	s.UserRepository = userRepository
 	s.LinkRepository = linkRepository
 	s.Client = client
 	s.AuthService = authService
-
+	s.JwtService = jwtService
 	router := http.NewServeMux()
 	router.Handle("/api/search", http.HandlerFunc(s.handlerSearch))
 	router.Handle("/api/collections", http.HandlerFunc(s.handlerAddBook))

@@ -35,16 +35,31 @@ func (cfg *BookclubServer) handlerLogin(w http.ResponseWriter, r *http.Request) 
 	// try to get the user without re-authenticating
 	gothUser, err := cfg.AuthService.CompleteUserAuth(w, r)
 	if err != nil {
-		gothic.BeginAuthHandler(w, r)
+		gothic.BeginAuthHandler(w, r) //todo add to interface
 	}
 	//check if user exists, if not, create
-	persisted, err := cfg.UserRepository.GetByEmail(gothUser.Email) //todo validate
+	persisted, err := cfg.UserRepository.GetByEmail(gothUser.Email)
 	fmt.Println(persisted)
 
-	respondWithJSON(w, 200, gothUser) //todo return jwt
+	jwt, err := cfg.JwtService.CreateToken("bookclub-access", int(persisted.ID))
+	if err != nil {
+		//todo logging
+		respondWithError(w, 400, "Unable to login user")
+	}
+
+	//todo return login response
+	loginResponse := LoginResponse{Name: persisted.Name, Email: persisted.Email, Jwt: jwt}
+
+	respondWithJSON(w, 200, loginResponse) //todo return jwt
 }
 
 type ProviderIndex struct {
-	Providers    []string
-	ProvidersMap map[string]string
+	Providers       []string
+	ProvidersMapmap map[string]string
+}
+
+type LoginResponse struct {
+	Name  string
+	Email string
+	Jwt   string //todo reconsider naming
 }

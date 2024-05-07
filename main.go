@@ -31,6 +31,12 @@ func main() {
 	}
 	client := internal.NewClient(5 * time.Second)
 
-	server := internal.NewBookclubServer(client, &internal.PostgresBookRepository{Database: db}, &internal.PostgresUserRepository{Database: db}, &internal.PostgresLinkRepository{Database: db})
+	server := internal.NewBookclubServer(
+		client,
+		&internal.PostgresBookRepository{Database: db},
+		&internal.PostgresUserRepository{Database: db},
+		&internal.PostgresLinkRepository{Database: db},
+		&internal.GothicAuthService{},
+		&internal.JwtServiceImpl{})
 	internal.StartServer(server)
 }

@@ -165,7 +165,7 @@ func TestAcceptLink(t *testing.T) {
 	assert.Equal(t, got.IsLinked, true)
 }
 
-// Tests to login an known user
+// Tests to login a known user
 func TestLogin(t *testing.T) {
 	//given
 	s, err := setupTest()
@@ -183,7 +183,7 @@ func TestLogin(t *testing.T) {
 	s.ServeHTTP(response, request)
 
 	//then
-	var got UserResponse
+	var got LoginResponse
 	err = json.NewDecoder(response.Body).Decode(&got)
 	if err != nil {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
@@ -198,4 +198,5 @@ func TestLogin(t *testing.T) {
 	//response
 	assert.Equal(t, got.Name, "Alfred")
 	assert.Equal(t, got.Email, "alfred@gmail.com")
+	assert.Equal(t, got.Jwt, "mock token")
 }

@@ -43,7 +43,7 @@ func setupTest() (*BookclubServer, error) {
 		log.Fatal(err)
 	}
 
-	s := NewBookclubServer(Client{}, &PostgresBookRepository{Database: db}, &PostgresUserRepository{Database: db}, &PostgresLinkRepository{Database: db}, &MockAuthService{})
+	s := NewBookclubServer(Client{}, &PostgresBookRepository{Database: db}, &PostgresUserRepository{Database: db}, &PostgresLinkRepository{Database: db}, &MockAuthService{}, &MockJwtService{})
 	return s, err
 }
 
@@ -53,6 +53,12 @@ func (svc *MockAuthService) CompleteUserAuth(w http.ResponseWriter, r *http.Requ
 
 	user := goth.User{Name: "Alfred", Email: "alfred@gmail.com"}
 	return user, nil
+}
+
+type MockJwtService struct{}
+
+func (svc *MockJwtService) CreateToken(issuer string, id int) (string, error) {
+	return "mock token", nil
 }
 
 var (
