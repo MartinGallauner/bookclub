@@ -1,7 +1,12 @@
 ###
+# @name healthz
+GET http://localhost:8080/api/healthz
+
+###
 # @name add book to collection
 POST http://localhost:8080/api/collections
 Content-Type: application/json
+Authorization: bullshit
 
 {
   "user_id": 1,
@@ -74,7 +79,3 @@ GET http://localhost:8080/auth/google
 # group: auth
 # @name logout
 GET http://localhost:8080/auth/google/logout
-
-###
-# @name healthz
-GET http://localhost:8080/api/healthz

@@ -3,6 +3,7 @@ package internal
 import (
 	"errors"
 	"github.com/golang-jwt/jwt/v5"
+	"os"
 	"strconv"
 	"time"
 )
@@ -26,7 +27,8 @@ func (srv JwtServiceImpl) CreateToken(issuer string, id int) (string, error) {
 	}
 
 	jwt := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{Issuer: issuer, IssuedAt: jwt.NewNumericDate(now), ExpiresAt: jwt.NewNumericDate(expiresAt), Subject: strconv.Itoa(id)})
-	signedJwt, err := jwt.SignedString([]byte("CHANGE_ME")) //todo change the jwt secret
+	jwtSecret := os.Getenv("JWT_SECRET")
+	signedJwt, err := jwt.SignedString([]byte(jwtSecret)) //todo change the jwt secret
 
 	if err != nil {
 		return "", errors.New("Coudn't create JWT token")
