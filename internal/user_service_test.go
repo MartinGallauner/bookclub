@@ -166,7 +166,7 @@ func TestAcceptLink(t *testing.T) {
 	assert.Equal(t, got.IsLinked, true)
 }
 
-// Tests to login off a known user
+// Tests the login of a known user
 func TestLogin(t *testing.T) {
 	//given
 	s, err := setupTest()
@@ -195,6 +195,38 @@ func TestLogin(t *testing.T) {
 
 	//persisted
 	persistedUser, err := s.UserRepository.GetByEmail(testUser.Email)
+	assert.Equal(t, persistedUser.Name, "Alfred")
+	assert.Equal(t, persistedUser.Email, "alfred@gmail.com")
+
+	//response
+	assert.Equal(t, got.Name, "Alfred")
+	assert.Equal(t, got.Email, "alfred@gmail.com")
+	assert.Equal(t, got.Jwt, "mock token")
+}
+
+// Tests the login of a UNKNOWN user
+func TestLoginOfNewUser(t *testing.T) {
+	//given
+	s, err := setupTest()
+	if err != nil {
+		return
+	}
+
+	//when
+	request, _ := http.NewRequest(http.MethodPost, "/auth/login", nil)
+	response := httptest.NewRecorder()
+	s.ServeHTTP(response, request)
+
+	//then
+	var got LoginResponse
+	err = json.NewDecoder(response.Body).Decode(&got)
+	if err != nil {
+		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
+	}
+	assertStatus(t, response.Code, http.StatusOK)
+
+	//persisted
+	persistedUser, err := s.UserRepository.GetByEmail("alfred@gmail.com")
 	assert.Equal(t, persistedUser.Name, "Alfred")
 	assert.Equal(t, persistedUser.Email, "alfred@gmail.com")
 

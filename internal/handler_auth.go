@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/markbates/goth/gothic"
+	"gorm.io/gorm"
 	"net/http"
 )
 
@@ -38,19 +39,21 @@ func (cfg *BookclubServer) handlerLogin(w http.ResponseWriter, r *http.Request) 
 		gothic.BeginAuthHandler(w, r) //todo add to interface
 	}
 	//check if user exists, if not, create
-	persisted, err := cfg.UserRepository.GetByEmail(gothUser.Email)
-	//todo if not found -> create
-
-	jwt, err := cfg.JwtService.CreateToken("bookclub-access", int(persisted.ID))
+	persistedUser, err := cfg.UserRepository.GetByEmail(gothUser.Email)
+	if err == gorm.ErrRecordNotFound {
+		persistedUser, err = cfg.CreateUser(gothUser.Name, gothUser.Email)
+		if err != nil {
+			respondWithError(w, 400, "Unable to create new user.")
+		}
+	}
+	jwt, err := cfg.JwtService.CreateToken("bookclub-access", int(persistedUser.ID))
 	if err != nil {
 		//todo logging
-		respondWithError(w, 400, "Unable to login user")
+		respondWithError(w, 400, "Unable to login user.")
 	}
-
 	//todo return login response
-	loginResponse := LoginResponse{Name: persisted.Name, Email: persisted.Email, Jwt: jwt}
-
-	respondWithJSON(w, 200, loginResponse) //todo return jwt
+	loginResponse := LoginResponse{Name: persistedUser.Name, Email: persistedUser.Email, Jwt: jwt}
+	respondWithJSON(w, 200, loginResponse)
 }
 
 type LoginResponse struct {
