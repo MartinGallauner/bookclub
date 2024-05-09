@@ -7,12 +7,12 @@ function App() {
   const [count, setCount] = useState(0)
 
     const handleLogin = () => {
-      window.location.href = "http://localhost:8080/auth/google";
+      window.location.href = "http://localhost:8080/api/auth/google";
     }
 
     const handleLogout = async () => {
         try {
-            const response = await fetch("http://localhost:8080/auth/google/logout", {
+            const response = await fetch("http://localhost:8080/api/auth/google/logout", {
                 method: 'GET', // Assuming logout requires a POST request
             });
 

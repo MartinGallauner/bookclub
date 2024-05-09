@@ -29,13 +29,6 @@ type BookclubServer struct {
 	http.Handler
 }
 
-type UseCases interface {
-	AddBookToCollection(isbn string, userId uint) (Book, error)
-	SearchBookInNetwork(userId uint, isbn string) ([]User, error)
-	CreateUser(name string) (User, error)
-	LinkUsers(senderId uint, receiverId uint) (Link, error)
-}
-
 func NewBookclubServer(client Client, repository BookRepository, userRepository UserRepository, linkRepository LinkRepository, authService AuthService, jwtService JwtService) *BookclubServer {
 	s := new(BookclubServer)
 	s.BookRepository = repository

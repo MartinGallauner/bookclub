@@ -68,14 +68,14 @@ GET https://openlibrary.org/api/books?
 ###
 # group: auth
 # @name callback
-GET localhost:8080/auth/callback
+GET localhost:8080/api/auth/callback
 
 ###
 # group: auth
 # @name login
-GET http://localhost:8080/auth/google
+GET http://localhost:8080/api/auth/google
 
 ###
 # group: auth
 # @name logout
-GET http://localhost:8080/auth/google/logout
+GET http://localhost:8080/api/auth/google/logout
