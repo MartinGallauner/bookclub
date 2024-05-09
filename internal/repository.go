@@ -102,7 +102,7 @@ func (r *PostgresLinkRepository) Get(senderId uint, receiverId uint) (Link, erro
 	return link, nil
 }
 
-func (r *PostgresLinkRepository) GetById(userId string) ([]Link, error) { //todo
+func (r *PostgresLinkRepository) GetById(userId string) ([]Link, error) {
 	var links []Link
 
 	// Build the query with OR condition
@@ -115,7 +115,7 @@ func (r *PostgresLinkRepository) GetById(userId string) ([]Link, error) { //todo
 	return links, nil
 }
 
-func (r *PostgresLinkRepository) GetAcceptedById(userId uint) ([]Link, error) { //todo
+func (r *PostgresLinkRepository) GetAcceptedById(userId uint) ([]Link, error) {
 	var links []Link
 
 	// Build the query with OR condition

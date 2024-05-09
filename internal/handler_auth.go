@@ -51,7 +51,6 @@ func (cfg *BookclubServer) handlerLogin(w http.ResponseWriter, r *http.Request) 
 		//todo logging
 		respondWithError(w, 400, "Unable to login user.")
 	}
-	//todo return login response
 	loginResponse := LoginResponse{Name: persistedUser.Name, Email: persistedUser.Email, Jwt: jwt}
 	respondWithJSON(w, 200, loginResponse)
 }
