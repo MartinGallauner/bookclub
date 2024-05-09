@@ -32,7 +32,7 @@ func (cfg *BookclubServer) handlerLogout(w http.ResponseWriter, r *http.Request)
 }
 
 func (cfg *BookclubServer) handlerLogin(w http.ResponseWriter, r *http.Request) {
-	r = r.WithContext(context.WithValue(context.Background(), "provider", "google")) //todo I don't fully understand that tbh
+	r = r.WithContext(context.WithValue(context.Background(), "provider", "google"))
 	// try to get the user without re-authenticating
 	gothUser, err := cfg.AuthService.CompleteUserAuth(w, r)
 	if err != nil {
@@ -58,5 +58,5 @@ func (cfg *BookclubServer) handlerLogin(w http.ResponseWriter, r *http.Request) 
 type LoginResponse struct {
 	Name  string
 	Email string
-	Jwt   string //todo reconsider naming
+	Jwt   string //todo naming?
 }
