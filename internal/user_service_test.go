@@ -181,7 +181,7 @@ func TestLogin(t *testing.T) {
 
 	//when
 
-	request, _ := http.NewRequest(http.MethodPost, "/auth/login", nil)
+	request, _ := http.NewRequest(http.MethodPost, "/api/auth/login", nil)
 	response := httptest.NewRecorder()
 	s.ServeHTTP(response, request)
 
@@ -213,7 +213,7 @@ func TestLoginOfNewUser(t *testing.T) {
 	}
 
 	//when
-	request, _ := http.NewRequest(http.MethodPost, "/auth/login", nil)
+	request, _ := http.NewRequest(http.MethodPost, "/api/auth/login", nil)
 	response := httptest.NewRecorder()
 	s.ServeHTTP(response, request)
 

@@ -45,10 +45,11 @@ func NewBookclubServer(client Client, repository BookRepository, userRepository 
 	router.Handle("/api/users", http.HandlerFunc(s.handlerCreateUser))
 	router.Handle("/api/links/{id}", http.HandlerFunc(s.handlerGetLinks))
 	router.Handle("/api/links", http.HandlerFunc(s.handlerCreateLink))
-	router.Handle("/auth/{provider}/callback", http.HandlerFunc(s.handlerCallback))
-	router.Handle("/auth/{provider}/logout", http.HandlerFunc(s.handlerLogout))
-	router.Handle("/auth/{provider}", http.HandlerFunc(s.handlerLogin))
+	router.Handle("/api/auth/{provider}/callback", http.HandlerFunc(s.handlerCallback))
+	router.Handle("/api/auth/{provider}/logout", http.HandlerFunc(s.handlerLogout))
+	router.Handle("/api/auth/{provider}", http.HandlerFunc(s.handlerLogin))
 	router.Handle("/swagger/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8080/swagger/doc.json")))
+	router.Handle("/api/healthz", http.HandlerFunc(handlerReadiness))
 
 	s.Handler = router
 	return s
