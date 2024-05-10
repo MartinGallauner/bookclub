@@ -17,6 +17,9 @@ func SetupDatabaseWithDSN(connString string) (*gorm.DB, error) {
 		return nil, err
 	}
 	err = db.AutoMigrate(&User{}, &Book{}, &UserBooks{}, &Link{})
+	if err != nil {
+		return nil, err
+	}
 	err = db.SetupJoinTable(&User{}, "Books", &UserBooks{})
 	if err != nil {
 		return nil, err
