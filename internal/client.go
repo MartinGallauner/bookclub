@@ -60,7 +60,7 @@ func (c *Client) FetchBook(isbn string) (Book, error) {
 }
 
 // mapBookResponse reads the ugly response from the OpenLibraryAPI and maps it to a simple book entity.
-// todo clean that crap up
+// TODO: clean that crap up
 func mapBookResponse(response map[string]map[string]interface{}) (Book, error) {
 	var book Book
 	for isbn, bookData := range response {

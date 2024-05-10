@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-// Search a book in the database //todo filter for connected users
+// Search a book in the database //TODO: filter for connected users
 func (cfg *BookclubServer) handlerSearch(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	body := AddBookRequest{}
@@ -15,7 +15,7 @@ func (cfg *BookclubServer) handlerSearch(w http.ResponseWriter, r *http.Request)
 		respondWithError(w, 400, fmt.Sprintf("Error decoding parameters: %s", err))
 		return
 	}
-	//todo remove ID from user response
+	//TODO: remove ID from user response
 	users, err := cfg.SearchBookInNetwork(body.UserId, body.ISBN)
 	if err != nil {
 		respondWithError(w, 404, "Book is not available in the users network.")

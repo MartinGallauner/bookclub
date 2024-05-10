@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// handlerAddBook handles requests to add books to user collection
 func (cfg *BookclubServer) handlerAddBook(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	body := AddBookRequest{}
@@ -20,11 +21,11 @@ func (cfg *BookclubServer) handlerAddBook(w http.ResponseWriter, r *http.Request
 		respondWithError(w, 400, "Unable to add the requested book")
 		return
 	}
-	respondWithJSON(w, 200, book) //todo reconsider response body
+	respondWithJSON(w, 200, book) //TODO: reconsider response body
 	return
 }
 
-type AddBookRequest struct { //todo what is the best location for this struct definition?
-	UserId uint   `json:"user_id"` //todo this needs to be changed later when auth is in place
+type AddBookRequest struct { //TODO: what is the best location for this struct definition?
+	UserId uint   `json:"user_id"` //TODO: this needs to be changed later when auth is in place
 	ISBN   string `json:"isbn"`
 }

@@ -3,9 +3,10 @@ package internal
 import (
 	"context"
 	"fmt"
+	"net/http"
+
 	"github.com/markbates/goth/gothic"
 	"gorm.io/gorm"
-	"net/http"
 )
 
 func (cfg *BookclubServer) handlerCallback(w http.ResponseWriter, r *http.Request) {
@@ -16,13 +17,13 @@ func (cfg *BookclubServer) handlerCallback(w http.ResponseWriter, r *http.Reques
 		fmt.Fprintln(w, err)
 		return
 	}
-	fmt.Println("logging in user: ", user.Email) //todo delete
+	fmt.Println("logging in user: ", user.Email) //TODO: delete
 
 	http.Redirect(w, r, "http://localhost:5173", http.StatusFound)
 }
 
 func (cfg *BookclubServer) handlerLogout(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("loggin out user") //todo delete
+	fmt.Println("loggin out user") //TODO: delete
 
 	gothic.Logout(w, r)
 	w.Header().Set("Location", "http://localhost:5173")
@@ -36,7 +37,7 @@ func (cfg *BookclubServer) handlerLogin(w http.ResponseWriter, r *http.Request) 
 	// try to get the user without re-authenticating
 	gothUser, err := cfg.AuthService.CompleteUserAuth(w, r)
 	if err != nil {
-		gothic.BeginAuthHandler(w, r) //todo add to interface
+		gothic.BeginAuthHandler(w, r) //TODO: add to interface
 	}
 	//check if user exists, if not, create
 	persistedUser, err := cfg.UserRepository.GetByEmail(gothUser.Email)
@@ -48,7 +49,7 @@ func (cfg *BookclubServer) handlerLogin(w http.ResponseWriter, r *http.Request) 
 	}
 	jwt, err := cfg.JwtService.CreateToken("bookclub-access", int(persistedUser.ID))
 	if err != nil {
-		//todo logging
+		//TODO: logging
 		respondWithError(w, 400, "Unable to login user.")
 	}
 	loginResponse := LoginResponse{Name: persistedUser.Name, Email: persistedUser.Email, Jwt: jwt}
@@ -58,5 +59,5 @@ func (cfg *BookclubServer) handlerLogin(w http.ResponseWriter, r *http.Request) 
 type LoginResponse struct {
 	Name  string
 	Email string
-	Jwt   string //todo naming?
+	Jwt   string //TODO: naming?
 }

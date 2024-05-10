@@ -4,17 +4,19 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
-	_ "github.com/martingallauner/bookclub/docs"
-	"github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/golang-jwt/jwt/v5"
+	_ "github.com/martingallauner/bookclub/docs"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+// StartServer starts the server :)
 func StartServer(cfg *BookclubServer) error {
-	log.Print("Starting bookclub on port: 8080")
+	log.Print("Starting bookclub on port: 8080") //TODO:: make the port configurable
 	return http.ListenAndServe(":8080", cfg.Handler)
 }
 
@@ -36,7 +38,7 @@ func NewBookclubServer(client Client, repository BookRepository, userRepository 
 	s.Client = client
 	s.AuthService = authService
 	s.JwtService = jwtService
-	router := http.NewServeMux() //todo add jwtMiddleware to all concerned handler
+	router := http.NewServeMux() //TODO: add jwtMiddleware to all concerned handler
 	router.Handle("/api/search", http.HandlerFunc(s.handlerSearch))
 	router.Handle("/api/collections", http.HandlerFunc(jwtMiddleware(s.handlerAddBook)))
 	router.Handle("/api/books/{isbn}", http.HandlerFunc(s.handlerGetBookByISBN))
@@ -54,7 +56,7 @@ func NewBookclubServer(client Client, repository BookRepository, userRepository 
 
 func jwtMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		tokenString := extractToken(r) //todo extract token
+		tokenString := extractToken(r) //TODO: extract token
 		if tokenString == "" {
 			respondWithError(w, http.StatusUnauthorized, "Missing JWT")
 			return
@@ -76,7 +78,7 @@ func extractToken(r *http.Request) string {
 }
 
 func validateToken(tokenString string) (jwt.RegisteredClaims, error) {
-	jwtSecret := os.Getenv("JWT_SECRET") //todo load from .env
+	jwtSecret := os.Getenv("JWT_SECRET") //TODO: load from .env
 	claims := jwt.RegisteredClaims{}
 	token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(jwtSecret), nil

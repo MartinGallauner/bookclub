@@ -2,14 +2,15 @@ package internal
 
 import (
 	"context"
-	"github.com/markbates/goth"
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/modules/postgres"
-	"github.com/testcontainers/testcontainers-go/wait"
 	"log"
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/markbates/goth"
+	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/modules/postgres"
+	"github.com/testcontainers/testcontainers-go/wait"
 )
 
 func assertResponseBody(t testing.TB, got, want string) {
@@ -31,7 +32,7 @@ type PostgresContainer struct {
 	ConnectionString string
 }
 
-// helper method to run for each test //todo please don't start a new container for each test
+// helper method to run for each test //TODO: please don't start a new container for each test
 func setupTest() (*BookclubServer, error) {
 	container, err := CreatePostgresContainer()
 	if err != nil {

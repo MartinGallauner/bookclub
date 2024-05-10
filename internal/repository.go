@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+
 	"gorm.io/gorm"
 )
 
@@ -67,7 +68,7 @@ func (r *PostgresUserRepository) GetByEmail(email string) (User, error) {
 	err := r.Database.Table("users").Preload("Books").First(&user).Where("email = ?", email).Error
 	if err != nil {
 		return User{}, err
-	} //todo return ErrNotFound
+	} //TODO: return ErrNotFound
 	return user, nil
 }
 
@@ -96,7 +97,7 @@ func (r *PostgresLinkRepository) Get(senderId uint, receiverId uint) (Link, erro
 		return Link{}, err
 	}
 
-	if link.SenderId == 0 && link.ReceiverId == 0 { //todo I feel like that check is bad
+	if link.SenderId == 0 && link.ReceiverId == 0 { //TODO: I feel like that check is bad
 		return Link{}, gorm.ErrRecordNotFound
 	}
 	return link, nil
