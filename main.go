@@ -38,5 +38,8 @@ func main() {
 		&internal.PostgresLinkRepository{Database: db},
 		&internal.GothicAuthService{},
 		&internal.JwtServiceImpl{})
-	internal.StartServer(server)
+	err = internal.StartServer(server)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

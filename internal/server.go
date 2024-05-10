@@ -13,10 +13,9 @@ import (
 	"strings"
 )
 
-func StartServer(cfg *BookclubServer) {
+func StartServer(cfg *BookclubServer) error {
 	log.Print("Starting bookclub on port: 8080")
-	log.Fatal(http.ListenAndServe(":8080", cfg.Handler))
-	//todo not sure if I should return an error here
+	return http.ListenAndServe(":8080", cfg.Handler)
 }
 
 type BookclubServer struct {
