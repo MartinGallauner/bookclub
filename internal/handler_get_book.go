@@ -9,9 +9,9 @@ func (cfg *BookclubServer) handlerGetBookByISBN(w http.ResponseWriter, r *http.R
 	isbn := r.PathValue("isbn")
 	book, err := cfg.Client.FetchBook(isbn)
 	if err != nil {
-		respondWithError(w, 400, "Unable to fetch the requested book")
+		respondWithError(w, http.StatusBadRequest, "Unable to fetch the requested book")
 		return
 	}
-	respondWithJSON(w, 200, book)
+	respondWithJSON(w, http.StatusOK, book)
 	return
 }

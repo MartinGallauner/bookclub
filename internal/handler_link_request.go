@@ -11,16 +11,16 @@ func (cfg *BookclubServer) handlerCreateLink(w http.ResponseWriter, r *http.Requ
 	request := LinkRequest{}
 	err := decoder.Decode(&request)
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Error decoding parameters: %s", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Error decoding parameters: %s", err))
 		return
 	}
 	link, err := cfg.LinkUsers(request.SenderId, request.ReceiverId)
 	linkResponse := mapLinkResponse(link)
 	if err != nil {
-		respondWithError(w, 400, "Unable to create user link")
+		respondWithError(w, http.StatusBadRequest, "Unable to create user link")
 		return
 	}
-	respondWithJSON(w, 200, linkResponse)
+	respondWithJSON(w, http.StatusOK, linkResponse)
 	return
 
 }

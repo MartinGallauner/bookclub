@@ -44,16 +44,16 @@ func (cfg *BookclubServer) handlerLogin(w http.ResponseWriter, r *http.Request) 
 	if err == gorm.ErrRecordNotFound {
 		persistedUser, err = cfg.CreateUser(gothUser.Name, gothUser.Email)
 		if err != nil {
-			respondWithError(w, 400, "Unable to create new user.")
+			respondWithError(w, http.StatusBadRequest, "Unable to create new user.")
 		}
 	}
 	jwt, err := cfg.JwtService.CreateToken("bookclub-access", int(persistedUser.ID))
 	if err != nil {
 		//TODO: logging
-		respondWithError(w, 400, "Unable to login user.")
+		respondWithError(w, http.StatusBadRequest, "Unable to login user.")
 	}
 	loginResponse := LoginResponse{Name: persistedUser.Name, Email: persistedUser.Email, Jwt: jwt}
-	respondWithJSON(w, 200, loginResponse)
+	respondWithJSON(w, http.StatusOK, loginResponse)
 }
 
 type LoginResponse struct {

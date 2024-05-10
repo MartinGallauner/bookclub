@@ -12,16 +12,16 @@ func (cfg *BookclubServer) handlerAddBook(w http.ResponseWriter, r *http.Request
 	body := AddBookRequest{}
 	err := decoder.Decode(&body)
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Error decoding parameters: %s", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Error decoding parameters: %s", err))
 		return
 	}
 	book, err := cfg.AddBookToCollection(body.ISBN, body.UserId)
 
 	if err != nil {
-		respondWithError(w, 400, "Unable to add the requested book")
+		respondWithError(w, http.StatusBadRequest, "Unable to add the requested book")
 		return
 	}
-	respondWithJSON(w, 200, book) //TODO: reconsider response body
+	respondWithJSON(w, http.StatusOK, book) //TODO: reconsider response body
 	return
 }
 

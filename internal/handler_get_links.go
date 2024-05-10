@@ -14,9 +14,9 @@ func (cfg *BookclubServer) handlerGetLinks(w http.ResponseWriter, r *http.Reques
 	}
 
 	if err != nil {
-		respondWithError(w, 400, "Unable to create user link")
+		respondWithError(w, http.StatusBadRequest, "Unable to create user link")
 		return
 	}
-	respondWithJSON(w, 200, result)
+	respondWithJSON(w, http.StatusOK, result)
 	return
 }
