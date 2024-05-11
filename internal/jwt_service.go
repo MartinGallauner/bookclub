@@ -3,11 +3,10 @@ package internal
 import (
 	"errors"
 	"fmt"
+	"github.com/golang-jwt/jwt/v5"
 	"os"
 	"strconv"
 	"time"
-
-	"github.com/golang-jwt/jwt/v5"
 )
 
 type JwtService interface {
