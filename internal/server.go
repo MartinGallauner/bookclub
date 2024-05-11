@@ -40,7 +40,8 @@ func NewBookclubServer(client Client, repository BookRepository, userRepository 
 	s.JwtService = jwtService
 	router := http.NewServeMux() //TODO: add jwtMiddleware to all concerned handler
 	router.Handle("/api/search", http.HandlerFunc(s.handlerSearch))
-	router.Handle("/api/collections", http.HandlerFunc(jwtMiddleware(s.handlerAddBook)))
+	router.Handle("/api/collections", http.HandlerFunc(s.handlerAddBook))
+	//router.Handle("/api/collections", http.HandlerFunc(jwtMiddleware(s.handlerAddBook)))
 	router.Handle("/api/books/{isbn}", http.HandlerFunc(s.handlerGetBookByISBN))
 	router.Handle("/api/users", http.HandlerFunc(s.handlerCreateUser))
 	router.Handle("/api/links/{id}", http.HandlerFunc(s.handlerGetLinks))

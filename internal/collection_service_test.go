@@ -26,6 +26,7 @@ func TestAddBookToUser(t *testing.T) {
 	}
 	//when
 	request, _ := http.NewRequest(http.MethodPost, "/api/collections", strings.NewReader(`{"user_id": 1, "isbn": "1234567890"}`))
+	request.Header.Add("Authorization", "Bearer test-token")
 	response := httptest.NewRecorder()
 	s.ServeHTTP(response, request)
 
