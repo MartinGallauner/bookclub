@@ -57,7 +57,7 @@ func NewBookclubServer(client Client, repository BookRepository, userRepository 
 
 func jwtMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		tokenString := extractToken(r) //TODO: extract token
+		tokenString := extractToken(r) 
 		if tokenString == "" {
 			respondWithError(w, http.StatusUnauthorized, "Missing JWT")
 			return
@@ -79,7 +79,7 @@ func extractToken(r *http.Request) string {
 }
 
 func validateToken(tokenString string) (jwt.RegisteredClaims, error) {
-	jwtSecret := os.Getenv("JWT_SECRET") //TODO: load from .env
+	jwtSecret := os.Getenv("JWT_SECRET")
 	claims := jwt.RegisteredClaims{}
 	token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(jwtSecret), nil
