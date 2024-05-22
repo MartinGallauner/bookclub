@@ -8,7 +8,10 @@ func (cfg *BookclubServer) AddBookToCollection(isbn string, userId uint) (Book, 
 	}
 
 	var book Book
-	book, _ = cfg.BookRepository.GetBook(isbn) //TODO: handle error
+	book, err = cfg.BookRepository.GetBook(isbn) 
+	if err != nil {
+		return Book{}, err
+	}
 	if book.ISBN == "" {
 		book, err = cfg.Client.FetchBook(isbn)
 		if err != nil {
