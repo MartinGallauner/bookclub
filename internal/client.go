@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"strings"
 	"time"
@@ -17,6 +18,12 @@ func NewClient(timeout time.Duration) Client {
 	return Client{
 		httpClient: http.Client{
 			Timeout: timeout,
+			Transport: &http.Transport{
+				DialContext: (&net.Dialer{
+					Timeout: time.Second,
+				}).DialContext,
+				ResponseHeaderTimeout: time.Second,
+			},
 		},
 	}
 }
