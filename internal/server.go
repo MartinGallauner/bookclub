@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	_ "github.com/martingallauner/bookclub/docs"
@@ -16,8 +17,15 @@ import (
 
 // StartServer starts the server :)
 func StartServer(cfg *BookclubServer) error {
-	log.Print("Starting bookclub on port: 8080") //TODO:: make the port configurable
-	return http.ListenAndServe(":8080", cfg.Handler)
+	log.Print("Starting bookclub on port: 8080") //TODO:: make parameters configurable
+
+	s := &http.Server{
+		Addr: ":8080",
+		ReadHeaderTimeout: 500 * time.Millisecond,
+		ReadTimeout: 500 * time.Millisecond,
+		Handler: cfg.Handler,
+	}
+	return s.ListenAndServe()
 }
 
 type BookclubServer struct {
