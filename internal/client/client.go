@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	. "github.com/martingallauner/bookclub/internal"
 )
 
 type Client struct {

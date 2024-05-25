@@ -2,8 +2,8 @@ package internal
 
 import (
 	"fmt"
-
 	"gorm.io/gorm"
+	. "github.com/martingallauner/bookclub/internal"
 )
 
 type UserRepository interface {
