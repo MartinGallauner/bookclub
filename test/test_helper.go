@@ -2,15 +2,18 @@ package internal
 
 import (
 	"context"
+	"github.com/markbates/goth"
+	client "github.com/martingallauner/bookclub/internal/client"
+	repository "github.com/martingallauner/bookclub/internal/repository"
+	server "github.com/martingallauner/bookclub/internal/server"
+	internal "github.com/martingallauner/bookclub/internal"
+	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/modules/postgres"
+	"github.com/testcontainers/testcontainers-go/wait"
 	"log"
 	"net/http"
 	"testing"
 	"time"
-
-	"github.com/markbates/goth"
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/modules/postgres"
-	"github.com/testcontainers/testcontainers-go/wait"
 )
 
 func assertResponseBody(t testing.TB, got, want string) {
@@ -33,18 +36,18 @@ type PostgresContainer struct {
 }
 
 // helper method to run for each test //TODO: please don't start a new container for each test
-func setupTest() (*BookclubServer, error) {
+func setupTest() (*server.BookclubServer, error) {
 	container, err := CreatePostgresContainer()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	db, err := SetupDatabaseWithDSN(container.ConnectionString)
+	db, err := internal.SetupDatabaseWithDSN(container.ConnectionString)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	s := NewBookclubServer(Client{}, &PostgresBookRepository{Database: db}, &PostgresUserRepository{Database: db}, &PostgresLinkRepository{Database: db}, &MockAuthService{}, &MockJwtService{})
+	s := server.NewBookclubServer(client.Client{}, &repository.PostgresBookRepository{Database: db}, &repository.PostgresUserRepository{Database: db}, &repository.PostgresLinkRepository{Database: db}, &MockAuthService{}, &MockJwtService{})
 	return s, err
 }
 

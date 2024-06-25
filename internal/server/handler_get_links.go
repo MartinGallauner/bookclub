@@ -1,4 +1,4 @@
-package internal
+package server
 
 import (
 	"net/http"
@@ -14,9 +14,9 @@ func (cfg *BookclubServer) handlerGetLinks(w http.ResponseWriter, r *http.Reques
 	}
 
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Unable to create user link")
+		RespondWithError(w, http.StatusBadRequest, "Unable to create user link")
 		return
 	}
-	respondWithJSON(w, http.StatusOK, result)
+	RespondWithJSON(w, http.StatusOK, result)
 	return
 }

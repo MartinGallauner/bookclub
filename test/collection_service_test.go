@@ -9,6 +9,8 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	internal "github.com/martingallauner/bookclub/internal"
+	server "github.com/martingallauner/bookclub/internal/server"
 )
 
 // Tests if a saved book can be added to the collection of an existing user.
@@ -16,9 +18,9 @@ func TestAddBookToUser(t *testing.T) {
 	//given
 	s, err := setupTest()
 
-	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
+	mockBook := internal.Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
 	s.BookRepository.Save(mockBook)
-	mockUser := &User{Name: "Test User"}
+	mockUser := &internal.User{Name: "Test User"}
 	mockUser.ID = 1
 	err = s.UserRepository.Save(mockUser)
 	if err != nil {
@@ -46,7 +48,7 @@ func TestAddBookToUser(t *testing.T) {
 func TestAddBookToUnknownUser(t *testing.T) {
 	//given
 	s, err := setupTest()
-	mockBook := Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
+	mockBook := internal.Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
 	s.BookRepository.Save(mockBook)
 
 	if err != nil {
@@ -68,7 +70,7 @@ func TestSearchBookInNetwork(t *testing.T) {
 	s, err := setupTest()
 
 	userWithBook, err := s.CreateUser("Book Owner", "owner@gmail.com")
-	book := &Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
+	book := &internal.Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
 	s.BookRepository.Save(*book)
 	_, err = s.AddBookToCollection(book.ISBN, userWithBook.ID)
 
@@ -85,7 +87,7 @@ func TestSearchBookInNetwork(t *testing.T) {
 	}
 
 	//when
-	requestBody := SearchRequest{UserId: uint(1), ISBN: "1234567890"}
+	requestBody := server.SearchRequest{UserId: uint(1), ISBN: "1234567890"}
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {
 		return
@@ -96,7 +98,7 @@ func TestSearchBookInNetwork(t *testing.T) {
 	s.ServeHTTP(response, request)
 
 	//then
-	var got SearchResponse
+	var got server.SearchResponse
 	err = json.NewDecoder(response.Body).Decode(&got)
 	if err != nil {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)

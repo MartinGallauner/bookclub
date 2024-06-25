@@ -1,4 +1,4 @@
-package internal
+package server
 
 import (
 	"encoding/json"
@@ -12,13 +12,13 @@ func (cfg *BookclubServer) handlerSearch(w http.ResponseWriter, r *http.Request)
 	body := AddBookRequest{}
 	err := decoder.Decode(&body)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Error decoding parameters: %s", err))
+		RespondWithError(w, http.StatusBadRequest, fmt.Sprintf("Error decoding parameters: %s", err))
 		return
 	}
 	//TODO: remove ID from user response
 	users, err := cfg.SearchBookInNetwork(body.UserId, body.ISBN)
 	if err != nil {
-		respondWithError(w, http.StatusNotFound, "Book is not available in the users network.")
+		RespondWithError(w, http.StatusNotFound, "Book is not available in the users network.")
 	}
 
 	var responseBody []UserResponse
@@ -28,7 +28,7 @@ func (cfg *BookclubServer) handlerSearch(w http.ResponseWriter, r *http.Request)
 
 	searchResponse := SearchResponse{body.ISBN, responseBody}
 
-	respondWithJSON(w, http.StatusOK, searchResponse)
+	RespondWithJSON(w, http.StatusOK, searchResponse)
 	return
 }
 

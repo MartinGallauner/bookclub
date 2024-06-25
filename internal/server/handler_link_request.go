@@ -1,9 +1,10 @@
-package internal
+package server
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"github.com/martingallauner/bookclub/internal"
 )
 
 func (cfg *BookclubServer) handlerCreateLink(w http.ResponseWriter, r *http.Request) {
@@ -11,21 +12,21 @@ func (cfg *BookclubServer) handlerCreateLink(w http.ResponseWriter, r *http.Requ
 	request := LinkRequest{}
 	err := decoder.Decode(&request)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Error decoding parameters: %s", err))
+		RespondWithError(w, http.StatusBadRequest, fmt.Sprintf("Error decoding parameters: %s", err))
 		return
 	}
 	link, err := cfg.LinkUsers(request.SenderId, request.ReceiverId)
 	linkResponse := mapLinkResponse(link)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Unable to create user link")
+		RespondWithError(w, http.StatusBadRequest, "Unable to create user link")
 		return
 	}
-	respondWithJSON(w, http.StatusOK, linkResponse)
+	RespondWithJSON(w, http.StatusOK, linkResponse)
 	return
 
 }
 
-func mapLinkResponse(link Link) LinkResponse {
+func mapLinkResponse(link internal.Link) LinkResponse {
 	linkResponse := LinkResponse{SenderId: link.SenderId, ReceiverId: link.ReceiverId, IsLinked: false}
 	if link.DeletedAt.Before(link.AcceptedAt) {
 		linkResponse.IsLinked = true

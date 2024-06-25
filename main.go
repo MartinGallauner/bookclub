@@ -2,8 +2,11 @@ package main
 
 import (
 	"github.com/joho/godotenv"
-	"github.com/martingallauner/bookclub/internal"
+	internal "github.com/martingallauner/bookclub/internal"
 	"github.com/martingallauner/bookclub/internal/auth"
+	. "github.com/martingallauner/bookclub/internal/client"
+	repository "github.com/martingallauner/bookclub/internal/repository"
+	server "github.com/martingallauner/bookclub/internal/server"
 	"log"
 	"os"
 	"time"
@@ -29,16 +32,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	client := internal.NewClient(5 * time.Second)
+	client := NewClient(5 * time.Second)
 
-	server := internal.NewBookclubServer(
+	server := server.NewBookclubServer(
 		client,
-		&internal.PostgresBookRepository{Database: db},
-		&internal.PostgresUserRepository{Database: db},
-		&internal.PostgresLinkRepository{Database: db},
+		&repository.PostgresBookRepository{Database: db},
+		&repository.PostgresUserRepository{Database: db},
+		&repository.PostgresLinkRepository{Database: db},
 		&internal.GothicAuthService{},
 		&internal.JwtServiceImpl{})
-	err = internal.StartServer(server)
+	err = server.StartServer(server)
 	if err != nil {
 		log.Fatal(err)
 	}

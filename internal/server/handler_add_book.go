@@ -1,4 +1,4 @@
-package internal
+package server
 
 import (
 	"encoding/json"
@@ -12,16 +12,16 @@ func (cfg *BookclubServer) handlerAddBook(w http.ResponseWriter, r *http.Request
 	body := AddBookRequest{}
 	err := decoder.Decode(&body)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Error decoding parameters: %s", err))
+		RespondWithError(w, http.StatusBadRequest, fmt.Sprintf("Error decoding parameters: %s", err))
 		return
 	}
 	book, err := cfg.AddBookToCollection(body.ISBN, body.UserId)
 
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Unable to add the requested book")
+		RespondWithError(w, http.StatusBadRequest, "Unable to add the requested book")
 		return
 	}
-	respondWithJSON(w, http.StatusOK, book) //TODO: reconsider response body
+	RespondWithJSON(w, http.StatusOK, book) //TODO: reconsider response body
 	return
 }
 

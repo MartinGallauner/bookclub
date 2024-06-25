@@ -1,4 +1,4 @@
-package internal
+package server
 
 import (
 	"context"
@@ -9,9 +9,11 @@ import (
 	"os"
 	"strings"
 	"time"
-
 	"github.com/golang-jwt/jwt/v5"
 	_ "github.com/martingallauner/bookclub/docs"
+	client "github.com/martingallauner/bookclub/internal/client"
+	repository "github.com/martingallauner/bookclub/internal/repository"
+	internal "github.com/martingallauner/bookclub/internal"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
@@ -20,27 +22,27 @@ func StartServer(cfg *BookclubServer) error {
 	log.Print("Starting bookclub on port: 8080") //TODO:: make parameters configurable
 
 	s := &http.Server{
-		Addr: ":8080",
+		Addr:              ":8080",
 		ReadHeaderTimeout: 500 * time.Millisecond,
-		ReadTimeout: 500 * time.Millisecond,
-		Handler: cfg.Handler,
+		ReadTimeout:       500 * time.Millisecond,
+		Handler:           cfg.Handler,
 	}
 	return s.ListenAndServe()
 }
 
 type BookclubServer struct {
-	Client         Client
-	BookRepository BookRepository
-	UserRepository UserRepository
-	LinkRepository LinkRepository
-	AuthService    AuthService
-	JwtService     JwtService
+	Client         client.Client
+	BookRepository repository.BookRepository
+	UserRepository repository.UserRepository
+	LinkRepository repository.LinkRepository
+	AuthService    internal.AuthService
+	JwtService     internal.JwtService
 	http.Handler
 }
 
-func NewBookclubServer(client Client, repository BookRepository, userRepository UserRepository, linkRepository LinkRepository, authService AuthService, jwtService JwtService) *BookclubServer {
+func NewBookclubServer(client client.Client, bookRepository repository.BookRepository, userRepository repository.UserRepository, linkRepository repository.LinkRepository, authService internal.AuthService, jwtService internal.JwtService) *BookclubServer {
 	s := new(BookclubServer)
-	s.BookRepository = repository
+	s.BookRepository = bookRepository
 	s.UserRepository = userRepository
 	s.LinkRepository = linkRepository
 	s.Client = client
@@ -65,14 +67,14 @@ func NewBookclubServer(client Client, repository BookRepository, userRepository 
 
 func jwtMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		tokenString := extractToken(r) 
+		tokenString := extractToken(r)
 		if tokenString == "" {
-			respondWithError(w, http.StatusUnauthorized, "Missing JWT")
+			RespondWithError(w, http.StatusUnauthorized, "Missing JWT")
 			return
 		}
 		claims, err := validateToken(tokenString)
 		if err != nil {
-			respondWithError(w, http.StatusUnauthorized, "Invalid JWT")
+			RespondWithError(w, http.StatusUnauthorized, "Invalid JWT")
 			return
 		}
 		ctx := context.WithValue(r.Context(), "claims", claims)

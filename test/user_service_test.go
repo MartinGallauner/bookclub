@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	server "github.com/martingallauner/bookclub/internal/server"
+	internal "github.com/martingallauner/bookclub/internal"
 )
 
 // Tests creation of a new user.
@@ -19,7 +21,7 @@ func TestCreateNewUser(t *testing.T) {
 	}
 
 	//when
-	requestBody := CreateUserRequest{Name: "Mocki", Email: "mock@gmail.com"}
+	requestBody := server.CreateUserRequest{Name: "Mocki", Email: "mock@gmail.com"}
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {
 		return
@@ -30,7 +32,7 @@ func TestCreateNewUser(t *testing.T) {
 	s.ServeHTTP(response, request)
 
 	//then
-	var got User
+	var got internal.User
 	err = json.NewDecoder(response.Body).Decode(&got)
 	if err != nil {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
@@ -58,7 +60,7 @@ func TestRequestLink(t *testing.T) {
 	}
 
 	//when
-	requestBody := LinkRequest{SenderId: user1.ID, ReceiverId: user2.ID}
+	requestBody := server.LinkRequest{SenderId: user1.ID, ReceiverId: user2.ID}
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {
 		return
@@ -69,7 +71,7 @@ func TestRequestLink(t *testing.T) {
 	s.ServeHTTP(response, request)
 
 	//then
-	var got LinkResponse
+	var got server.LinkResponse
 	err = json.NewDecoder(response.Body).Decode(&got)
 	if err != nil {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
@@ -108,7 +110,7 @@ func TestGetLinks(t *testing.T) {
 	s.ServeHTTP(response, request)
 
 	//then
-	var got []LinkResponse
+	var got []server.LinkResponse
 	err = json.NewDecoder(response.Body).Decode(&got)
 	if err != nil {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
@@ -139,7 +141,7 @@ func TestAcceptLink(t *testing.T) {
 	}
 
 	//when
-	requestBody := LinkRequest{SenderId: user2.ID, ReceiverId: user1.ID}
+	requestBody := server.LinkRequest{SenderId: user2.ID, ReceiverId: user1.ID}
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {
 		return
@@ -150,7 +152,7 @@ func TestAcceptLink(t *testing.T) {
 	s.ServeHTTP(response, request)
 
 	//then
-	var got LinkResponse
+	var got server.LinkResponse
 	err = json.NewDecoder(response.Body).Decode(&got)
 	if err != nil {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
@@ -174,9 +176,9 @@ func TestLogin(t *testing.T) {
 		return
 	}
 
-	testUser := &User{Name: "Alfred", Email: "alfred@gmail.com"}
+	testUser := &internal.User{Name: "Alfred", Email: "alfred@gmail.com"}
 	err = s.UserRepository.Save(testUser)
-	extraUser := &User{Name: "Bert", Email: "bert@gmail.com"}
+	extraUser := &internal.User{Name: "Bert", Email: "bert@gmail.com"}
 	err = s.UserRepository.Save(extraUser)
 
 	//when
@@ -186,7 +188,7 @@ func TestLogin(t *testing.T) {
 	s.ServeHTTP(response, request)
 
 	//then
-	var got LoginResponse
+	var got server.LoginResponse
 	err = json.NewDecoder(response.Body).Decode(&got)
 	if err != nil {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
@@ -218,7 +220,7 @@ func TestLoginOfNewUser(t *testing.T) {
 	s.ServeHTTP(response, request)
 
 	//then
-	var got LoginResponse
+	var got server.LoginResponse
 	err = json.NewDecoder(response.Body).Decode(&got)
 	if err != nil {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)

@@ -1,22 +1,23 @@
-package internal
+package server
 
 import (
 	"gorm.io/gorm"
 	"log"
 	"time"
+	internal "github.com/martingallauner/bookclub/internal"
 )
 
-func (cfg *BookclubServer) CreateUser(name, email string) (User, error) {
-	user := &User{Name: name, Email: email}
+func (cfg *BookclubServer) CreateUser(name, email string) (internal.User, error) {
+	user := &internal.User{Name: name, Email: email}
 	err := cfg.UserRepository.Save(user)
 	if err != nil {
-		return User{}, nil
+		return internal.User{}, nil
 	}
 	return *user, nil
 }
 
 // Creates a link request betweem two users
-func (cfg *BookclubServer) LinkUsers(senderId uint, receiverId uint) (Link, error) {
+func (cfg *BookclubServer) LinkUsers(senderId uint, receiverId uint) (internal.Link, error) {
 	//ask if request already exists, if yes exit
 	existingLink, err := cfg.LinkRepository.Get(senderId, receiverId)
 
@@ -28,7 +29,7 @@ func (cfg *BookclubServer) LinkUsers(senderId uint, receiverId uint) (Link, erro
 		if err == gorm.ErrRecordNotFound {
 			log.Printf("Creating new link request for users with id %v and %v", senderId, receiverId)
 		} else {
-			return Link{}, err
+			return internal.Link{}, err
 		}
 	}
 
@@ -38,22 +39,22 @@ func (cfg *BookclubServer) LinkUsers(senderId uint, receiverId uint) (Link, erro
 		existingRequest.AcceptedAt = time.Now()
 		err := cfg.LinkRepository.Save(&existingRequest)
 		if err != nil {
-			return Link{}, err
+			return internal.Link{}, err
 		}
 		return existingRequest, nil
 	}
 
 	//if request not exists -> create new
-	link := &Link{SenderId: senderId, ReceiverId: receiverId}
+	link := &internal.Link{SenderId: senderId, ReceiverId: receiverId}
 	err = cfg.LinkRepository.Save(link)
 	if err != nil {
-		return Link{}, err
+		return internal.Link{}, err
 	}
-	return Link{SenderId: senderId, ReceiverId: receiverId}, nil
+	return internal.Link{SenderId: senderId, ReceiverId: receiverId}, nil
 }
 
 // Returns all link requests concerning the specified user
-func (cfg *BookclubServer) GetLinks(userId string) ([]Link, error) {
+func (cfg *BookclubServer) GetLinks(userId string) ([]internal.Link, error) {
 	links, err := cfg.LinkRepository.GetById(userId)
 	if err != nil {
 		return nil, err

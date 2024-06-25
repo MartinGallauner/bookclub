@@ -1,4 +1,4 @@
-package internal
+package server
 
 import (
 	"encoding/json"
@@ -13,22 +13,22 @@ func (cfg *BookclubServer) handlerCreateUser(w http.ResponseWriter, r *http.Requ
 	request := CreateUserRequest{}
 	err := decoder.Decode(&request)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Error decoding parameters: %s", err))
+		RespondWithError(w, http.StatusBadRequest, fmt.Sprintf("Error decoding parameters: %s", err))
 		return
 	}
 
 	if request.Name == "" {
-		respondWithError(w, http.StatusBadRequest, "Empty username is not accepted.")
+		RespondWithError(w, http.StatusBadRequest, "Empty username is not accepted.")
 		return
 	}
 
 	user, err := cfg.CreateUser(request.Name, request.Email)
 
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Unable to create the user")
+		RespondWithError(w, http.StatusBadRequest, "Unable to create the user")
 		return
 	}
-	respondWithJSON(w, http.StatusOK, user)
+	RespondWithJSON(w, http.StatusOK, user)
 	return
 }
 
