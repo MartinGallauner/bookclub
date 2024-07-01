@@ -6,7 +6,7 @@ import (
 	"github.com/martingallauner/bookclub/internal/auth"
 	. "github.com/martingallauner/bookclub/internal/client"
 	repository "github.com/martingallauner/bookclub/internal/repository"
-	server "github.com/martingallauner/bookclub/internal/server"
+	bcServer "github.com/martingallauner/bookclub/internal/server"
 	"log"
 	"os"
 	"time"
@@ -34,14 +34,14 @@ func main() {
 	}
 	client := NewClient(5 * time.Second)
 
-	server := server.NewBookclubServer(
+	server := bcServer.NewBookclubServer(
 		client,
 		&repository.PostgresBookRepository{Database: db},
 		&repository.PostgresUserRepository{Database: db},
 		&repository.PostgresLinkRepository{Database: db},
 		&internal.GothicAuthService{},
 		&internal.JwtServiceImpl{})
-	err = server.StartServer(server)
+	err = bcServer.StartServer(server)
 	if err != nil {
 		log.Fatal(err)
 	}

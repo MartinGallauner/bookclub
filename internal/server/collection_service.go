@@ -2,7 +2,7 @@ package server
 
 import (
 	"github.com/martingallauner/bookclub/internal"
-	"github.com/martingallauner/bookclub/internal/client"
+	//"github.com/martingallauner/bookclub/internal/client"
 
 )
 
