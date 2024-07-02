@@ -3,31 +3,38 @@ package internal
 import (
 	"fmt"
 	"github.com/caarlos0/env/v11"
+	"github.com/go-playground/validator/v10"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 type DatabaseConfig struct {
-	Host     string `env:"POSTGRES_HOST"`
+	Host     string `env:"POSTGRES_HOST" validate:"hostname"` 
 	DbUser   string `env:"POSTGRES_USER"`
 	Password string `env:"POSTGRES_PASSWORD"`
 	Dbname   string `env:"POSTGRES_DBNAME"`
-	Port     string `env:"POSTGRES_PORT"`
+	Port     int `env:"POSTGRES_PORT"`
 	Sslmode  string `env:"POSTGRES_SSLMODE"`
 	Timezone string `env:"TIMEZONE"`
 }
 
 func ReadDatabaseConfig() (DatabaseConfig, error) {
-	var DbConfig DatabaseConfig
-	err := env.Parse(&DbConfig)
+	var dbConfig DatabaseConfig
+	err := env.Parse(&dbConfig)
 	if err != nil {
 		return DatabaseConfig{}, err //consider returning pointer to struct
 	}
-	return DbConfig, nil
+	return dbConfig, nil
 }
 
+var validate = validator.New(validator.WithRequiredStructEnabled())
+
 func SetupDatabase(config DatabaseConfig) (*gorm.DB, error) {
-	connString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s", 
+	err := validate.Struct(&config)
+	if err != nil {
+		return nil, err
+	}
+	connString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=%s", 
 	config.Host, config.DbUser, config.Password, config.Dbname, config.Port, config.Sslmode, config.Timezone)
 	return SetupDatabaseWithDSN(connString)
 }
