@@ -2,12 +2,33 @@ package internal
 
 import (
 	"fmt"
+	"github.com/caarlos0/env/v11"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func SetupDatabase(host, dbUser, password, dbname, port, sslmode, timezone string) (*gorm.DB, error) {
-	connString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s", host, dbUser, password, dbname, port, sslmode, timezone)
+type DatabaseConfig struct {
+	Host     string `env:"POSTGRES_HOST"`
+	DbUser   string `env:"POSTGRES_USER"`
+	Password string `env:"POSTGRES_PASSWORD"`
+	Dbname   string `env:"POSTGRES_DBNAME"`
+	Port     string `env:"POSTGRES_PORT"`
+	Sslmode  string `env:"POSTGRES_SSLMODE"`
+	Timezone string `env:"TIMEZONE"`
+}
+
+func ReadDatabaseConfig() (DatabaseConfig, error) {
+	var DbConfig DatabaseConfig
+	err := env.Parse(&DbConfig)
+	if err != nil {
+		return DatabaseConfig{}, err //consider returning pointer to struct
+	}
+	return DbConfig, nil
+}
+
+func SetupDatabase(config DatabaseConfig) (*gorm.DB, error) {
+	connString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s", 
+	config.Host, config.DbUser, config.Password, config.Dbname, config.Port, config.Sslmode, config.Timezone)
 	return SetupDatabaseWithDSN(connString)
 }
 

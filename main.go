@@ -8,7 +8,6 @@ import (
 	repository "github.com/martingallauner/bookclub/internal/repository"
 	bcServer "github.com/martingallauner/bookclub/internal/server"
 	"log"
-	"os"
 	"time"
 )
 
@@ -20,15 +19,12 @@ func main() {
 
 	auth.NewAuth()
 
-	host := os.Getenv("POSTGRES_HOST")
-	user := os.Getenv("POSTGRES_USER")
-	password := os.Getenv("POSTGRES_PASSWORD")
-	dbname := os.Getenv("POSTGRES_DBNAME")
-	port := os.Getenv("POSTGRES_PORT")
-	sslmode := os.Getenv("POSTGRES_SSLMODE")
-	timezone := os.Getenv("TIMEZONE")
 
-	db, err := internal.SetupDatabase(host, user, password, dbname, port, sslmode, timezone)
+	dbConfig, err := internal.ReadDatabaseConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+	db, err := internal.SetupDatabase(dbConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
