@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"fmt"
 	"github.com/caarlos0/env/v11"
 	"github.com/go-playground/validator/v10"
 	"gorm.io/driver/postgres"
