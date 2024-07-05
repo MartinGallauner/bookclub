@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/joho/godotenv"
+	//"github.com/joho/godotenv"
 	internal "github.com/martingallauner/bookclub/internal"
 	"github.com/martingallauner/bookclub/internal/auth"
 	. "github.com/martingallauner/bookclub/internal/client"
