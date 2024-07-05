@@ -9,13 +9,14 @@ import (
 )
 
 type DatabaseConfig struct {
-	Host     string `env:"POSTGRES_HOST" validate:"hostname"` 
-	DbUser   string `env:"POSTGRES_USER"`
-	Password string `env:"POSTGRES_PASSWORD"`
-	Dbname   string `env:"POSTGRES_DBNAME"`
-	Port     int `env:"POSTGRES_PORT"`
-	Sslmode  string `env:"POSTGRES_SSLMODE"`
-	Timezone string `env:"TIMEZONE"`
+	Host        string `env:"POSTGRES_HOST" validate:"hostname"`
+	DbUser      string `env:"POSTGRES_USER"`
+	Password    string `env:"POSTGRES_PASSWORD"`
+	Dbname      string `env:"POSTGRES_DBNAME"`
+	Port        int    `env:"POSTGRES_PORT"`
+	Sslmode     string `env:"POSTGRES_SSLMODE"`
+	Timezone    string `env:"TIMEZONE"`
+	DatabaseUrl string `env:"DATABASE_URL"`
 }
 
 func ReadDatabaseConfig() (DatabaseConfig, error) {
@@ -34,9 +35,10 @@ func SetupDatabase(config DatabaseConfig) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	connString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=%s", 
-	config.Host, config.DbUser, config.Password, config.Dbname, config.Port, config.Sslmode, config.Timezone)
-	return SetupDatabaseWithDSN(connString)
+	// commented out to use the connection string provided by Digital Ocean
+	/* connString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=%s",
+		config.Host, config.DbUser, config.Password, config.Dbname, config.Port, config.Sslmode, config.Timezone) */
+	return SetupDatabaseWithDSN(config.DatabaseUrl)
 }
 
 func SetupDatabaseWithDSN(connString string) (*gorm.DB, error) {
