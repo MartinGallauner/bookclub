@@ -9,11 +9,13 @@ import (
 	"os"
 	"strings"
 	"time"
+
 	"github.com/golang-jwt/jwt/v5"
 	_ "github.com/martingallauner/bookclub/docs"
-	client "github.com/martingallauner/bookclub/internal/client"
-	repository "github.com/martingallauner/bookclub/internal/repository"
 	internal "github.com/martingallauner/bookclub/internal"
+	client "github.com/martingallauner/bookclub/internal/client"
+	"github.com/martingallauner/bookclub/internal/collections"
+	repository "github.com/martingallauner/bookclub/internal/repository"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
@@ -38,9 +40,10 @@ type BookclubServer struct {
 	AuthService    internal.AuthService
 	JwtService     internal.JwtService
 	http.Handler
+	Service *collections.Service
 }
 
-func NewBookclubServer(client client.Client, bookRepository repository.BookRepository, userRepository repository.UserRepository, linkRepository repository.LinkRepository, authService internal.AuthService, jwtService internal.JwtService) *BookclubServer {
+func New(client client.Client, bookRepository repository.BookRepository, userRepository repository.UserRepository, linkRepository repository.LinkRepository, authService internal.AuthService, jwtService internal.JwtService, service *collections.Service) *BookclubServer {
 	s := new(BookclubServer)
 	s.BookRepository = bookRepository
 	s.UserRepository = userRepository
@@ -48,6 +51,7 @@ func NewBookclubServer(client client.Client, bookRepository repository.BookRepos
 	s.Client = client
 	s.AuthService = authService
 	s.JwtService = jwtService
+	s.Service = service
 	router := http.NewServeMux() //TODO: add jwtMiddleware to all concerned handler
 	router.Handle("/api/search", http.HandlerFunc(s.handlerSearch))
 	router.Handle("/api/collections", http.HandlerFunc(s.handlerAddBook))

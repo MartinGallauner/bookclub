@@ -2,23 +2,24 @@ package main
 
 import (
 	//"github.com/joho/godotenv"
+	"log"
+	"time"
+
 	internal "github.com/martingallauner/bookclub/internal"
 	"github.com/martingallauner/bookclub/internal/auth"
 	. "github.com/martingallauner/bookclub/internal/client"
+	"github.com/martingallauner/bookclub/internal/collections"
 	repository "github.com/martingallauner/bookclub/internal/repository"
 	bcServer "github.com/martingallauner/bookclub/internal/server"
-	"log"
-	"time"
 )
 
 func main() {
-/* 	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	} */
+	/* 	err := godotenv.Load()
+	   	if err != nil {
+	   		log.Fatal("Error loading .env file")
+	   	} */
 
 	auth.NewAuth()
-
 
 	dbConfig, err := internal.ReadDatabaseConfig()
 	if err != nil {
@@ -30,13 +31,19 @@ func main() {
 	}
 	client := NewClient(5 * time.Second)
 
-	server := bcServer.NewBookclubServer(
+	bookRepository := &repository.PostgresBookRepository{Database: db}
+	userRepository := &repository.PostgresUserRepository{Database: db}
+	linkRepository := &repository.PostgresLinkRepository{Database: db}
+
+
+	server := bcServer.New(
 		client,
-		&repository.PostgresBookRepository{Database: db},
-		&repository.PostgresUserRepository{Database: db},
-		&repository.PostgresLinkRepository{Database: db},
+		bookRepository,
+		userRepository,
+		linkRepository,
 		&internal.GothicAuthService{},
-		&internal.JwtServiceImpl{})
+		&internal.JwtServiceImpl{},
+		collections.New(userRepository, bookRepository, linkRepository, client))
 	err = bcServer.StartServer(server)
 	if err != nil {
 		log.Fatal(err)

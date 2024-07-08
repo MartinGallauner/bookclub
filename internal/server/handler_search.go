@@ -16,7 +16,7 @@ func (cfg *BookclubServer) handlerSearch(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	//TODO: remove ID from user response
-	users, err := cfg.SearchBookInNetwork(body.UserId, body.ISBN)
+	users, err := cfg.service.SearchBookInNetwork(body.UserId, body.ISBN)
 	if err != nil {
 		RespondWithError(w, http.StatusNotFound, "Book is not available in the users network.")
 	}

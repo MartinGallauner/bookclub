@@ -1,4 +1,4 @@
-package internal
+package collections
 
 import (
 	"bytes"
@@ -9,9 +9,71 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
-	internal "github.com/martingallauner/bookclub/internal"
-	server "github.com/martingallauner/bookclub/internal/server"
+	"github.com/martingallauner/bookclub/internal"
+	"github.com/martingallauner/bookclub/internal/client"
+	"github.com/martingallauner/bookclub/internal/server"
+	"github.com/martingallauner/bookclub/test"
+	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/modules/postgres"
+	"github.com/testcontainers/testcontainers-go/wait"
+	"context"
+	"log"
 )
+
+func setupTest() (*server.BookclubServer, error) {
+	container, err := CreatePostgresContainer()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db, err := internal.SetupDatabaseWithDSN(container.ConnectionString)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	client := client.Client{}
+	bookRepository := &repository.PostgresBookRepository{Database: db}
+	userRepository := &repository.PostgresUserRepository{Database: db}
+	linkRepository := &repository.PostgresLinkRepository{Database: db}
+	collectionService := New(userRepository, bookRepository, linkRepository, client)
+
+	s := server.New(client, bookRepository, userRepository, linkRepository, &MockAuthService{}, &MockJwtService{}, collectionService)
+	return s, err
+}
+
+var (
+	ctx = context.Background()
+)
+
+type PostgresContainer struct {
+	*postgres.PostgresContainer
+	ConnectionString string
+}
+
+func CreatePostgresContainer() (*PostgresContainer, error) {
+	postgresContainer, err := postgres.RunContainer(ctx,
+		testcontainers.WithImage("docker.io/postgres:15.2-alpine"),
+		postgres.WithDatabase("bookclub-db"),
+		postgres.WithUsername("postgres"),
+		postgres.WithPassword("password"),
+		testcontainers.WithWaitStrategy(
+			wait.ForLog("database system is ready to accept connections").
+				WithOccurrence(2).
+				WithStartupTimeout(5*time.Second)),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	connStr, err := postgresContainer.ConnectionString(ctx, "sslmode=disable")
+	if err != nil {
+		return nil, err
+	}
+	return &PostgresContainer{
+		PostgresContainer: postgresContainer,
+		ConnectionString:  connStr,
+	}, nil
+}
 
 // Tests if a saved book can be added to the collection of an existing user.
 func TestAddBookToUser(t *testing.T) {
@@ -33,7 +95,7 @@ func TestAddBookToUser(t *testing.T) {
 	s.ServeHTTP(response, request)
 
 	//then
-	assertStatus(t, response.Code, http.StatusOK)
+	test.AssertStatus(t, response.Code, http.StatusOK)
 	user, err := s.UserRepository.Get(1)
 
 	if len(user.Books) == 0 {
@@ -61,8 +123,9 @@ func TestAddBookToUnknownUser(t *testing.T) {
 	s.ServeHTTP(response, request)
 
 	//then
-	assertStatus(t, response.Code, http.StatusBadRequest)
+	test.AssertStatus(t, response.Code, http.StatusBadRequest)
 }
+
 
 // Tests search function when one user has the book
 func TestSearchBookInNetwork(t *testing.T) {
@@ -72,7 +135,7 @@ func TestSearchBookInNetwork(t *testing.T) {
 	userWithBook, err := s.CreateUser("Book Owner", "owner@gmail.com")
 	book := &internal.Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
 	s.BookRepository.Save(*book)
-	_, err = s.AddBookToCollection(book.ISBN, userWithBook.ID)
+	_, err = s.Service.AddBookToCollection(book.ISBN, userWithBook.ID)
 
 	userWithoutBooks, err := s.CreateUser("Reader", "reader@gmail.com")
 
@@ -87,6 +150,7 @@ func TestSearchBookInNetwork(t *testing.T) {
 	}
 
 	//when
+	
 	requestBody := server.SearchRequest{UserId: uint(1), ISBN: "1234567890"}
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {
@@ -106,5 +170,5 @@ func TestSearchBookInNetwork(t *testing.T) {
 
 	assert.Equal(t, got.Isbn, "1234567890", "Did we search for the wrong book?")
 	assert.Equal(t, len(got.Users), 1, ". Expected a different number of book owners.")
-	assertStatus(t, response.Code, http.StatusOK)
+	test.AssertStatus(t, response.Code, http.StatusOK)
 }

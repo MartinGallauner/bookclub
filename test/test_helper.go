@@ -1,29 +1,29 @@
-package internal
+package test
 
 import (
 	"context"
-	"github.com/markbates/goth"
-	client "github.com/martingallauner/bookclub/internal/client"
-	repository "github.com/martingallauner/bookclub/internal/repository"
-	server "github.com/martingallauner/bookclub/internal/server"
-	internal "github.com/martingallauner/bookclub/internal"
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/modules/postgres"
-	"github.com/testcontainers/testcontainers-go/wait"
 	"log"
 	"net/http"
 	"testing"
 	"time"
+	"github.com/markbates/goth"
+	internal "github.com/martingallauner/bookclub/internal"
+	client "github.com/martingallauner/bookclub/internal/client"
+	repository "github.com/martingallauner/bookclub/internal/repository"
+	server "github.com/martingallauner/bookclub/internal/server"
+	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/modules/postgres"
+	"github.com/testcontainers/testcontainers-go/wait"
 )
 
-func assertResponseBody(t testing.TB, got, want string) {
+func AssertResponseBody(t testing.TB, got, want string) {
 	t.Helper()
 	if got != want {
 		t.Errorf("response body is wrong, got %q want %q", got, want)
 	}
 }
 
-func assertStatus(t testing.TB, got, want int) {
+func AssertStatus(t testing.TB, got, want int) { //TODO: consider removing that helper and assert inline
 	t.Helper()
 	if got != want {
 		t.Errorf("did not get correct status, got %d, want %d", got, want)
@@ -36,7 +36,7 @@ type PostgresContainer struct {
 }
 
 // helper method to run for each test //TODO: please don't start a new container for each test
-func setupTest() (*server.BookclubServer, error) {
+func SetupTest() (*server.BookclubServer, error) {
 	container, err := CreatePostgresContainer()
 	if err != nil {
 		log.Fatal(err)
@@ -47,9 +47,18 @@ func setupTest() (*server.BookclubServer, error) {
 		log.Fatal(err)
 	}
 
-	s := server.NewBookclubServer(client.Client{}, &repository.PostgresBookRepository{Database: db}, &repository.PostgresUserRepository{Database: db}, &repository.PostgresLinkRepository{Database: db}, &MockAuthService{}, &MockJwtService{})
+	client := client.Client{}
+	bookRepository := &repository.PostgresBookRepository{Database: db}
+	userRepository := &repository.PostgresUserRepository{Database: db}
+	linkRepository := &repository.PostgresLinkRepository{Database: db}
+	collectionService := collections.New(userRepository, bookRepository, linkRepository, client)
+
+	s := server.New(client, bookRepository, userRepository, linkRepository, &MockAuthService{}, &MockJwtService{}, collectionService)
 	return s, err
 }
+
+
+
 
 type MockAuthService struct{}
 
