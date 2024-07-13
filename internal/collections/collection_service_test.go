@@ -12,13 +12,29 @@ import (
 	"github.com/martingallauner/bookclub/internal"
 	"github.com/martingallauner/bookclub/internal/client"
 	"github.com/martingallauner/bookclub/internal/server"
+	"github.com/martingallauner/bookclub/internal/repository"
 	"github.com/martingallauner/bookclub/test"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"context"
 	"log"
+	"time"
 )
+
+func assertResponseBody(t testing.TB, got, want string) {
+	t.Helper()
+	if got != want {
+		t.Errorf("response body is wrong, got %q want %q", got, want)
+	}
+}
+
+func assertStatus(t testing.TB, got, want int) { //TODO: consider removing that helper and assert inline
+	t.Helper()
+	if got != want {
+		t.Errorf("did not get correct status, got %d, want %d", got, want)
+	}
+}
 
 func setupTest() (*server.BookclubServer, error) {
 	container, err := CreatePostgresContainer()
@@ -37,7 +53,7 @@ func setupTest() (*server.BookclubServer, error) {
 	linkRepository := &repository.PostgresLinkRepository{Database: db}
 	collectionService := New(userRepository, bookRepository, linkRepository, client)
 
-	s := server.New(client, bookRepository, userRepository, linkRepository, &MockAuthService{}, &MockJwtService{}, collectionService)
+	s := server.New(client, bookRepository, userRepository, linkRepository, nil, nil, collectionService, nil)
 	return s, err
 }
 
@@ -95,7 +111,7 @@ func TestAddBookToUser(t *testing.T) {
 	s.ServeHTTP(response, request)
 
 	//then
-	test.AssertStatus(t, response.Code, http.StatusOK)
+	assertStatus(t, response.Code, http.StatusOK)
 	user, err := s.UserRepository.Get(1)
 
 	if len(user.Books) == 0 {
@@ -123,7 +139,7 @@ func TestAddBookToUnknownUser(t *testing.T) {
 	s.ServeHTTP(response, request)
 
 	//then
-	test.AssertStatus(t, response.Code, http.StatusBadRequest)
+	assertStatus(t, response.Code, http.StatusBadRequest)
 }
 
 
@@ -132,15 +148,15 @@ func TestSearchBookInNetwork(t *testing.T) {
 	//given
 	s, err := setupTest()
 
-	userWithBook, err := s.CreateUser("Book Owner", "owner@gmail.com")
+	userWithBook, err := s.UsersService.CreateUser("Book Owner", "owner@gmail.com")
 	book := &internal.Book{ISBN: "1234567890", URL: "https://...", Title: "Test Book"}
 	s.BookRepository.Save(*book)
-	_, err = s.Service.AddBookToCollection(book.ISBN, userWithBook.ID)
+	_, err = s.CollectionService.AddBookToCollection(book.ISBN, userWithBook.ID)
 
-	userWithoutBooks, err := s.CreateUser("Reader", "reader@gmail.com")
+	userWithoutBooks, err := s.UsersService.CreateUser("Reader", "reader@gmail.com")
 
-	s.LinkUsers(userWithBook.ID, userWithoutBooks.ID)
-	s.LinkUsers(userWithoutBooks.ID, userWithBook.ID)
+	s.UsersService.LinkUsers(userWithBook.ID, userWithoutBooks.ID)
+	s.UsersService.LinkUsers(userWithoutBooks.ID, userWithBook.ID)
 
 	link, err := s.LinkRepository.Get(userWithBook.ID, userWithoutBooks.ID)
 	fmt.Println(link)
@@ -151,7 +167,7 @@ func TestSearchBookInNetwork(t *testing.T) {
 
 	//when
 	
-	requestBody := server.SearchRequest{UserId: uint(1), ISBN: "1234567890"}
+	requestBody := server.CollectionService.SearchRequest{UserId: uint(1), ISBN: "1234567890"}
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {
 		return
@@ -170,5 +186,5 @@ func TestSearchBookInNetwork(t *testing.T) {
 
 	assert.Equal(t, got.Isbn, "1234567890", "Did we search for the wrong book?")
 	assert.Equal(t, len(got.Users), 1, ". Expected a different number of book owners.")
-	test.AssertStatus(t, response.Code, http.StatusOK)
+	assertStatus(t, response.Code, http.StatusOK)
 }

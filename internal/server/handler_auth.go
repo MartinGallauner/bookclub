@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-
 	"github.com/markbates/goth/gothic"
 	"gorm.io/gorm"
 )
@@ -42,7 +41,7 @@ func (cfg *BookclubServer) handlerLogin(w http.ResponseWriter, r *http.Request) 
 	//check if user exists, if not, create
 	persistedUser, err := cfg.UserRepository.GetByEmail(gothUser.Email)
 	if err == gorm.ErrRecordNotFound {
-		persistedUser, err = cfg.CreateUser(gothUser.Name, gothUser.Email)
+		persistedUser, err = cfg.UsersService.CreateUser(gothUser.Name, gothUser.Email)
 		if err != nil {
 			RespondWithError(w, http.StatusBadRequest, "Unable to create new user.")
 		}

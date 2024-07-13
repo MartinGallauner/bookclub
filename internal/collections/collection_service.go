@@ -44,16 +44,16 @@ func (srv *Service) AddBookToCollection(isbn string, userId uint) (internal.Book
 }
 
 // Searches for the given book within the network of the given user.
-func (cfg *Service) SearchBookInNetwork(userId uint, isbn string) ([]internal.User, error) {
+func (srv *Service) SearchBookInNetwork(userId uint, isbn string) ([]internal.User, error) {
 
 	//get linked users
-	links, err := cfg.linkRepository.GetAcceptedById(userId)
+	links, err := srv.linkRepository.GetAcceptedById(userId)
 	if err != nil {
 		return nil, err
 	}
 
 	// filter user for searched book
-	users, err := cfg.userRepository.SearchBook(isbn)
+	users, err := srv.userRepository.SearchBook(isbn)
 	if err != nil {
 		return nil, err
 	}

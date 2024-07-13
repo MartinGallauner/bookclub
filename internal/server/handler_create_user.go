@@ -22,7 +22,7 @@ func (cfg *BookclubServer) handlerCreateUser(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	user, err := cfg.CreateUser(request.Name, request.Email)
+	user, err := cfg.UsersService.CreateUser(request.Name, request.Email)
 
 	if err != nil {
 		RespondWithError(w, http.StatusBadRequest, "Unable to create the user")
