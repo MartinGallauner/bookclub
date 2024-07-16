@@ -105,7 +105,7 @@ func TestCreateNewUser(t *testing.T) {
 	assert.Equal(t, got.Email, "mock@gmail.com")
 	assert.Equal(t, got.ID, uint(1))
 
-	AssertStatus(t, response.Code, http.StatusOK)
+	assertStatus(t, response.Code, http.StatusOK)
 }
 
 // Tests to create link request
@@ -140,7 +140,7 @@ func TestRequestLink(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
 	}
-	test.AssertStatus(t, response.Code, http.StatusOK)
+	assertStatus(t, response.Code, http.StatusOK)
 	assert.Equal(t, got.SenderId, user1.ID)
 	assert.Equal(t, got.ReceiverId, user2.ID)
 	savedLink, err := s.LinkRepository.Get(user1.ID, user2.ID)
@@ -185,7 +185,7 @@ func TestGetLinks(t *testing.T) {
 			t.Errorf("User 1 is not supposed to have any link to user 3")
 		}
 	}
-	test.AssertStatus(t, response.Code, http.StatusOK)
+	assertStatus(t, response.Code, http.StatusOK)
 }
 
 // Tests to accept an existing link request
@@ -221,7 +221,7 @@ func TestAcceptLink(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
 	}
-	test.AssertStatus(t, response.Code, http.StatusOK)
+	assertStatus(t, response.Code, http.StatusOK)
 
 	fetchLink, _ := s.LinkRepository.Get(user1.ID, user2.ID)
 
@@ -257,7 +257,7 @@ func TestLogin(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
 	}
-	test.AssertStatus(t, response.Code, http.StatusOK)
+	assertStatus(t, response.Code, http.StatusOK)
 
 	//persisted
 	persistedUser, err := s.UserRepository.GetByEmail(testUser.Email)
@@ -289,7 +289,7 @@ func TestLoginOfNewUser(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unable to parse response from server %q, '%v'", response.Body, err)
 	}
-	test.AssertStatus(t, response.Code, http.StatusOK)
+	assertStatus(t, response.Code, http.StatusOK)
 
 	//persisted
 	persistedUser, err := s.UserRepository.GetByEmail("alfred@gmail.com")
@@ -300,4 +300,18 @@ func TestLoginOfNewUser(t *testing.T) {
 	assert.Equal(t, got.Name, "Alfred")
 	assert.Equal(t, got.Email, "alfred@gmail.com")
 	assert.Equal(t, got.Jwt, "mock token")
+}
+
+func assertResponseBody(t testing.TB, got, want string) {
+	t.Helper()
+	if got != want {
+		t.Errorf("response body is wrong, got %q want %q", got, want)
+	}
+}
+
+func assertStatus(t testing.TB, got, want int) { //TODO: consider removing that helper and assert inline
+	t.Helper()
+	if got != want {
+		t.Errorf("did not get correct status, got %d, want %d", got, want)
+	}
 }
