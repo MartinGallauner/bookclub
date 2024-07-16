@@ -166,7 +166,7 @@ func TestSearchBookInNetwork(t *testing.T) {
 
 	//when
 	
-	requestBody := server.CollectionService.SearchRequest{UserId: uint(1), ISBN: "1234567890"}
+	requestBody := SearchRequest{UserId: uint(1), ISBN: "1234567890"}
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {
 		return
