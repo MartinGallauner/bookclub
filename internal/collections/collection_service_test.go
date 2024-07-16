@@ -13,7 +13,6 @@ import (
 	"github.com/martingallauner/bookclub/internal/client"
 	"github.com/martingallauner/bookclub/internal/server"
 	"github.com/martingallauner/bookclub/internal/repository"
-	"github.com/martingallauner/bookclub/test"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
