@@ -54,6 +54,10 @@ class _MyHomePageState extends State<MyHomePage>{
     return LayoutBuilder(
         builder: (context, constraints) {
           return Scaffold(
+            appBar: AppBar(
+              title: Text('Book Club'),
+              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            ),
             body: Row(
               children: [
                 SafeArea(
