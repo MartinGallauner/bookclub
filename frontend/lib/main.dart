@@ -61,11 +61,11 @@ class _MyHomePageState extends State<MyHomePage>{
                     extended: constraints.maxWidth >= 600,
                     destinations: [
                       NavigationRailDestination(
-                        icon: Icon(Icons.home),
+                        icon: Icon(Icons.book),
                         label: Text('Your Library'),
                       ),
                       NavigationRailDestination(
-                        icon: Icon(Icons.favorite),
+                        icon: Icon(Icons.search),
                         label: Text('Search'),
                       ),
                     ],
