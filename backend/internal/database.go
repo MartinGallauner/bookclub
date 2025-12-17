@@ -36,7 +36,7 @@ func SetupDatabase(config DatabaseConfig) (*gorm.DB, error) {
 	}
 	// commented out to use the connection string provided by Digital Ocean
 	/* connString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=%s",
-		config.Host, config.DbUser, config.Password, config.Dbname, config.Port, config.Sslmode, config.Timezone) */
+	config.Host, config.DbUser, config.Password, config.Dbname, config.Port, config.Sslmode, config.Timezone) */
 	return SetupDatabaseWithDSN(config.DatabaseUrl)
 }
 

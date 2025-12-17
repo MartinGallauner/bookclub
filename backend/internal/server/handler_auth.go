@@ -3,9 +3,9 @@ package server
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"github.com/markbates/goth/gothic"
 	"gorm.io/gorm"
+	"net/http"
 )
 
 func (cfg *BookclubServer) handlerCallback(w http.ResponseWriter, r *http.Request) {

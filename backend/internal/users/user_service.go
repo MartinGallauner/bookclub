@@ -14,7 +14,8 @@ type Service struct {
 	bookRepository repository.BookRepository
 	linkRepository repository.LinkRepository
 }
-//TODO: check whats needed
+
+// TODO: check whats needed
 func New(userRepository repository.UserRepository, bookRepository repository.BookRepository, linkRepository repository.LinkRepository, client client.Client) *Service {
 	return &Service{userRepository: userRepository, bookRepository: bookRepository, linkRepository: linkRepository}
 }

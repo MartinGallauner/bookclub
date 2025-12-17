@@ -3,8 +3,8 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"github.com/martingallauner/bookclub/internal"
+	"net/http"
 )
 
 func (cfg *BookclubServer) handlerCreateLink(w http.ResponseWriter, r *http.Request) {

@@ -21,7 +21,7 @@
 go.work
 
 # IDE
-.idea
+../.idea
 .vscode
 .bruno
 

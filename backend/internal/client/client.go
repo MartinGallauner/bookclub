@@ -3,12 +3,12 @@ package client
 import (
 	"encoding/json"
 	"fmt"
+	internal "github.com/martingallauner/bookclub/internal"
 	"io"
 	"net"
 	"net/http"
 	"strings"
 	"time"
-	internal "github.com/martingallauner/bookclub/internal"
 )
 
 type Client struct {

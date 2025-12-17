@@ -2,8 +2,8 @@ package collections
 
 import (
 	"github.com/martingallauner/bookclub/internal"
-	"github.com/martingallauner/bookclub/internal/repository"
 	"github.com/martingallauner/bookclub/internal/client"
+	"github.com/martingallauner/bookclub/internal/repository"
 )
 
 type Service struct {

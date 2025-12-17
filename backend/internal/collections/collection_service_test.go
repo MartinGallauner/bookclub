@@ -2,22 +2,22 @@ package collections
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/magiconair/properties/assert"
+	"github.com/martingallauner/bookclub/internal"
+	"github.com/martingallauner/bookclub/internal/client"
+	"github.com/martingallauner/bookclub/internal/repository"
+	"github.com/martingallauner/bookclub/internal/server"
+	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/modules/postgres"
+	"github.com/testcontainers/testcontainers-go/wait"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"github.com/martingallauner/bookclub/internal"
-	"github.com/martingallauner/bookclub/internal/client"
-	"github.com/martingallauner/bookclub/internal/server"
-	"github.com/martingallauner/bookclub/internal/repository"
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/modules/postgres"
-	"github.com/testcontainers/testcontainers-go/wait"
-	"context"
-	"log"
 	"time"
 )
 
@@ -141,7 +141,6 @@ func TestAddBookToUnknownUser(t *testing.T) {
 	assertStatus(t, response.Code, http.StatusBadRequest)
 }
 
-
 // Tests search function when one user has the book
 func TestSearchBookInNetwork(t *testing.T) {
 	//given
@@ -165,7 +164,7 @@ func TestSearchBookInNetwork(t *testing.T) {
 	}
 
 	//when
-	
+
 	requestBody := SearchRequest{UserId: uint(1), ISBN: "1234567890"}
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {

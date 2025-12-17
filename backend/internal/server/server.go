@@ -4,19 +4,19 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
-	"net/http"
-	"os"
-	"strings"
-	"time"
 	"github.com/golang-jwt/jwt/v5"
 	_ "github.com/martingallauner/bookclub/docs"
 	internal "github.com/martingallauner/bookclub/internal"
 	client "github.com/martingallauner/bookclub/internal/client"
 	"github.com/martingallauner/bookclub/internal/collections"
-	"github.com/martingallauner/bookclub/internal/users"
 	repository "github.com/martingallauner/bookclub/internal/repository"
+	"github.com/martingallauner/bookclub/internal/users"
 	httpSwagger "github.com/swaggo/http-swagger"
+	"log"
+	"net/http"
+	"os"
+	"strings"
+	"time"
 )
 
 // StartServer starts the server :)
@@ -41,16 +41,15 @@ type BookclubServer struct {
 	JwtService     internal.JwtService
 	http.Handler
 	CollectionService *collections.Service
-	UsersService *users.Service
-
+	UsersService      *users.Service
 }
 
-func New(client client.Client, 
-	bookRepository repository.BookRepository, 
-	userRepository repository.UserRepository, 
-	linkRepository repository.LinkRepository, 
-	authService internal.AuthService, 
-	jwtService internal.JwtService, 
+func New(client client.Client,
+	bookRepository repository.BookRepository,
+	userRepository repository.UserRepository,
+	linkRepository repository.LinkRepository,
+	authService internal.AuthService,
+	jwtService internal.JwtService,
 	collectionService *collections.Service,
 	usersService *users.Service) *BookclubServer {
 	s := new(BookclubServer)
