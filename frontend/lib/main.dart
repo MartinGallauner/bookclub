@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/library_page.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -42,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage>{
     Widget page;
     switch (selectedIndex) {
       case 0:
-        page = Placeholder();
+        page = LibraryPage();
         break;
       case 1:
         page = Placeholder();
