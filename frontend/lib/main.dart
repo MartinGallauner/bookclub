@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/library_page.dart';
+import 'package:frontend/pages/search_page.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -46,6 +47,9 @@ class _MyHomePageState extends State<MyHomePage>{
         page = LibraryPage();
         break;
       case 1:
+        page = SearchPage();
+        break;
+      case 2:
         page = Placeholder();
         break;
       default:
@@ -72,6 +76,10 @@ class _MyHomePageState extends State<MyHomePage>{
                       NavigationRailDestination(
                         icon: Icon(Icons.search),
                         label: Text('Search'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.person),
+                        label: Text('Network'),
                       ),
                     ],
                     selectedIndex: selectedIndex,
