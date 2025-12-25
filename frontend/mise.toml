@@ -1,3 +1,11 @@
+[tools]
+dart = "latest"
+
+[tasks.analyze]
+description = "Runs flutters static code analyzer"
+run = "flutter analyze"
+
 [tasks.start]
 description = "Starts the app locally for Chrome"
 run = "flutter run -d web-server --web-port=8080"
+
