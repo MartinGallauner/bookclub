@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/library_page.dart';
 import 'package:frontend/pages/network_page.dart';
@@ -107,13 +109,13 @@ class _MyHomePageState extends State<MyHomePage>{
             ? FloatingActionButton(
                 onPressed: () {
                   if (selectedIndex == 0) {
-                    print('Add book pressed');
+                    log('pressed add-book-button');
                     showModalBottomSheet(
                         context: context,
                         builder: (context) => AddBookBottomSheet(),
                     );
                   } else if (selectedIndex == 2) {
-                    print('Add contact pressed');
+                    log('pressed add-contact-button');
                     showModalBottomSheet(
                       context: context,
                       builder: (context) => AddContactBottomSheet(),
