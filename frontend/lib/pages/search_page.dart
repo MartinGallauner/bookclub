@@ -8,6 +8,7 @@ class SearchPage extends StatelessWidget {
     return Center(
       child: Column(
         children: [
+          SizedBox(height: 20),
           SearchBar(
             hintText: 'What book are you looking for?',
           )
