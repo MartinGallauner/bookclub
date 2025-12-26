@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/pages/library_page.dart';
 import 'package:frontend/pages/network_page.dart';
 import 'package:frontend/pages/search_page.dart';
+import 'package:frontend/widgets/add_book_bottom_sheet.dart';
+import 'package:frontend/widgets/add_contact_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -106,8 +108,16 @@ class _MyHomePageState extends State<MyHomePage>{
                 onPressed: () {
                   if (selectedIndex == 0) {
                     print('Add book pressed');
+                    showModalBottomSheet(
+                        context: context,
+                        builder: (context) => AddBookBottomSheet(),
+                    );
                   } else if (selectedIndex == 2) {
                     print('Add contact pressed');
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) => AddContactBottomSheet(),
+                    );
                   }
                 },
               child: Icon(Icons.add),
