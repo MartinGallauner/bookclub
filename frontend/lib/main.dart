@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/library_page.dart';
+import 'package:frontend/pages/network_page.dart';
 import 'package:frontend/pages/search_page.dart';
 import 'package:provider/provider.dart';
 
@@ -52,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage>{
         page = SearchPage();
         break;
       case 2:
-        page = Placeholder();
+        page = NetworkPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
