@@ -10,6 +10,54 @@ This is the Flutter web frontend for a bookclub application. The app uses a resp
 
 Bookclub allows users to scan the barcodes of their physical books to build their personal library digitally. Users can then make their library searchable for their friends, enabling book discovery and sharing within their social network.
 
+## Current Status
+
+### ✅ What's Already Implemented
+
+**UI Foundation**:
+- NavigationRail-based navigation with 3 pages
+- Responsive layout (extends at 600px+ breakpoint)
+- Provider state management setup (MyAppState)
+- Theme with ColorScheme.fromSeed (indigoAccent)
+
+**Pages**:
+- Library Page: GridView displaying user's book collection with mock data
+- Network Page: GridView showing contacts/friends with mock data (12 pirate-themed test contacts)
+- Search Page: Search interface for finding books
+
+**Widgets**:
+- AddBookBottomSheet: Bottom sheet for adding new books to library
+- AddContactBottomSheet: Bottom sheet for adding new contacts with search functionality
+- ContactCard: Card widget for displaying contact information
+- Book cards: Grid cards for displaying books in library
+
+**Current Data**: All pages use mock/test data (no backend connection yet)
+
+### 🚧 Planned: Firebase Migration
+
+**Backend Transition**:
+- **Removing**: The existing Go backend will be removed
+- **Replacing with**: Firebase serverless infrastructure
+
+**Firebase Services to Integrate**:
+1. **Firebase Auth**: User authentication and identity management
+2. **Cloud Firestore**: NoSQL database for users, books, friend connections
+3. **Firebase App Check**: Security and abuse prevention
+
+**Migration Benefits**:
+- No server infrastructure to maintain
+- Offline-first with real-time synchronization
+- Automatic scaling
+- Built-in security rules
+
+**Next Steps**:
+1. Set up Firebase project and FlutterFire packages
+2. Implement Firebase Authentication
+3. Design Firestore data model (users, books, friendships)
+4. Replace mock data with Firestore queries
+5. Add App Check for security
+6. Remove Go backend dependencies
+
 ## Common Commands
 
 ### Development
