@@ -101,11 +101,24 @@ class _MyHomePageState extends State<MyHomePage>{
                 ),
               ],
             ),
+            floatingActionButton: (selectedIndex == 0 || selectedIndex == 2)
+            ? FloatingActionButton(
+                onPressed: () {
+                  if (selectedIndex == 0) {
+                    print('Add book pressed');
+                  } else if (selectedIndex == 2) {
+                    print('Add contact pressed');
+                  }
+                },
+              child: Icon(Icons.add),
+            )
+                : null,
+              );
+            }
           );
         }
-    );
   }
-}
+
 
 
 
