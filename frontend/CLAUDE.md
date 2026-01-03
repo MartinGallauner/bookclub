@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Important: Development Preference
+
+**NEVER write code directly for the user in this project.** Instead, provide guidance, explanations, and instructions on how to implement features. The user wants to learn by doing the implementation themselves.
+
 ## Project Overview
 
 This is the Flutter web frontend for a bookclub application. The app uses a responsive navigation rail pattern with Provider for state management.
