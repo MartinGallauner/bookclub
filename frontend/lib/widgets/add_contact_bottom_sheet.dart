@@ -1,9 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-/**
- * This widget provides the buttom sheet, offering input fields to add new contacts
- */
+/// This widget provides the buttom sheet, offering input fields to add new contacts
+
 class AddContactBottomSheet extends StatelessWidget {
   const AddContactBottomSheet({super.key});
 

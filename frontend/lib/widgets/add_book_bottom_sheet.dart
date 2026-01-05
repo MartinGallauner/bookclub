@@ -1,11 +1,8 @@
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-/**
- * This buttom sheet offers input fields to add a new book
- */
+/// This bottom sheet offers input fields to add a new book
 
 class AddBookBottomSheet extends StatelessWidget {
   const AddBookBottomSheet({super.key});
