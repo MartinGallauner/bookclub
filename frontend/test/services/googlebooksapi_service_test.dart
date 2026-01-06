@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/services/openlibrary_service.dart';
+import 'package:frontend/services/googlebooksapi_service.dart';
 
 void main() {
 group('OpenLibraryService', () {
   group('searchByISBN', () {
     test('returns book data when valid', () async {
-      final service = OpenLibraryService();
+      final service = GoogleBooksAPIService();
       const isbn = '0451524934';
       final result = await service.searchByISBN(isbn);
 
