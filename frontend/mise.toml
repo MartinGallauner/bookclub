@@ -5,6 +5,14 @@ dart = "latest"
 description = "Runs flutters static code analyzer"
 run = "flutter analyze"
 
+[tasks.dependencies]
+description = "Loads specified dependencies"
+run = "flutter pub get"
+
+[tasks.test]
+description = "Run flutter tests"
+run = "flutter test"
+
 [tasks.start]
 description = "Starts the app locally for Chrome"
 run = "flutter run -d web-server --web-port=8080"
