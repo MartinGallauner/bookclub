@@ -14,7 +14,7 @@ class AddBookBottomSheet extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text("Go ahead and add another book from your physical bookshelf!"),
+            child: Text("Go ahead and add a book from your physical bookshelf!"),
           ),
           SizedBox(height: 20),
           FractionallySizedBox(
