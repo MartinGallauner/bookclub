@@ -10,9 +10,19 @@ group('GoogleBooksAPI', () {
       final result = await service.searchByISBN(isbn);
 
       expect(result, isNotNull);
-      expect(result.title, contains('1984'));
+      expect(result.title, contains('Nineteen Eighty-four'));
       expect(result.authors, contains('George Orwell'));
       expect(result.isbn, contains('0451524934'));
+    });
+    test('returns harry potter by ISBN', () async {
+      final service = GoogleBooksAPIService();
+      const isbn = '0135957052';
+      final result = await service.searchByISBN(isbn);
+
+      expect(result, isNotNull);
+      expect(result.title, contains('The Pragmatic Programmer'));
+      expect(result.authors, contains('David Hurst Thomas'));
+      expect(result.isbn, contains('0135957052'));
     });
   });
 
