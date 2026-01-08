@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../models/book.dart';
+
 class LibraryPage extends StatelessWidget {
   const LibraryPage({super.key});
 
@@ -7,12 +9,12 @@ class LibraryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Mock data for testing
     final List<Book> books = [
-      Book(title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', coverUrl: ''),
-      Book(title: '1984', author: 'George Orwell', coverUrl: ''),
-      Book(title: 'To Kill a Mockingbird', author: 'Harper Lee', coverUrl: ''),
-      Book(title: 'Pride and Prejudice', author: 'Jane Austen', coverUrl: ''),
-      Book(title: 'The Hobbit', author: 'J.R.R. Tolkien', coverUrl: ''),
-      Book(title: 'Harry Potter', author: 'J.K. Rowling', coverUrl: ''),
+      Book(title: 'The Great Gatsby', authors: ['F. Scott Fitzgerald'], coverUrl: '', isbn: ''),
+      Book(title: '1984', authors: ['George Orwell'], coverUrl: '', isbn: ''),
+      Book(title: 'To Kill a Mockingbird', authors: ['Harper Lee'], coverUrl: '', isbn: ''),
+      Book(title: 'Pride and Prejudice', authors: ['Jane Austen'], coverUrl: '', isbn: ''),
+      Book(title: 'The Hobbit', authors: ['J.R.R. Tolkien'], coverUrl: '', isbn: ''),
+      Book(title: 'Harry Potter', authors: ['J.K. Rowling'], coverUrl: '', isbn: ''),
     ];
 
     return Padding(
@@ -33,17 +35,6 @@ class LibraryPage extends StatelessWidget {
   }
 }
 
-class Book {
-  final String title;
-  final String author;
-  final String coverUrl;
-
-  Book({
-    required this.title,
-    required this.author,
-    required this.coverUrl,
-  });
-}
 
 class BookCard extends StatelessWidget {
   final Book book;
@@ -87,7 +78,7 @@ class BookCard extends StatelessWidget {
               ),
               SizedBox(height: 4),
               Text(
-                book.author,
+                book.authors[0],
                 style: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 12,
