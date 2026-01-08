@@ -4,18 +4,16 @@ import 'package:frontend/services/googlebooksapi_service.dart';
 void main() {
 group('GoogleBooksAPI', () {
   group('searchByISBN', () {
-    test('returns book data when valid', () async {
+    test('returns 1984 by ISBN', () async {
       final service = GoogleBooksAPIService();
       const isbn = '0451524934';
       final result = await service.searchByISBN(isbn);
 
       expect(result, isNotNull);
-      //expect(result.title, contains('1984'));
-
-
-
+      expect(result.title, contains('1984'));
+      expect(result.authors, contains('George Orwell'));
+      expect(result.isbn, contains('0451524934'));
     });
-    test('throws when empty', () {});
   });
 
   group('searchByTitle', () {
