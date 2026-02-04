@@ -26,4 +26,4 @@ run = "flutter build web"
 [tasks.deploy]
 description = "Deploys the WEB app"
 depends = ['build-web']
-run = 'flutter deploy --only hosting'
+run = 'firebase deploy --only hosting'
