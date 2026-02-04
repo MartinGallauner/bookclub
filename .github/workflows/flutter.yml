@@ -42,8 +42,8 @@ jobs:
 
       - name: Run tests
         working-directory: frontend
-        run: mise run test --skip-deps
+        run: mise run --skip-deps test
         
       - name: Run build
         working-directory: frontend
-        run: mise build --skip-deps
+        run: mise --skip-deps run build
