@@ -18,12 +18,12 @@ run = "flutter test"
 description = "Starts the app locally for Chrome"
 run = "flutter run -d web-server --web-port=8080"
 
-[tasks.build-web]
+[tasks.build]
 description = "Builds the app for WEB"
 depends = ['test']
 run = "flutter build web"
 
 [tasks.deploy]
 description = "Deploys the WEB app"
-depends = ['build-web']
+depends = ['build']
 run = 'firebase deploy --only hosting'
