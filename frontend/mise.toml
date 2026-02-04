@@ -11,7 +11,7 @@ run = "flutter pub get"
 
 [tasks.test]
 description = "Run flutter tests"
-depends = ['analyze']
+depends = ['dependencies', 'analyze']
 run = "flutter test"
 
 [tasks.start]
