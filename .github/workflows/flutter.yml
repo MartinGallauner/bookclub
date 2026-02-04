@@ -3,7 +3,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Dart
+name: Validation
 
 on:
   push:
@@ -26,11 +26,20 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./frontend
-        run: flutter pub get
+        run: mise run dependencies
 
       - name: Analyze project source
         working-directory: ./frontend
-        run: flutter analyze
+        run: mise run analyze
+
+      - name: Run tests
+        working-directory: ./frontend
+        run: mise test
+        
+      - name: Run build
+        working-directory: ./frontend
+        run: mise build  
+
 
       # Your project will need to have tests in test/ and a dependency on
       # package:test for this step to succeed. Note that Flutter projects will
