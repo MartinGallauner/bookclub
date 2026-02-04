@@ -20,7 +20,7 @@ jobs:
       
       - uses: jdx/mise-action@v2
         with:
-          version: 2024.12.14 # [default: latest] mise version to install
+          version: 2026.02.02 # [default: latest] mise version to install
           install: true # [default: true] run `mise install`
           cache: true # [default: true] cache mise using GitHub's cache
           experimental: true # [default: false] enable experimental features
