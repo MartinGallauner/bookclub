@@ -19,10 +19,12 @@ jobs:
           install: true # [default: true] run `mise install`
           cache: true # [default: true] cache mise using GitHub's cache
           experimental: true # [default: false] enable experimental features
-      - run: mise run deploy
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BOOKCLUB_6C433 }}
           channelId: live
           projectId: bookclub-6c433
+      - name: Deploy the project
+        working-directory: frontend
+        run: mise run deploy
