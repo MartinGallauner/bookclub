@@ -24,7 +24,7 @@ jobs:
           install: true # [default: true] run `mise install`
           cache: true # [default: true] cache mise using GitHub's cache
           experimental: true # [default: false] enable experimental features
-          # automatically write this mise.toml file
+          working_directory: frontend
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -33,25 +33,13 @@ jobs:
           flutter-version: 3.38.5
 
       - name: Install dependencies
-        working-directory: ./frontend
         run: mise run dependencies
 
       - name: Analyze project source
-        working-directory: ./frontend
         run: mise run analyze
 
       - name: Run tests
-        working-directory: ./frontend
-        run: mise test
+        run: mise run test --skip-deps
         
       - name: Run build
-        working-directory: ./frontend
-        run: mise build  
-
-
-      # Your project will need to have tests in test/ and a dependency on
-      # package:test for this step to succeed. Note that Flutter projects will
-      # want to change this to 'flutter test'.
-      #- name: Run tests
-      #  working-directory: ./frontend
-       # run: flutter test
+        run: mise build --skip-deps
