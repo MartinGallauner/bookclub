@@ -37,10 +37,13 @@ jobs:
         run: mise run dependencies
 
       - name: Analyze project source
+        working-directory: frontend
         run: mise run analyze
 
       - name: Run tests
+        working-directory: frontend
         run: mise run test --skip-deps
         
       - name: Run build
+        working-directory: frontend
         run: mise build --skip-deps
