@@ -37,6 +37,12 @@ Bookclub allows users to scan the barcodes of their physical books to build thei
 
 **Current Data**: All pages use mock/test data (no backend connection yet)
 
+**Dev Deployment**:
+- Firebase Hosting is set up as the dev deployment environment
+- Firebase project: `bookclub-6c433`
+- Hosted at: `https://bookclub-6c433.web.app`
+- Deploy via `mise run deploy` (runs analyze → test → build → deploy)
+
 ### 🚧 Planned: Firebase Migration
 
 **Backend Transition**:
@@ -55,7 +61,7 @@ Bookclub allows users to scan the barcodes of their physical books to build thei
 - Built-in security rules
 
 **Next Steps**:
-1. Set up Firebase project and FlutterFire packages
+1. Set up FlutterFire packages
 2. Implement Firebase Authentication
 3. Design Firestore data model (users, books, friendships)
 4. Replace mock data with Firestore queries
@@ -76,6 +82,16 @@ mise start
 flutter run -d chrome
 ```
 
+### Mise Tasks
+All common workflows are available as mise tasks (defined in `mise.toml`):
+```bash
+mise run start        # Run the app locally on web (port 8080)
+mise run analyze      # Run Flutter static code analyzer
+mise run test         # Run tests (depends on analyze)
+mise run build-web    # Build for web (depends on test)
+mise run deploy       # Deploy to dev (Firebase Hosting) (depends on build-web)
+```
+
 ### Build & Deploy
 ```bash
 # Build for web production
@@ -84,6 +100,9 @@ flutter build web
 # Build with web renderer options
 flutter build web --web-renderer canvaskit  # Better performance for complex UIs
 flutter build web --web-renderer html       # Smaller download size
+
+# Deploy to dev environment (Firebase Hosting)
+mise run deploy       # Runs analyze → test → build → deploy
 ```
 
 ### Testing
