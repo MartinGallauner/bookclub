@@ -11,9 +11,19 @@ run = "flutter pub get"
 
 [tasks.test]
 description = "Run flutter tests"
+depends = ['analyze']
 run = "flutter test"
 
 [tasks.start]
 description = "Starts the app locally for Chrome"
 run = "flutter run -d web-server --web-port=8080"
 
+[tasks.build-web]
+description = "Builds the app for WEB"
+depends = ['test']
+run = "flutter build web"
+
+[tasks.deploy]
+description = "Deploys the WEB app"
+depends = ['build-web']
+run = 'flutter deploy --only hosting'
