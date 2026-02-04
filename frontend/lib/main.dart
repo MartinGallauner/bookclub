@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage>{
         builder: (context, constraints) {
           return Scaffold(
             appBar: AppBar(
-              title: Text('Book Club'),
+              title: Text('BookClub'),
               backgroundColor: Theme.of(context).colorScheme.inversePrimary,
             ),
             body: Row(
