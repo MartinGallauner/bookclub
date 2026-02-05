@@ -7,8 +7,12 @@ import 'package:frontend/pages/search_page.dart';
 import 'package:frontend/widgets/add_book_bottom_sheet.dart';
 import 'package:frontend/widgets/add_contact_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:frontend/firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
