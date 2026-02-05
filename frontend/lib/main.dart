@@ -25,25 +25,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       builder: (context, child) {
-        var appState = context.watch<MyAppState>();
-        var user = appState.user;
-        var loggedIn = user != null;
-        Widget next;
-        if (loggedIn) {
-          next = MyHomePage();
-        } else {
-          next = LoginPage();
-        }
         return MaterialApp(
           title: 'bookclub',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent),
           ),
-          home: next,
+          //if user is not logged in, send to them to the Login Page.
+          home: context.watch<MyAppState>().user == null
+              ? LoginPage()
+              : MyHomePage(),
         );
       },
     );
@@ -62,8 +55,9 @@ class MyAppState extends ChangeNotifier {
   }
 
   @override
-  void dispose() { //we need the dispose to clean up the connection we made above when calling .listen()
-     _authSubscription.cancel();
+  void dispose() {
+    //we need the dispose to clean up the connection we made above when calling .listen()
+    _authSubscription.cancel();
     super.dispose();
   }
 }
@@ -75,7 +69,7 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage>{
+class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0;
 
   @override
@@ -96,79 +90,69 @@ class _MyHomePageState extends State<MyHomePage>{
     }
 
     return LayoutBuilder(
-        builder: (context, constraints) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('BookClub'),
-              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-            ),
-            body: Row(
-              children: [
-                SafeArea(
-                  child: NavigationRail(
-                    extended: constraints.maxWidth >= 600,
-                    destinations: [
-                      NavigationRailDestination(
-                        icon: Icon(Icons.book),
-                        label: Text('Your Library'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.search),
-                        label: Text('Search'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.person),
-                        label: Text('Network'),
-                      ),
-                    ],
-                    selectedIndex: selectedIndex,
-                    onDestinationSelected: (value) {
-                      setState(() {
-                        selectedIndex = value;
-                      });
-                    },
-                  ),
+      builder: (context, constraints) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('BookClub'),
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          ),
+          body: Row(
+            children: [
+              SafeArea(
+                child: NavigationRail(
+                  extended: constraints.maxWidth >= 600,
+                  destinations: [
+                    NavigationRailDestination(
+                      icon: Icon(Icons.book),
+                      label: Text('Your Library'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.search),
+                      label: Text('Search'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.person),
+                      label: Text('Network'),
+                    ),
+                  ],
+                  selectedIndex: selectedIndex,
+                  onDestinationSelected: (value) {
+                    setState(() {
+                      selectedIndex = value;
+                    });
+                  },
                 ),
-                Expanded(
-                  child: Container(
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                    child: page,
-                  ),
+              ),
+              Expanded(
+                child: Container(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  child: page,
                 ),
-              ],
-            ),
-            floatingActionButton: (selectedIndex == 0 || selectedIndex == 2)
-            ? FloatingActionButton(
-                onPressed: () {
-                  if (selectedIndex == 0) {
-                    log('pressed add-book-button');
-                    showModalBottomSheet(
+              ),
+            ],
+          ),
+          floatingActionButton: (selectedIndex == 0 || selectedIndex == 2)
+              ? FloatingActionButton(
+                  onPressed: () {
+                    if (selectedIndex == 0) {
+                      log('pressed add-book-button');
+                      showModalBottomSheet(
                         context: context,
                         builder: (context) => AddBookBottomSheet(),
-                    );
-                  } else if (selectedIndex == 2) {
-                    log('pressed add-contact-button');
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (context) => AddContactBottomSheet(),
-                    );
-                  }
-                },
-              child: Icon(Icons.add),
-            )
-                : null,
-              );
-            }
-          );
-        }
+                      );
+                    } else if (selectedIndex == 2) {
+                      log('pressed add-contact-button');
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) => AddContactBottomSheet(),
+                      );
+                    }
+                  },
+                  child: Icon(Icons.add),
+                )
+              : null,
+        );
+      },
+    );
   }
-
-
-
-
-
-
-
-
-
-
+}
