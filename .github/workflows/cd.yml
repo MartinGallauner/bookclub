@@ -16,6 +16,16 @@ jobs:
           install: true # [default: true] run `mise install`
           cache: true # [default: true] cache mise using GitHub's cache
           experimental: true # [default: false] enable experimental features
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.38.5
+
+      - name: Build
+        working-directory: frontend
+        run: mise run build
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
@@ -23,6 +33,3 @@ jobs:
           channelId: live
           projectId: bookclub-6c433
           entryPoint: frontend
-      - name: Deploy the project
-        working-directory: frontend
-        run: mise run deploy
