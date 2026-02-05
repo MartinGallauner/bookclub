@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/library_page.dart';
+import 'package:frontend/pages/login_page.dart';
 import 'package:frontend/pages/network_page.dart';
 import 'package:frontend/pages/search_page.dart';
 import 'package:frontend/services/auth_service.dart';
@@ -24,17 +25,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
-      child: MaterialApp(
-        title: 'bookclub',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent),
-        ),
-        home: MyHomePage(),
-      ),
-
-
+      builder: (context, child) {
+        var appState = context.watch<MyAppState>();
+        var user = appState.user;
+        var loggedIn = user != null;
+        Widget next;
+        if (loggedIn) {
+          next = MyHomePage();
+        } else {
+          next = LoginPage();
+        }
+        return MaterialApp(
+          title: 'bookclub',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent),
+          ),
+          home: next,
+        );
+      },
     );
   }
 }
