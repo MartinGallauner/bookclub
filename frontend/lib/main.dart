@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           title: 'bookclub',
+          debugShowCheckedModeBanner: false,
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent),
           ),
@@ -95,6 +96,9 @@ class _MyHomePageState extends State<MyHomePage> {
           appBar: AppBar(
             title: Text('BookClub'),
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            actions: [
+              IconButton(onPressed: AuthService().signOut, icon: Icon(Icons.logout))
+            ],
           ),
           body: Row(
             children: [
