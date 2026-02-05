@@ -2,6 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:frontend/services/googlebooksapi_service.dart';
+import 'package:frontend/widgets/book_card.dart';
+
+import '../models/book.dart';
 
 /// This bottom sheet offers input fields to add a new book
 class AddBookBottomSheet extends StatefulWidget {
@@ -12,11 +15,14 @@ class AddBookBottomSheet extends StatefulWidget {
 }
 
 class _AddBookBottomSheetState extends State<AddBookBottomSheet> {
+  Book? result;
+
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        children: [
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
@@ -28,8 +34,20 @@ class _AddBookBottomSheetState extends State<AddBookBottomSheet> {
             widthFactor: 0.8,
             child: TextField(
               onSubmitted: (isbn) async {
-                final book = await GoogleBooksAPIService().searchByISBN(isbn);
-                log(book.title);
+                print('1. onSubmitted fired with ISBN: $isbn');
+                try {
+                  final fetchedBook = await GoogleBooksAPIService()
+                      .searchByISBN(isbn);
+                  print('2. API returned book: ${fetchedBook.title}');
+                  setState(() {
+                    result = fetchedBook;
+                    print(
+                      '3. set state called, result is not ${result?.title}',
+                    );
+                  });
+                } catch (e) {
+                  print('ERROR: $e');
+                }
               },
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.search),
@@ -45,7 +63,14 @@ class _AddBookBottomSheetState extends State<AddBookBottomSheet> {
             icon: Icon(Icons.camera_alt),
             label: Text("Scan ISBN code"),
           ),
-        ],
+          if (result != null)
+            SizedBox(
+              width: 200,
+              height: 280,
+              child: BookCard(book: result!, colorIndex: 1),
+            ),
+          ],
+        ),
       ),
     );
   }
