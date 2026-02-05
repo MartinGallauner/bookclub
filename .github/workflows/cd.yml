@@ -3,10 +3,7 @@
 
 name: delivery
 on:
-  workflow_run:
-    workflows: [ integration ]
-    types:
-      - completed
+  workflow_dispatch:
 
 jobs:
   build_and_deploy:
