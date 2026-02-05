@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/library_page.dart';
 import 'package:frontend/pages/network_page.dart';
 import 'package:frontend/pages/search_page.dart';
+import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/widgets/add_book_bottom_sheet.dart';
 import 'package:frontend/widgets/add_contact_bottom_sheet.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +40,21 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
+  User? user;
+  late final StreamSubscription<User?> _authSubscription;
 
+  MyAppState() {
+    _authSubscription = AuthService().authStateChanges().listen((newUser) {
+      user = newUser;
+      notifyListeners(); //causes all widgets watching this state to rebuild when the auth state changes
+    });
+  }
+
+  @override
+  void dispose() { //we need the dispose to clean up the connection we made above when calling .listen()
+     _authSubscription.cancel();
+    super.dispose();
+  }
 }
 
 class MyHomePage extends StatefulWidget {
