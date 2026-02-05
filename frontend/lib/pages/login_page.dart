@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/services/auth_service.dart';
 
@@ -12,11 +11,11 @@ class LoginPage extends StatelessWidget {
         children: [
           Text("Please login"),
           FilledButton.icon(
-              onPressed: AuthService().signInWithGoogle, label: Text("Sign in with Google"),)
+            onPressed: AuthService().signInWithGoogle,
+            label: Text("Sign in with Google"),
+          ),
         ],
       ),
     );
   }
-
-
 }
