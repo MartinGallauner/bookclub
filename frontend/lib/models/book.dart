@@ -9,9 +9,5 @@ class Book {
     required this.authors,
     required this.isbn,
     required this.coverUrl,
-
   });
-
-
 }
-
