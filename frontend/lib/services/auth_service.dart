@@ -1,9 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 class AuthService {
   /// This class provides service functions for everything concerned with (firebase) authentication
 
-  void signInWithGoogle() {}
+  Future<UserCredential> signInWithGoogle() {
+    return FirebaseAuth.instance.signInWithPopup(GoogleAuthProvider());
+  }
 
-  void signOut() {}
+  void signOut() {
+    FirebaseAuth.instance.signOut();
+  }
 
-  void authStateChanges() {}
+  Stream<User?> authStateChanges() {
+    return FirebaseAuth.instance.authStateChanges();
+  }
 }
