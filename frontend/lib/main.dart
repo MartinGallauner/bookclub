@@ -99,7 +99,10 @@ class _HomePageState extends State<HomePage> {
             title: Text('BookClub'),
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
             actions: [
-              IconButton(onPressed: AuthService().signOut, icon: Icon(Icons.logout))
+              IconButton(
+                onPressed: AuthService().signOut,
+                icon: Icon(Icons.logout),
+              ),
             ],
           ),
           body: Row(
