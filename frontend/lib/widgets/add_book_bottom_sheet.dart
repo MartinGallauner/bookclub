@@ -64,7 +64,6 @@ class _AddBookBottomSheetState extends State<AddBookBottomSheet> {
               InkWell(
                 onTap: () => {
                   context.read<LibraryService>().addBook(result!),
-                  print('Added book ${result?.title}')
                 },
                 child: SizedBox(
                     width: 200,

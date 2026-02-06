@@ -11,7 +11,6 @@ class LibraryService extends ChangeNotifier{
 
   void addBook(Book book) {
     _collection.add(book);
-    print('library service: added book ${book.title}');
     notifyListeners();
   }
 
