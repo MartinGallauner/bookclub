@@ -23,52 +23,48 @@ class _AddBookBottomSheetState extends State<AddBookBottomSheet> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "Go ahead and add a book from your physical bookshelf!",
-            ),
-          ),
-          SizedBox(height: 20),
-          FractionallySizedBox(
-            widthFactor: 0.8,
-            child: TextField(
-              onSubmitted: (isbn) async {
-                print('1. onSubmitted fired with ISBN: $isbn');
-                try {
-                  final fetchedBook = await GoogleBooksAPIService()
-                      .searchByISBN(isbn);
-                  print('2. API returned book: ${fetchedBook.title}');
-                  setState(() {
-                    result = fetchedBook;
-                    print(
-                      '3. set state called, result is not ${result?.title}',
-                    );
-                  });
-                } catch (e) {
-                  print('ERROR: $e');
-                }
-              },
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.search),
-                hintText: 'Enter ISBN',
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Go ahead and add a book from your physical bookshelf!",
               ),
             ),
-          ),
-          SizedBox(height: 20),
-          FilledButton.icon(
-            onPressed: () {
-              log('pressed book scan button');
-            },
-            icon: Icon(Icons.camera_alt),
-            label: Text("Scan ISBN code"),
-          ),
-          if (result != null)
-            SizedBox(
-              width: 200,
-              height: 280,
-              child: BookCard(book: result!, colorIndex: 1),
+            SizedBox(height: 20),
+            FractionallySizedBox(
+              widthFactor: 0.8,
+              child: TextField(
+                onSubmitted: (isbn) async {
+                  try {
+                    final fetchedBook = await GoogleBooksAPIService()
+                        .searchByISBN(isbn);
+                    setState(() {
+                      result = fetchedBook;
+                      );
+                    });
+                  } catch (e) {
+                    log('ERROR: $e');
+                  }
+                },
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.search),
+                  hintText: 'Enter ISBN',
+                ),
+              ),
             ),
+            SizedBox(height: 20),
+            FilledButton.icon(
+              onPressed: () {
+                log('pressed book scan button');
+              },
+              icon: Icon(Icons.camera_alt),
+              label: Text("Scan ISBN code"),
+            ),
+            if (result != null)
+              SizedBox(
+                width: 200,
+                height: 280,
+                child: BookCard(book: result!, colorIndex: 1),
+              ),
           ],
         ),
       ),
