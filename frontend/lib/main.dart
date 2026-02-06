@@ -18,16 +18,16 @@ import 'package:frontend/firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  runApp(const App());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class App extends StatelessWidget {
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
+      create: (context) => AppState(),
       builder: (context, child) {
         return MaterialApp(
           title: 'bookclub',
@@ -36,21 +36,21 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent),
           ),
           //if user is not logged in, send to them to the Login Page.
-          home: context.watch<MyAppState>().user == null
+          home: context.watch<AppState>().user == null
               ? LoginPage()
-              : MyHomePage(),
+              : HomePage(),
         );
       },
     );
   }
 }
 
-class MyAppState extends ChangeNotifier {
+class AppState extends ChangeNotifier {
   User? user;
   late final StreamSubscription<User?> _authSubscription;
   final LibraryService libraryService = LibraryService();
 
-  MyAppState() {
+  AppState() {
     _authSubscription = AuthService().authStateChanges().listen((newUser) {
       user = newUser;
       notifyListeners(); //causes all widgets watching this state to rebuild when the auth state changes
@@ -65,14 +65,14 @@ class MyAppState extends ChangeNotifier {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _HomePageState extends State<HomePage> {
   var selectedIndex = 0;
 
   @override
