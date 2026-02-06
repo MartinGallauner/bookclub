@@ -8,6 +8,7 @@ import 'package:frontend/pages/login_page.dart';
 import 'package:frontend/pages/network_page.dart';
 import 'package:frontend/pages/search_page.dart';
 import 'package:frontend/services/auth_service.dart';
+import 'package:frontend/services/library_service.dart';
 import 'package:frontend/widgets/add_book_bottom_sheet.dart';
 import 'package:frontend/widgets/add_contact_bottom_sheet.dart';
 import 'package:provider/provider.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
 class MyAppState extends ChangeNotifier {
   User? user;
   late final StreamSubscription<User?> _authSubscription;
+  final LibraryService libraryService = LibraryService();
 
   MyAppState() {
     _authSubscription = AuthService().authStateChanges().listen((newUser) {
