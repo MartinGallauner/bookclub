@@ -2,7 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:frontend/services/googlebooksapi_service.dart';
+import 'package:frontend/services/library_service.dart';
 import 'package:frontend/widgets/book_card.dart';
+import 'package:provider/provider.dart';
 
 import '../models/book.dart';
 
@@ -59,10 +61,16 @@ class _AddBookBottomSheetState extends State<AddBookBottomSheet> {
               label: Text("Scan ISBN code"),
             ),
             if (result != null)
-              SizedBox(
-                width: 200,
-                height: 280,
-                child: BookCard(book: result!, colorIndex: 1),
+              InkWell(
+                onTap: () => {
+                  context.read<LibraryService>().addBook(result!),
+                  print('Added book ${result?.title}')
+                },
+                child: SizedBox(
+                    width: 200,
+                    height: 280,
+                    child: BookCard(book: result!, colorIndex: 1),
+              )
               ),
           ],
         ),

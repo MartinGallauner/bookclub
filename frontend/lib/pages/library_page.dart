@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/main.dart';
+import 'package:frontend/services/library_service.dart';
 import 'package:provider/provider.dart';
 
 import '../models/book.dart';
@@ -10,8 +11,8 @@ class LibraryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
-    final List<Book> books = appState.libraryService.books;
+    final libraryState = context.watch<LibraryService>();
+    final List<Book> books = libraryState.books;
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
