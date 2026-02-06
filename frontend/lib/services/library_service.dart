@@ -5,7 +5,7 @@ class LibraryService {
 
   LibraryService();
 
-  List<Book> get books =>  _collection;
+  List<Book> get books =>  List.unmodifiable(_collection);
 
   void addBook(Book book) {
     _collection.add(book);
