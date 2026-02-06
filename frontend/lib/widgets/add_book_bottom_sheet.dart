@@ -39,7 +39,6 @@ class _AddBookBottomSheetState extends State<AddBookBottomSheet> {
                         .searchByISBN(isbn);
                     setState(() {
                       result = fetchedBook;
-                      );
                     });
                   } catch (e) {
                     log('ERROR: $e');
