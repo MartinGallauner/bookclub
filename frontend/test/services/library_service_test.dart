@@ -6,7 +6,7 @@ void main() {
   group('LibraryService', () {
     test('New library is empty', () {
       final service = LibraryService();
-      expect(service.collection, hasLength(0));
+      expect(service.books, hasLength(0));
     });
     test('Added books are in the collection', () {
       final service = LibraryService();
@@ -18,8 +18,8 @@ void main() {
       );
       service.addBook(book);
 
-      expect(service.collection, hasLength(1));
-      var result = service.collection[0];
+      expect(service.books, hasLength(1));
+      var result = service.books[0];
       expect(result.title, contains('Nineteen Eighty-four'));
       expect(result.authors, contains('George Orwell'));
       expect(result.isbn, contains('0451524934'));

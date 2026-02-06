@@ -1,13 +1,13 @@
 import '../models/book.dart';
 
 class LibraryService {
-  late List<Book> collection;
+  final List<Book> _collection = [];
 
-  LibraryService() {
-    collection = [];
-  }
+  LibraryService();
+
+  List<Book> get books =>  _collection;
 
   void addBook(Book book) {
-    collection.add(book);
+    _collection.add(book);
   }
 }
