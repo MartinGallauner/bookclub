@@ -1,12 +1,15 @@
-import 'package:frontend/models/book.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class GoogleBooksAPIService {
+import 'package:frontend/models/book.dart';
+import 'package:frontend/services/book_api_service.dart';
+import 'package:http/http.dart' as http;
+
+class GoogleBooksAPIService implements BookApiService {
   /// This class provides service methods to call the OpenLibary.org API.
 
   static const String baseUrl = 'https://www.googleapis.com';
 
+  @override
   Future<Book> searchByISBN(String isbn) async {
     final url = Uri.parse('$baseUrl/books/v1/volumes?q=isbn:$isbn');
 
