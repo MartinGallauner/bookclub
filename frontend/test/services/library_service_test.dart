@@ -15,6 +15,7 @@ void main() {
         authors: ['George Orwell'],
         isbn: '0451524934',
         coverUrl: "",
+        language: 'en',
       );
       service.addBook(book);
 

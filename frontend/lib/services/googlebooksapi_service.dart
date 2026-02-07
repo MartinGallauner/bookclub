@@ -20,6 +20,7 @@ class GoogleBooksAPIService {
             title: volumeInfo['title'],
             authors: List<String>.from(volumeInfo['authors'] ?? []),
             isbn: isbn,
+            language: "en",
             coverUrl: volumeInfo['imageLinks']?['thumbnail'] ?? "");
       } else {
         throw Exception('API returned status ${response.statusCode}');
