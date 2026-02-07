@@ -10,8 +10,8 @@ class LibraryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final libraryState = context.watch<LibraryService>();
-    final List<Book> books = libraryState.books;
+    final libraryState = context.watch<LibraryService?>();
+    final List<Book> books = libraryState?.books ?? [];
 
     return Padding(
       padding: const EdgeInsets.all(16.0),

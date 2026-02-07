@@ -30,7 +30,21 @@ class App extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AppState()),
-        ChangeNotifierProvider(create: (context) => LibraryService("", FirebaseFirestore.instance)),
+        ChangeNotifierProxyProvider<AppState, LibraryService?>(
+          update: (context, appState, previous) {
+            if (appState.user != null) {
+              return LibraryService(
+                appState.user!.uid,
+                FirebaseFirestore.instance,
+              );
+            } else {
+              return null;
+            }
+          },
+          create: (BuildContext context) {
+            return null;
+          },
+        ),
       ],
       builder: (context, child) {
         return MaterialApp(

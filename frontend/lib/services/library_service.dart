@@ -9,7 +9,7 @@ class LibraryService extends ChangeNotifier {
   /// The LibraryServices manages the users book collection.
   /// It is a ChangeNotifier because it actually owns the state of the collection.
 
-  String uid = '';
+  String uid = '0';
   List<Book> _collection = [];
   late StreamSubscription<QuerySnapshot> _stream;
   late FirebaseFirestore firebaseFirestore;
@@ -19,7 +19,7 @@ class LibraryService extends ChangeNotifier {
     firebaseFirestore = firebase;
     _stream = firebaseFirestore
         .collection('users')
-        .doc(userId)
+        .doc(uid)
         .collection('library')
         .snapshots()
         .listen((snapshot) {
