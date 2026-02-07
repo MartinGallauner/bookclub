@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/firebase_options.dart';
 import 'package:frontend/pages/library_page.dart';
 import 'package:frontend/pages/login_page.dart';
 import 'package:frontend/pages/network_page.dart';
@@ -12,8 +15,6 @@ import 'package:frontend/services/library_service.dart';
 import 'package:frontend/widgets/add_book_bottom_sheet.dart';
 import 'package:frontend/widgets/add_contact_bottom_sheet.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:frontend/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +30,7 @@ class App extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AppState()),
-        ChangeNotifierProvider(create: (context) => LibraryService()),
+        ChangeNotifierProvider(create: (context) => LibraryService("", FirebaseFirestore.instance)),
       ],
       builder: (context, child) {
         return MaterialApp(
@@ -51,11 +52,17 @@ class App extends StatelessWidget {
 class AppState extends ChangeNotifier {
   User? user;
   late final StreamSubscription<User?> _authSubscription;
-  final LibraryService libraryService = LibraryService();
+  late final LibraryService? libraryService;
 
   AppState() {
     _authSubscription = AuthService().authStateChanges().listen((newUser) {
       user = newUser;
+      if (user == null) {
+        libraryService = null;
+      } else {
+        libraryService = LibraryService(user!.uid, FirebaseFirestore.instance);
+      }
+
       notifyListeners(); //causes all widgets watching this state to rebuild when the auth state changes
     });
   }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/main.dart';
 import 'package:frontend/services/library_service.dart';
 import 'package:provider/provider.dart';
 

@@ -62,14 +62,12 @@ class _AddBookBottomSheetState extends State<AddBookBottomSheet> {
             ),
             if (result != null)
               InkWell(
-                onTap: () => {
-                  context.read<LibraryService>().addBook(result!),
-                },
+                onTap: () => {context.read<LibraryService>().addBook(result!)},
                 child: SizedBox(
-                    width: 200,
-                    height: 280,
-                    child: BookCard(book: result!, colorIndex: 1),
-              )
+                  width: 200,
+                  height: 280,
+                  child: BookCard(book: result!, colorIndex: 1),
+                ),
               ),
           ],
         ),
