@@ -111,6 +111,8 @@ class _HomePageState extends State<HomePage> {
         throw UnimplementedError('no widget for $selectedIndex');
     }
 
+    var user = context.watch<AppState>().user;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return Scaffold(
@@ -118,6 +120,10 @@ class _HomePageState extends State<HomePage> {
             title: Text('BookClub'),
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
             actions: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                child: Center(child: Text(user?.uid ?? '')),
+              ),
               IconButton(
                 onPressed: AuthService().signOut,
                 icon: Icon(Icons.logout),
