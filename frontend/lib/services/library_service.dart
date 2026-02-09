@@ -9,15 +9,17 @@ class LibraryService extends ChangeNotifier {
   /// The LibraryServices manages the users book collection.
   /// It is a ChangeNotifier because it actually owns the state of the collection.
 
-  final String userId;
-  final FirebaseFirestore firebaseFirestore;
+  String uid = '0';
   List<Book> _collection = [];
   late StreamSubscription<QuerySnapshot> _stream;
+  late FirebaseFirestore firebaseFirestore;
 
-  LibraryService(this.userId, this.firebaseFirestore) {
+  LibraryService(String userId, FirebaseFirestore firebase) {
+    uid = userId;
+    firebaseFirestore = firebase;
     _stream = firebaseFirestore
         .collection('users')
-        .doc(userId)
+        .doc(uid)
         .collection('library')
         .snapshots()
         .listen((snapshot) {
@@ -50,7 +52,7 @@ class LibraryService extends ChangeNotifier {
   Future addBook(Book book) async {
     await firebaseFirestore
         .collection('users')
-        .doc(userId)
+        .doc(uid)
         .collection('library')
         .doc(book.isbn)
         .set({
