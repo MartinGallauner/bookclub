@@ -71,7 +71,7 @@ class AppState extends ChangeNotifier {
   late final StreamSubscription<User?> _authSubscription;
 
   AppState() {
-    _authSubscription = AuthService().authStateChanges().listen((newUser) {
+    _authSubscription = AuthService(FirebaseAuth.instance).authStateChanges().listen((newUser) {
       user = newUser;
       notifyListeners(); //causes all widgets watching this state to rebuild when the auth state changes
     });
@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               IconButton(
-                onPressed: AuthService().signOut,
+                onPressed: AuthService(FirebaseAuth.instance).signOut,
                 icon: Icon(Icons.logout),
               ),
             ],
