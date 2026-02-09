@@ -133,7 +133,7 @@ class _HomePageState extends State<HomePage> {
                   setState(() {
                     selectedIndex = newIndex;
                   });
-                }
+                },
               ),
               Expanded(
                 child: Container(
