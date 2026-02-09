@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:frontend/firebase_options.dart';
 import 'package:frontend/pages/library_page.dart';
 import 'package:frontend/pages/login_page.dart';
@@ -120,9 +121,15 @@ class _HomePageState extends State<HomePage> {
             title: Text('BookClub'),
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
             actions: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0),
-                child: Center(child: Text(user?.uid ?? '')),
+              GestureDetector(
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: user?.uid ?? ''));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User ID copied!')));
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Center(child: Text(user?.uid ?? '')),
+                ),
               ),
               IconButton(
                 onPressed: AuthService().signOut,
