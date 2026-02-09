@@ -68,17 +68,10 @@ class App extends StatelessWidget {
 class AppState extends ChangeNotifier {
   User? user;
   late final StreamSubscription<User?> _authSubscription;
-  late final LibraryService? libraryService;
 
   AppState() {
     _authSubscription = AuthService().authStateChanges().listen((newUser) {
       user = newUser;
-      if (user == null) {
-        libraryService = null;
-      } else {
-        libraryService = LibraryService(user!.uid, FirebaseFirestore.instance);
-      }
-
       notifyListeners(); //causes all widgets watching this state to rebuild when the auth state changes
     });
   }
