@@ -16,6 +16,8 @@ import 'package:frontend/widgets/add_book_bottom_sheet.dart';
 import 'package:frontend/widgets/add_contact_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
+import 'layout/app_navigation_rail.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -131,30 +133,14 @@ class _HomePageState extends State<HomePage> {
           ),
           body: Row(
             children: [
-              SafeArea(
-                child: NavigationRail(
-                  extended: constraints.maxWidth >= 600,
-                  destinations: [
-                    NavigationRailDestination(
-                      icon: Icon(Icons.book),
-                      label: Text('Your Library'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.search),
-                      label: Text('Search'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.person),
-                      label: Text('Network'),
-                    ),
-                  ],
-                  selectedIndex: selectedIndex,
-                  onDestinationSelected: (value) {
-                    setState(() {
-                      selectedIndex = value;
-                    });
-                  },
-                ),
+              AppNavigationRail(
+                isExtended: constraints.maxWidth >= 600,
+                selectedIndex: selectedIndex,
+                onDestinationSelected: (newIndex) {
+                  setState(() {
+                    selectedIndex = newIndex;
+                  });
+                }
               ),
               Expanded(
                 child: Container(
