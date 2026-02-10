@@ -34,7 +34,7 @@ class App extends StatelessWidget {
       providers: [
         Provider(create: (_) => AuthService(FirebaseAuth.instance)),
         ChangeNotifierProxyProvider<AuthService, AppState>(
-            create: (_) => AppState(AuthService(FirebaseAuth.instance)),
+            create: (context) => AppState(context.read<AuthService>()),
             update: (context, authService, previous) => previous ?? AppState(authService),
         ),
         ChangeNotifierProxyProvider<AppState, LibraryService?>(
