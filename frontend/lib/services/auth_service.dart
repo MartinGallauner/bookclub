@@ -8,7 +8,7 @@ class AuthService {
   AuthService(this.firebaseAuth);
 
   Future<UserCredential> signInWithGoogle() {
-    return FirebaseAuth.instance.signInWithPopup(GoogleAuthProvider());
+    return firebaseAuth.signInWithPopup(GoogleAuthProvider());
   }
 
   void signOut() {
