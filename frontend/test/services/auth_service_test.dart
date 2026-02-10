@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:frontend/models/profile.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -14,7 +15,7 @@ void main() {
   });
 
   group('Auth Service', () {
-    test('if new signup, create new profile', () async {
+    test('new signup, create new profile', () async {
       final mockAuth = MockFirebaseAuth();
       final authService = AuthService(mockAuth);
 
@@ -32,10 +33,12 @@ void main() {
 
       User? user =  (await authService.signInWithGoogle()).user;
 
-      expect(user?.uid, equals('test-uid-123'));
+      Profile? profile = await authService.fetchProfile('test-uid-123').first;
 
-
+      expect(profile?.uid, equals('test-uid-123'));
+      expect(profile?.email, equals('test@example.com'));
+      expect(profile?.displayName, equals('Test User'));
+      expect(profile?.photoURL, equals('https://example.com/photo.jpg'));
     });
-
   });
 }
