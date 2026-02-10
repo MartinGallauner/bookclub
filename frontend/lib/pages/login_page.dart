@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -11,7 +12,7 @@ class LoginPage extends StatelessWidget {
         children: [
           Text("Please login"),
           FilledButton.icon(
-            onPressed: AuthService().signInWithGoogle,
+            onPressed: context.watch<AuthService>().signInWithGoogle,
             label: Text("Sign in with Google"),
           ),
         ],

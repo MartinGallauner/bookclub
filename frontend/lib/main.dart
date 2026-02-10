@@ -32,7 +32,11 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => AppState()),
+        Provider(create: (_) => AuthService(FirebaseAuth.instance)),
+        ChangeNotifierProxyProvider<AuthService, AppState>(
+            create: (_) => AppState(AuthService(FirebaseAuth.instance)),
+            update: (context, authService, previous) => previous ?? AppState(authService),
+        ),
         ChangeNotifierProxyProvider<AppState, LibraryService?>(
           update: (context, appState, previous) {
             if (appState.user != null) {
@@ -57,7 +61,9 @@ class App extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent),
           ),
           //if user is not logged in, send to them to the Login Page.
-          home: context.watch<AppState>().user == null
+          home: context
+              .watch<AppState>()
+              .user == null
               ? LoginPage()
               : HomePage(),
         );
@@ -69,9 +75,11 @@ class App extends StatelessWidget {
 class AppState extends ChangeNotifier {
   User? user;
   late final StreamSubscription<User?> _authSubscription;
+  final AuthService authService;
 
-  AppState() {
-    _authSubscription = AuthService(FirebaseAuth.instance).authStateChanges().listen((newUser) {
+
+  AppState(this.authService) {
+    _authSubscription = authService.authStateChanges().listen((newUser) {
       user = newUser;
       notifyListeners(); //causes all widgets watching this state to rebuild when the auth state changes
     });
@@ -112,19 +120,25 @@ class _HomePageState extends State<HomePage> {
         throw UnimplementedError('no widget for $selectedIndex');
     }
 
-    var user = context.watch<AppState>().user;
+    var user = context
+        .watch<AppState>()
+        .user;
 
     return LayoutBuilder(
       builder: (context, constraints) {
         return Scaffold(
           appBar: AppBar(
             title: Text('BookClub'),
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            backgroundColor: Theme
+                .of(context)
+                .colorScheme
+                .inversePrimary,
             actions: [
               GestureDetector(
                 onTap: () {
                   Clipboard.setData(ClipboardData(text: user?.uid ?? ''));
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User ID copied!')));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('User ID copied!')));
                 },
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8.0),
@@ -150,7 +164,10 @@ class _HomePageState extends State<HomePage> {
               ),
               Expanded(
                 child: Container(
-                  color: Theme.of(context).colorScheme.primaryContainer,
+                  color: Theme
+                      .of(context)
+                      .colorScheme
+                      .primaryContainer,
                   child: page,
                 ),
               ),
@@ -158,23 +175,23 @@ class _HomePageState extends State<HomePage> {
           ),
           floatingActionButton: (selectedIndex == 0 || selectedIndex == 2)
               ? FloatingActionButton(
-                  onPressed: () {
-                    if (selectedIndex == 0) {
-                      log('pressed add-book-button');
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) => AddBookBottomSheet(),
-                      );
-                    } else if (selectedIndex == 2) {
-                      log('pressed add-contact-button');
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) => AddContactBottomSheet(),
-                      );
-                    }
-                  },
-                  child: Icon(Icons.add),
-                )
+            onPressed: () {
+              if (selectedIndex == 0) {
+                log('pressed add-book-button');
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => AddBookBottomSheet(),
+                );
+              } else if (selectedIndex == 2) {
+                log('pressed add-contact-button');
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => AddContactBottomSheet(),
+                );
+              }
+            },
+            child: Icon(Icons.add),
+          )
               : null,
         );
       },
