@@ -32,6 +32,8 @@ void main() {
 
       User? user =  (await authService.signInWithGoogle()).user;
 
+      expect(user?.uid, equals('test-uid-123'));
+
 
     });
 
