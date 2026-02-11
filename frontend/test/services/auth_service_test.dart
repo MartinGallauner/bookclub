@@ -34,7 +34,7 @@ void main() {
       Profile? profileBefore = await authService.fetchProfile('test-uid-123').first;
       expect(profileBefore, isNull);
 
-      User? user = (await authService.signInWithGoogle()).user;
+      await authService.signInWithGoogle();
       Profile? profile = await authService.fetchProfile('test-uid-123').first;
 
       expect(profile, isNotNull);
