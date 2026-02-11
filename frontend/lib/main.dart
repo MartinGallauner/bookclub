@@ -7,9 +7,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/firebase_options.dart';
+import 'package:frontend/pages/contacts_page.dart';
 import 'package:frontend/pages/library_page.dart';
 import 'package:frontend/pages/login_page.dart';
-import 'package:frontend/pages/network_page.dart';
 import 'package:frontend/pages/search_page.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/services/library_service.dart';
@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> {
         page = SearchPage();
         break;
       case 2:
-        page = ConntactsPage();
+        page = ContactsPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
