@@ -34,10 +34,10 @@ void main() {
       Profile? profileBefore = await authService.fetchProfile('test-uid-123').first;
       expect(profileBefore, isNull);
 
-      User? user =  (await authService.signInWithGoogle()).user;
+      User? user = (await authService.signInWithGoogle()).user;
       Profile? profile = await authService.fetchProfile('test-uid-123').first;
 
-      expect(profileBefore, isNotNull);
+      expect(profile, isNotNull);
       expect(profile?.uid, equals('test-uid-123'));
       expect(profile?.email, equals('test@example.com'));
       expect(profile?.displayName, equals('Test User'));
