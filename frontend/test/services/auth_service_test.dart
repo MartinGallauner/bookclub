@@ -27,14 +27,16 @@ void main() {
       when(() => mockUser.displayName).thenReturn('Test User');
       when(() => mockUser.photoURL).thenReturn('https://example.com/photo.jpg');
       when(() => mockUserCredential.user).thenReturn(mockUser);
-
       when(() => mockAuth.signInWithPopup(any()))
           .thenAnswer((_) async => mockUserCredential);
 
-      User? user =  (await authService.signInWithGoogle()).user;
+      Profile? profileBefore = await authService.fetchProfile('test-uid-123').first;
+      expect(profileBefore, isNull);
 
+      User? user =  (await authService.signInWithGoogle()).user;
       Profile? profile = await authService.fetchProfile('test-uid-123').first;
 
+      expect(profileBefore, isNotNull);
       expect(profile?.uid, equals('test-uid-123'));
       expect(profile?.email, equals('test@example.com'));
       expect(profile?.displayName, equals('Test User'));
