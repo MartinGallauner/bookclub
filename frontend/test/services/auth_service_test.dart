@@ -1,3 +1,4 @@
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/models/profile.dart';
@@ -17,7 +18,7 @@ void main() {
   group('Auth Service', () {
     test('new signup, create new profile', () async {
       final mockAuth = MockFirebaseAuth();
-      final authService = AuthService(mockAuth);
+      final authService = AuthService(mockAuth, FakeFirebaseFirestore());
 
       final mockUser = MockUser();
       final mockUserCredential = MockUserCredential();

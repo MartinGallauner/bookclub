@@ -32,7 +32,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider(create: (_) => AuthService(FirebaseAuth.instance)),
+        Provider(create: (_) => AuthService(FirebaseAuth.instance, FirebaseFirestore.instance)),
         ChangeNotifierProxyProvider<AuthService, AppState>(
             create: (context) => AppState(context.read<AuthService>()),
             update: (context, authService, previous) => previous ?? AppState(authService),
@@ -146,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               IconButton(
-                onPressed: AuthService(FirebaseAuth.instance).signOut,
+                onPressed: AuthService(FirebaseAuth.instance, FirebaseFirestore.instance).signOut, //TODO do we really want to create a new AuthService here?
                 icon: Icon(Icons.logout),
               ),
             ],
