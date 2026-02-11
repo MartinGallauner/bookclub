@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> {
         page = SearchPage();
         break;
       case 2:
-        page = NetworkPage();
+        page = ConntactsPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');

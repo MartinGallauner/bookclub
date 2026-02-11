@@ -28,7 +28,7 @@ class AppNavigationRail extends StatelessWidget {
           ),
           NavigationRailDestination(
             icon: Icon(Icons.person),
-            label: Text('Network'),
+            label: Text('Conntacts'),
           ),
         ],
         selectedIndex: selectedIndex,
