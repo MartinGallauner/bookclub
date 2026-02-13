@@ -12,6 +12,7 @@ import 'package:frontend/pages/library_page.dart';
 import 'package:frontend/pages/login_page.dart';
 import 'package:frontend/pages/search_page.dart';
 import 'package:frontend/services/auth_service.dart';
+import 'package:frontend/services/contact_service.dart';
 import 'package:frontend/services/library_service.dart';
 import 'package:frontend/widgets/add_book_bottom_sheet.dart';
 import 'package:frontend/widgets/add_contact_bottom_sheet.dart';
@@ -32,10 +33,12 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider(create: (_) => AuthService(FirebaseAuth.instance, FirebaseFirestore.instance)),
+        Provider(create: (_) =>
+            AuthService(FirebaseAuth.instance, FirebaseFirestore.instance)),
         ChangeNotifierProxyProvider<AuthService, AppState>(
-            create: (context) => AppState(context.read<AuthService>()),
-            update: (context, authService, previous) => previous ?? AppState(authService),
+          create: (context) => AppState(context.read<AuthService>()),
+          update: (context, authService, previous) =>
+          previous ?? AppState(authService),
         ),
         ChangeNotifierProxyProvider<AppState, LibraryService?>(
           update: (context, appState, previous) {
@@ -52,6 +55,21 @@ class App extends StatelessWidget {
             return null;
           },
         ),
+        ChangeNotifierProxyProvider<AppState, ContactService?>(
+          create: (BuildContext context) {
+            return null;
+          },
+          update: (context, appState, previous) {
+            if (appState.user != null) {
+              return ContactService(
+                appState.user!.uid,
+                FirebaseFirestore.instance,
+              );
+            } else {
+              return null;
+            }
+          },
+        )
       ],
       builder: (context, child) {
         return MaterialApp(
@@ -146,7 +164,9 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               IconButton(
-                onPressed: AuthService(FirebaseAuth.instance, FirebaseFirestore.instance).signOut, //TODO do we really want to create a new AuthService here?
+                onPressed: AuthService(
+                    FirebaseAuth.instance, FirebaseFirestore.instance).signOut,
+                //TODO do we really want to create a new AuthService here?
                 icon: Icon(Icons.logout),
               ),
             ],
