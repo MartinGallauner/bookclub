@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/connection_status.dart';
 import 'package:provider/provider.dart';
 
+import '../models/connection.dart';
 import '../models/profile.dart';
 import '../services/contact_service.dart';
 
@@ -10,12 +12,12 @@ class ContactsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final contactState = context.watch<ContactService?>();
-    final List<Profile> contacts = contactState?.connections ?? [];
+    final List<Connection> connections = contactState?.connections ?? [];
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: GridView.builder(
-        itemCount: contacts.length,
+        itemCount: connections.length,
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 200,
           childAspectRatio: 0.7,
@@ -23,7 +25,25 @@ class ContactsPage extends StatelessWidget {
           mainAxisSpacing: 10,
         ),
         itemBuilder: (context, index) {
-          return ContactCard(contact: contacts[index]);
+          //todo forgive me
+          Connection connection = connections[index];
+          String contactUid = connection.users.firstWhere(
+            (id) => id != contactState?.uid,
+          );
+          return StreamBuilder<Profile?>(
+            stream: contactState?.fetchProfile(contactUid),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Card(child: Center(child: CircularProgressIndicator()));
+              }
+
+              Profile contactProfile = snapshot.data!;
+              return ContactCard(
+                contact: contactProfile,
+                connectionStatus: connection.status,
+              );
+            },
+          );
         },
       ),
     );
@@ -46,8 +66,13 @@ class Contact {
 
 class ContactCard extends StatelessWidget {
   final Profile contact;
+  final ConnectionStatus connectionStatus;
 
-  const ContactCard({super.key, required this.contact});
+  const ContactCard({
+    super.key,
+    required this.contact,
+    required this.connectionStatus,
+  });
 
   @override
   Widget build(BuildContext context) {
