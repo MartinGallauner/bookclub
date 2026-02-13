@@ -10,8 +10,7 @@ class ContactsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final contactState = context.watch<ContactService?>();
-    final List<Profile> contacts = contactState?.contacts ?? [];
-
+    final List<Profile> contacts = contactState?.connections ?? [];
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -46,12 +45,9 @@ class Contact {
 }
 
 class ContactCard extends StatelessWidget {
-  final Contact contact;
-  const ContactCard({
-    super.key,
-    required this.contact,
-  });
+  final Profile contact;
 
+  const ContactCard({super.key, required this.contact});
 
   @override
   Widget build(BuildContext context) {
@@ -61,32 +57,24 @@ class ContactCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Cover image
-          Expanded(
-            flex: 3,
-            child: Placeholder()
-          ),
+          Expanded(flex: 3, child: Placeholder()),
           // Book details
           Padding(
-              padding: EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "${contact.firstName} ${contact.lastName}",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  contact.displayName,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              )
-            ],
-          ))
+              ],
+            ),
+          ),
         ],
       ),
-
     );
-
   }
-
 }
