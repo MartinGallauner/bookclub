@@ -20,6 +20,7 @@ class AddContactBottomSheet extends StatefulWidget {
 class _AddContactBottomSheetState extends State<AddContactBottomSheet> {
   Profile? result;
 
+  @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
@@ -35,7 +36,9 @@ class _AddContactBottomSheetState extends State<AddContactBottomSheet> {
               onSubmitted: (uid) async {
                 try {
                   final contactService = context.read<ContactService?>();
-                  Profile? profile = await contactService?.fetchProfile(uid).first;
+                  Profile? profile = await contactService
+                      ?.fetchProfile(uid)
+                      .first;
                   setState(() {
                     result = profile;
                   });
@@ -55,13 +58,15 @@ class _AddContactBottomSheetState extends State<AddContactBottomSheet> {
               onTap: () {
                 context.read<ContactService?>()?.addContact(result!.uid);
               },
-                child: SizedBox(
+              child: SizedBox(
                 width: 200,
                 height: 280,
-                child: ContactCard(contact: result!, connectionStatus: ConnectionStatus.pending),
+                child: ContactCard(
+                  contact: result!,
+                  connectionStatus: ConnectionStatus.pending,
+                ),
               ),
-            )
-
+            ),
         ],
       ),
     );
