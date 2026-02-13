@@ -53,7 +53,7 @@ class LibraryService extends ChangeNotifier {
         .doc(userId)
         .collection('library')
         .doc(book.isbn)
-        .set({
+        .set({ //todo write toMap() method in Book model
           'title': book.title,
           'authors': book.authors,
           'isbn': book.isbn,
