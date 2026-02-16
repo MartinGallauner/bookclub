@@ -11,8 +11,8 @@ class ContactsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final contactState = context.watch<ContactService?>();
-    final List<Connection> connections = contactState?.connections ?? [];
+    final contactService = context.watch<ContactService?>();
+    final List<Connection> connections = contactService?.connections ?? [];
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -28,10 +28,10 @@ class ContactsPage extends StatelessWidget {
           //todo forgive me
           Connection connection = connections[index];
           String contactUid = connection.users.firstWhere(
-            (id) => id != contactState?.uid,
+            (id) => id != contactService?.uid,
           );
           return StreamBuilder<Profile?>(
-            stream: contactState?.fetchProfile(contactUid),
+            stream: contactService?.fetchProfile(contactUid),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Card(child: Center(child: CircularProgressIndicator()));
