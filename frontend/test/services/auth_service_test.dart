@@ -31,11 +31,11 @@ void main() {
       when(() => mockAuth.signInWithPopup(any()))
           .thenAnswer((_) async => mockUserCredential);
 
-      Profile? profileBefore = await authService.fetchProfile('test-uid-123').first;
+      Profile? profileBefore = await authService.fetchProfile('test-uid-123');
       expect(profileBefore, isNull);
 
       await authService.signInWithGoogle();
-      Profile? profile = await authService.fetchProfile('test-uid-123').first;
+      Profile? profile = await authService.fetchProfile('test-uid-123');
 
       expect(profile, isNotNull);
       expect(profile?.uid, equals('test-uid-123'));

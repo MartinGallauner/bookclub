@@ -18,7 +18,7 @@ class AuthService {
 
     //TODO can user be null ?
     //get profile
-    Profile? profile = await fetchProfile(user!.uid).first;
+    Profile? profile = await fetchProfile(user!.uid);
 
     if (profile == null) {
       await firebaseFirestore.collection('users').doc(user.uid).set({
@@ -41,20 +41,20 @@ class AuthService {
     return firebaseAuth.authStateChanges();
   }
 
-  Stream<Profile?> fetchProfile(String uid) {
-    return firebaseFirestore.collection('users').doc(uid).snapshots().map((
-      snapshot,
-    ) {
-      if (!snapshot.exists) return null;
-      var data = snapshot.data()!;
-      return Profile(
-        uid: data['uid'],
-        email: data['email'],
-        displayName: data['displayName'],
-        photoURL: data['photoURL'],
-        updatedAt: data['updatedAt'].toDate(),
-        createdAt: data['createdAt'].toDate(),
-      );
-    });
+  Future<Profile?> fetchProfile(String uid) async {
+    var profileDoc = await firebaseFirestore.collection('users').doc(uid).get();
+
+    if (!profileDoc.exists) {
+      return null;
+    }
+    var data = profileDoc.data()!;
+    return Profile(
+      uid: data['uid'],
+      email: data['email'],
+      displayName: data['displayName'],
+      photoURL: data['photoURL'],
+      updatedAt: data['updatedAt'].toDate(),
+      createdAt: data['createdAt'].toDate(),
+    );
   }
 }
