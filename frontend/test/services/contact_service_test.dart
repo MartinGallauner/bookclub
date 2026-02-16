@@ -5,17 +5,21 @@ import 'package:frontend/services/contact_service.dart';
 void main() {
   group('ContactService', () {
     test('Add one contact to empty network.', () async {
-      ContactService contactService = ContactService('user-id-test', FakeFirebaseFirestore());
+      ContactService contactService = ContactService('loggedInUID', FakeFirebaseFirestore());
 
       var connections = contactService.connections;
 
       expect(connections, isEmpty);
 
-      await contactService.addContact('new-contact-uid');
+      await contactService.addContact('newContactUID');
       await Future.delayed(Duration(milliseconds: 100));
       connections = contactService.connections;
 
       expect(connections.length, equals(1));
+      expect(connections[0].uid, equals('loggedInUID_newContactUID'));
+      expect(connections[0].requestedBy, equals('loggedInUID'));
+      expect(connections[0].acceptedAt, isNull);
+      expect(connections[0].rejectedAt, isNull);
     });
   });
 }

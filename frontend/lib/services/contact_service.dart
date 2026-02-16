@@ -22,13 +22,14 @@ class ContactService extends ChangeNotifier {
           _connections = snapshot.docs.map((doc) {
             var data = doc.data();
             return Connection(
-              uid: data['uid'],
+              uid: doc.id,
               users: List<String>.from(data['users']),
               requestedBy: data['requestedBy'],
               requestedAt: (data['requestedAt'] as Timestamp).toDate(),
               status: ConnectionStatus.values.byName(data['status']),
               rejectedAt: data['rejectedAt']?.toDate(),
               acceptedAt: data['acceptedAt']?.toDate(),
+
             );
           }).toList();
           notifyListeners();
@@ -60,8 +61,13 @@ class ContactService extends ChangeNotifier {
     );
     await _firebaseFirestore
         .collection('connections')
-        .doc()
+        .doc(generateConnectionId(uid, userToAdd))
         .set(connection.toMap());
+  }
+
+  String generateConnectionId(String uid, String userToAdd) {
+    List<String> sorted = [uid, userToAdd]..sort();
+    return '${sorted[0]}_${sorted[1]}';
   }
 
   Stream<Profile?> fetchProfile(String uid) {
