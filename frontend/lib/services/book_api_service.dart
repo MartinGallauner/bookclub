@@ -1,5 +1,5 @@
 import '../models/book.dart';
 
 abstract class BookApiService {
-  Future<Book> searchByISBN(String isbn);
+  Future<Book> searchByISBN(String input);
 }

@@ -3,7 +3,7 @@ import 'package:frontend/services/book_api_service.dart';
 
 class MockGooglebooksapiService implements BookApiService {
   @override
-  Future<Book> searchByISBN(String isbn) async {
+  Future<Book> searchByISBN(String input) async {
     Book book = Book(
       title: 'Nineteen Eighty-four',
       authors: ['George Orwell'],

@@ -12,10 +12,8 @@ class SearchService {
   SearchService(this._contactService, this._authService, this._firestore);
 
   Future<List<Profile>> searchByISBN(String isbn) async {
-    print('search service: start search for $isbn');
     List<Profile> results = [];
     List<Connection> connections = _contactService.connections;
-    print('the logged in user has number of connections ${connections.length}');
     for (var connection in connections) {
       String contactId = connection.users.firstWhere(
         (id) => id != _contactService.uid,

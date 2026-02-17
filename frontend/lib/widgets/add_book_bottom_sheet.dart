@@ -36,8 +36,8 @@ class _AddBookBottomSheetState extends State<AddBookBottomSheet> {
               widthFactor: 0.8,
               child: TextField(
                 onSubmitted: (isbn) async {
-                  try {
-                    final fetchedBook = await GoogleBooksAPIService()
+                  try { //todo: I dont want to use the API Service here but LibraryService instead.
+                    final fetchedBook = await GoogleBooksAPIService(apiKey: const String.fromEnvironment('GOOGLE_BOOKS_API_KEY'))
                         .searchByISBN(isbn);
                     setState(() {
                       result = fetchedBook;
@@ -66,7 +66,7 @@ class _AddBookBottomSheetState extends State<AddBookBottomSheet> {
                 child: SizedBox(
                   width: 200,
                   height: 280,
-                  child: BookCard(book: result!, colorIndex: 1),
+                  child: BookCard(book: result!),
                 ),
               ),
           ],

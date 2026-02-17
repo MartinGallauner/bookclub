@@ -38,15 +38,12 @@ class _SearchPageState extends State<SearchPage> {
                     context.read<AuthService>(),
                     FirebaseFirestore.instance,
                   );
-                  print('about to search for $isbn');
                   final profiles = await searchService.searchByISBN(isbn);
-                  print('profiles has the size ${profiles.length}');
                   setState(() {
                     results = profiles;
                   });
                 } catch (e) {
                   log('ERROR: $e');
-                  print('ERROR SEARCH SERVICE:  $e');
                 }
               },
               decoration: InputDecoration(
