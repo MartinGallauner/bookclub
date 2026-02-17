@@ -4,12 +4,12 @@ import '../models/book.dart';
 
 class BookCard extends StatelessWidget {
   final Book book;
-  final int colorIndex;
 
-  const BookCard({super.key, required this.book, required this.colorIndex});
+  const BookCard({super.key, required this.book});
 
   @override
   Widget build(BuildContext context) {
+    print('cover url: ${book.coverUrl}');
     return Card(
       elevation: 4,
       child: Column(
@@ -18,9 +18,10 @@ class BookCard extends StatelessWidget {
           // Cover image
           Expanded(
             flex: 3,
-            child: Container(
+            child: Image(
+              image: NetworkImage(book.coverUrl, webHtmlElementStrategy: WebHtmlElementStrategy.prefer),
               width: double.infinity,
-              color: Colors.primaries[colorIndex % Colors.primaries.length],
+              fit: BoxFit.cover,
             ),
           ),
           // Book details
