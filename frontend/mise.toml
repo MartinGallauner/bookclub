@@ -22,7 +22,7 @@ run = "flutter test"
 
 [tasks.start]
 description = "Starts the app locally for Chrome"
-run = "flutter run -d web-server --web-port=8080"
+run = "flutter run -d web-server --web-port=8080 --dart-define=GOOGLE_BOOKS_API_KEY=$GOOGLE_BOOKS_API_KEY"
 
 [tasks.build]
 description = "Builds the app for WEB"
