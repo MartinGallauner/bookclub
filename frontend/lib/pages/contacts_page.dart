@@ -82,7 +82,17 @@ class ContactCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Cover image
-          Expanded(flex: 3, child: Placeholder()),
+          Expanded(
+            flex: 3,
+            child: Image(
+              image: NetworkImage(
+                contact.photoURL,
+                webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
+              ),
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
           // Book details
           Padding(
             padding: EdgeInsets.all(8.0),
