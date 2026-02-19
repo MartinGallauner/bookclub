@@ -19,12 +19,12 @@ class LibraryPage extends StatelessWidget {
         itemCount: books.length,
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 200,
-          childAspectRatio: 0.7,
+          childAspectRatio: 0.55,
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
         ),
         itemBuilder: (context, index) {
-          return BookCard(book: books[index], colorIndex: index);
+          return BookCard(book: books[index]);
         },
       ),
     );
