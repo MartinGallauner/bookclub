@@ -19,7 +19,7 @@ class BookCard extends StatelessWidget {
           Expanded(
             flex: 3,
             child: Image(
-              image: NetworkImage(book.coverUrl, webHtmlElementStrategy: WebHtmlElementStrategy.prefer),
+              image: NetworkImage(book.coverUrl, webHtmlElementStrategy: WebHtmlElementStrategy.fallback),
               width: double.infinity,
               fit: BoxFit.cover,
             ),

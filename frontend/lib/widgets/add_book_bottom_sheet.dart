@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:frontend/services/googlebooksapi_service.dart';
 import 'package:frontend/services/library_service.dart';
+import 'package:frontend/widgets/barcode_scanner_sheet.dart';
 import 'package:frontend/widgets/book_card.dart';
 import 'package:provider/provider.dart';
 
@@ -35,17 +36,7 @@ class _AddBookBottomSheetState extends State<AddBookBottomSheet> {
             FractionallySizedBox(
               widthFactor: 0.8,
               child: TextField(
-                onSubmitted: (isbn) async {
-                  try { //todo: I dont want to use the API Service here but LibraryService instead.
-                    final fetchedBook = await GoogleBooksAPIService(apiKey: const String.fromEnvironment('GOOGLE_BOOKS_API_KEY'))
-                        .searchByISBN(isbn);
-                    setState(() {
-                      result = fetchedBook;
-                    });
-                  } catch (e) {
-                    log('ERROR: $e');
-                  }
-                },
+                onSubmitted: (isbn) => _lookUpISBN(isbn),
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.search),
                   hintText: 'Enter ISBN',
@@ -54,8 +45,11 @@ class _AddBookBottomSheetState extends State<AddBookBottomSheet> {
             ),
             SizedBox(height: 20),
             FilledButton.icon(
-              onPressed: () {
-                log('pressed book scan button');
+              onPressed: () async {
+                final isbn = await Navigator.of(context).push<String>(
+                  MaterialPageRoute(builder: (_) => BarcodeScannerSheet()),
+                );
+                if (isbn != null) _lookUpISBN(isbn);
               },
               icon: Icon(Icons.camera_alt),
               label: Text("Scan ISBN code"),
@@ -73,5 +67,19 @@ class _AddBookBottomSheetState extends State<AddBookBottomSheet> {
         ),
       ),
     );
+  }
+
+  Future<void> _lookUpISBN(String isbn) async {
+    try {
+      //todo: I dont want to use the API Service here but LibraryService instead.
+      final fetchedBook = await GoogleBooksAPIService(
+        apiKey: const String.fromEnvironment('GOOGLE_BOOKS_API_KEY'),
+      ).searchByISBN(isbn);
+      setState(() {
+        result = fetchedBook;
+      });
+    } catch (e) {
+      log('ERROR: $e');
+    }
   }
 }

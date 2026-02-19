@@ -199,6 +199,8 @@ class _HomePageState extends State<HomePage> {
               if (selectedIndex == 0) {
                 log('pressed add-book-button');
                 showModalBottomSheet(
+                  isScrollControlled: true,
+                  useSafeArea: true,
                   context: context,
                   builder: (context) => AddBookBottomSheet(),
                 );
