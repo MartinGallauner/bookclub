@@ -1,3 +1,9 @@
 [tools]
 gradle = "latest"
 java = "25"
+
+[tasks.build]
+description = "Build the Java backend"
+run = "./gradlew build"
+
+
