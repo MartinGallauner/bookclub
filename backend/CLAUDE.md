@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 ## Important: Development Preference
 
 **CRITICAL: Do NOT make any changes to code files.** This includes:
+
 - No code edits or modifications
 - No adding TODO comments or any other comments
 - No writing new files
@@ -19,7 +20,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 - **Use analogies and comparisons** to clarify complex ideas
 - **Point to the right place** in files where changes should be made, but don't write the code
 
-The user wants to learn Java and Spring Boot by doing the implementation themselves. Your role is to be a knowledgeable mentor who helps them understand concepts deeply, not a code generator.
+The user wants to learn Java and Spring Boot by doing the implementation themselves. Your role is to be a knowledgeable
+mentor who helps them understand concepts deeply, not a code generator.
 
 ---
 
@@ -27,17 +29,20 @@ This file also documents the architectural design decisions for the Bookclub Jav
 
 ## Project Overview
 
-This is a **Spring Boot REST API backend** for the Bookclub application. It replaces the previous Firebase/Firestore direct-access architecture with a traditional 3-tier application stack.
+This is a **Spring Boot REST API backend** for the Bookclub application. It replaces the previous Firebase/Firestore
+direct-access architecture with a traditional 3-tier application stack.
 
 ### Migration Context
 
 **Previous Architecture:**
+
 - Flutter app used Firebase Client SDK to directly access Firestore
 - Real-time data synchronization via Firestore streams
 - Firebase Auth for authentication
 - Client-side security rules
 
 **New Architecture:**
+
 - Flutter app calls REST API endpoints (HTTP client)
 - PostgreSQL relational database
 - Java backend handles authentication (OAuth 2.0 with Google)
@@ -50,6 +55,7 @@ This is a **Spring Boot REST API backend** for the Bookclub application. It repl
 **Decision:** Use PostgreSQL for persistent storage
 
 **Rationale:**
+
 - Need for complex join queries (e.g., searching books across friends' libraries)
 - Better query optimization compared to Firestore's N+1 pattern in `SearchService.searchByISBN()`
 - Learning opportunity: Understanding relational database design
@@ -57,23 +63,27 @@ This is a **Spring Boot REST API backend** for the Bookclub application. It repl
 - Public API ready: SQL databases are industry standard for APIs
 
 **Key Schema Challenges:**
+
 - **Subcollections → Foreign Keys:** Firestore's `users/{uid}/library/{isbn}` becomes foreign key relationships
 - **Arrays:** Firestore stores `authors: ['Author 1', 'Author 2']`. PostgreSQL options:
-  - TEXT[] array columns (simpler)
-  - Normalized `book_authors` table (more queryable)
-- **Document IDs:** Firestore uses composite IDs like `{uid1}_{uid2}` for connections. PostgreSQL uses UUIDs with unique constraints.
+    - TEXT[] array columns (simpler)
+    - Normalized `book_authors` table (more queryable)
+- **Document IDs:** Firestore uses composite IDs like `{uid1}_{uid2}` for connections. PostgreSQL uses UUIDs with unique
+  constraints.
 
 ### 2. Real-Time Updates: NOT Implemented
 
 **Decision:** No real-time data synchronization
 
 **Rationale:**
+
 - REST API uses request-response pattern, not streaming
 - Simplifies architecture significantly
 - User-initiated refresh pattern (pull-to-refresh in Flutter)
 - WebSockets/Server-Sent Events add complexity not needed for MVP
 
 **Flutter Impact:**
+
 - Services no longer extend `ChangeNotifier` with stream subscriptions
 - Manual refresh: Call API endpoints when data is needed
 - `notifyListeners()` called after successful HTTP responses
@@ -85,12 +95,14 @@ This is a **Spring Boot REST API backend** for the Bookclub application. It repl
 **Decision:** Java backend handles complete OAuth flow and issues JWT tokens
 
 **Rationale:**
+
 - Learning opportunity: Understand OAuth 2.0 flow end-to-end
 - Full control over user session management
 - Public API ready: Standard JWT-based auth
 - Security: Validate Google credentials server-side, not client-side
 
 **Flow:**
+
 1. Flutter redirects user to Google OAuth consent screen
 2. User approves, Google redirects back with authorization code
 3. Flutter sends code to backend: `POST /api/auth/google`
@@ -102,12 +114,14 @@ This is a **Spring Boot REST API backend** for the Bookclub application. It repl
 9. Flutter includes JWT in `Authorization: Bearer {token}` header for all subsequent requests
 
 **Components:**
+
 - **Spring Security OAuth2 Client:** Handles Google OAuth integration
 - **JWT Library:** Generate/validate tokens (e.g., `java-jwt` or Spring Security OAuth)
 - **SecurityFilterChain:** Define public (`/api/auth/**`) vs protected endpoints
 - **JWT Filter:** Intercept requests, validate token, populate Spring Security context
 
 **Token Strategy:**
+
 - Stateless JWTs (server doesn't store sessions)
 - Include claims: user ID, email, expiration
 - Expiration: 7 days (configurable)
@@ -120,6 +134,7 @@ This is a **Spring Boot REST API backend** for the Bookclub application. It repl
 **Target Service:** Cloud Run (serverless containers)
 
 **Rationale:**
+
 - Simplest GCP deployment: Build Docker image → Push to GCR → Deploy
 - Auto-scaling (including scale-to-zero for cost savings)
 - Automatic HTTPS
@@ -127,10 +142,12 @@ This is a **Spring Boot REST API backend** for the Bookclub application. It repl
 - Easier than GKE (Kubernetes) for single application
 
 **Alternative Considered:**
+
 - **Google Kubernetes Engine (GKE):** Overkill for one app, but valuable for learning K8s
 - **App Engine Standard:** Simpler but less flexible
 
 **Deployment Workflow:**
+
 1. Package Spring Boot as executable JAR
 2. Create Dockerfile (using multi-stage build)
 3. Build Docker image
@@ -138,6 +155,7 @@ This is a **Spring Boot REST API backend** for the Bookclub application. It repl
 5. Deploy to Cloud Run via `gcloud run deploy`
 
 **Infrastructure:**
+
 - **Cloud SQL for PostgreSQL:** Managed PostgreSQL instance
 - **Secret Manager:** Store database credentials, JWT signing key, OAuth client secrets
 - **Cloud Build:** CI/CD pipeline (optional, can start with local builds)
@@ -147,6 +165,7 @@ This is a **Spring Boot REST API backend** for the Bookclub application. It repl
 **Decision:** Write OpenAPI 3.0 spec first, generate Java server interfaces and Dart client code
 
 **Rationale:**
+
 - **Contract-first development:** API contract is source of truth
 - **Prevents drift:** Java and Flutter always in sync with spec
 - **Documentation:** OpenAPI spec IS the documentation
@@ -154,17 +173,19 @@ This is a **Spring Boot REST API backend** for the Bookclub application. It repl
 - **Type safety:** Both sides use generated models
 
 **Tooling:**
+
 - **Java:** `openapi-generator-maven-plugin` in `pom.xml`
-  - Generates Spring Boot controller interfaces
-  - Generates model POJOs with Jackson annotations
-  - Controllers implement generated interfaces
+    - Generates Spring Boot controller interfaces
+    - Generates model POJOs with Jackson annotations
+    - Controllers implement generated interfaces
 - **Dart/Flutter:** `openapi-generator-cli` or Flutter package
-  - Generates HTTP client with all API methods
-  - Generates Dart model classes with serialization
+    - Generates HTTP client with all API methods
+    - Generates Dart model classes with serialization
 
 **Spec Location:** `backend/src/main/resources/openapi.yaml`
 
 **Generated Artifacts (NOT hand-edited):**
+
 - Java: `target/generated-sources/openapi/`
 - Dart: `frontend/lib/generated/api/` (or similar)
 
@@ -172,17 +193,18 @@ This is a **Spring Boot REST API backend** for the Bookclub application. It repl
 
 **Endpoint Mapping:**
 
-| Flutter Service Method | REST Endpoint | HTTP Method | Description |
-|------------------------|---------------|-------------|-------------|
-| `LibraryService.addBook(book)` | `/api/users/{userId}/library` | POST | Add book to user's library |
-| `LibraryService.books` getter | `/api/users/{userId}/library` | GET | List all books in user's library |
-| `ContactService.addContact(userToAdd)` | `/api/connections` | POST | Create connection request |
-| `ContactService.connections` getter | `/api/connections?userId={userId}` | GET | List user's connections |
-| `SearchService.searchByISBN(isbn)` | `/api/search/books?isbn={isbn}` | GET | Find which friends have a book |
-| `AuthService.signInWithGoogle()` | `/api/auth/google` | POST | Exchange Google code for JWT |
-| `AuthService.fetchProfile(uid)` | `/api/users/{userId}` | GET | Get user profile |
+| Flutter Service Method                 | REST Endpoint                      | HTTP Method | Description                      |
+|----------------------------------------|------------------------------------|-------------|----------------------------------|
+| `LibraryService.addBook(book)`         | `/api/users/{userId}/library`      | POST        | Add book to user's library       |
+| `LibraryService.books` getter          | `/api/users/{userId}/library`      | GET         | List all books in user's library |
+| `ContactService.addContact(userToAdd)` | `/api/connections`                 | POST        | Create connection request        |
+| `ContactService.connections` getter    | `/api/connections?userId={userId}` | GET         | List user's connections          |
+| `SearchService.searchByISBN(isbn)`     | `/api/search/books?isbn={isbn}`    | GET         | Find which friends have a book   |
+| `AuthService.signInWithGoogle()`       | `/api/auth/google`                 | POST        | Exchange Google code for JWT     |
+| `AuthService.fetchProfile(uid)`        | `/api/users/{userId}`              | GET         | Get user profile                 |
 
 **Error Handling:**
+
 - Use standard HTTP status codes (400, 401, 403, 404, 500, etc.)
 - Consistent error response schema in OpenAPI spec:
   ```json
@@ -200,20 +222,24 @@ This is a **Spring Boot REST API backend** for the Bookclub application. It repl
 **Decision:** Rewrite entire backend at once, switch Flutter app in single deployment
 
 **Rationale:**
+
 - **Learning focus:** Want to dive into Java immediately, not maintain two backends
 - **Scope:** Application is small enough for complete rewrite
 - **Clean break:** No hybrid complexity of Firestore + PostgreSQL
 
 **Risks:**
+
 - High-risk deployment (all-or-nothing)
 - Testing burden is higher (must verify all features work)
 
 **Mitigation:**
+
 - Comprehensive integration tests with Testcontainers
 - Local testing with production-like environment
 - Firebase remains available as rollback option initially
 
 **Alternative (Not Chosen):** Strangler Fig Pattern
+
 - Migrate one service at a time
 - Lower risk but slower learning
 - More complex: maintaining two backends simultaneously
@@ -223,14 +249,17 @@ This is a **Spring Boot REST API backend** for the Bookclub application. It repl
 **Decision:** Three-tier testing pyramid with JUnit 5, Mockito, and Testcontainers
 
 #### Level 1: Unit Tests (Fast, Isolated)
+
 **Purpose:** Test business logic in service layer
 
 **Tools:**
+
 - JUnit 5
 - Mockito (mock repositories and external dependencies)
 - AssertJ (fluent assertions)
 
 **Pattern:**
+
 ```java
 @ExtendWith(MockitoExtension.class)
 class LibraryServiceTest {
@@ -248,11 +277,13 @@ class LibraryServiceTest {
 ```
 
 **What to test:**
+
 - Service methods with mocked repositories
 - Business logic validation
 - Error handling (e.g., duplicate book, unauthorized access)
 
 **What NOT to test:**
+
 - Framework behavior (Spring's DI, JPA's queries)
 - Database interactions (use slice tests for that)
 
@@ -265,6 +296,7 @@ class LibraryServiceTest {
 **Tests:** Controller request/response mapping
 
 **Pattern:**
+
 ```java
 @WebMvcTest(LibraryController.class)
 class LibraryControllerTest {
@@ -285,6 +317,7 @@ class LibraryControllerTest {
 ```
 
 **What to test:**
+
 - HTTP status codes
 - Request/response JSON mapping
 - Validation errors
@@ -295,6 +328,7 @@ class LibraryControllerTest {
 **Tests:** JPA repositories and queries
 
 **Pattern:**
+
 ```java
 @DataJpaTest
 class LibraryRepositoryTest {
@@ -312,6 +346,7 @@ class LibraryRepositoryTest {
 ```
 
 **What to test:**
+
 - Custom query methods
 - JPA relationships
 - Database constraints
@@ -323,11 +358,13 @@ class LibraryRepositoryTest {
 **Purpose:** Test full application stack with real PostgreSQL
 
 **Tools:**
+
 - `@SpringBootTest` (loads entire Spring context)
 - Testcontainers (spins up PostgreSQL in Docker)
 - RestAssured or TestRestTemplate (HTTP client for tests)
 
 **Pattern:**
+
 ```java
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
@@ -359,12 +396,14 @@ class LibraryIntegrationTest {
 ```
 
 **What to test:**
+
 - End-to-end API workflows
 - Database transactions
 - PostgreSQL-specific features (e.g., JSON columns, full-text search)
 - Authentication/authorization flows
 
 **Why Testcontainers?**
+
 - **Production parity:** Tests run against actual PostgreSQL, not H2
 - **Catches bugs:** PostgreSQL constraints, data types, and query syntax differ from H2
 - **Confidence:** If integration tests pass, deployment is likely to succeed
@@ -416,12 +455,14 @@ class LibraryIntegrationTest {
 ### Key Principles
 
 **Single Responsibility:**
+
 - Each layer has one reason to change
 - Database changes → affect entities/repositories only
 - Business rules → affect services only
 - API contract → affect controllers and OpenAPI spec only
 
 **DTOs vs Entities:**
+
 - **Entity:** Database row mapping (annotated with `@Entity`)
 - **DTO (Data Transfer Object):** API contract model (generated from OpenAPI)
 - **NEVER expose entities in API responses** (breaks encapsulation, leaks DB structure)
@@ -454,16 +495,18 @@ The schema design requires several key decisions:
 ##### Decision Point 1: Users Table
 
 **Primary Key Choice:**
+
 - **Option A:** Use Firebase UID as primary key (VARCHAR)
-  - Pros: Continuity with old system, easier migration
-  - Cons: Less conventional, string comparison slower than UUID
+    - Pros: Continuity with old system, easier migration
+    - Cons: Less conventional, string comparison slower than UUID
 - **Option B:** Generate new UUIDs (UUID type)
-  - Pros: Database independence, better performance
-  - Cons: Need to migrate user IDs
+    - Pros: Database independence, better performance
+    - Cons: Need to migrate user IDs
 
 **Recommended:** Option A for initial migration (use Firebase UID), can migrate to UUIDs later if needed
 
 **Schema:**
+
 ```sql
 CREATE TABLE users (
     id VARCHAR(128) PRIMARY KEY,  -- Firebase UID
@@ -484,6 +527,7 @@ CREATE INDEX idx_users_email ON users(email);
 **Option A: Normalized Schema (Separate Books Table)**
 
 Books table stores unique books by ISBN:
+
 ```sql
 CREATE TABLE books (
     isbn VARCHAR(13) PRIMARY KEY,
@@ -521,12 +565,14 @@ CREATE INDEX idx_user_library_isbn ON user_library(book_isbn);
 ```
 
 **Pros:**
+
 - No data duplication (book metadata stored once)
 - Easy to update book info globally
 - Query "which users have this book" is simple
 - Normalized design (database best practice)
 
 **Cons:**
+
 - Requires JOINs to get user's library with book details
 - More complex JPA entity relationships
 - More tables to manage
@@ -555,17 +601,20 @@ CREATE INDEX idx_library_isbn ON library(isbn);
 ```
 
 **Pros:**
+
 - Simple queries (no JOINs needed)
 - Mirrors Firestore subcollection structure
 - Faster reads (single table scan)
 - Easier JPA mapping
 
 **Cons:**
+
 - Book metadata duplicated per user
 - Updating book info requires updating all entries
 - Denormalized (violates database normal forms)
 
 **Recommended:** **Option A (Normalized)** for learning purposes
+
 - **Rationale:** One of the key reasons for moving to SQL is to leverage relational design
 - Teaches proper normalization
 - More representative of real-world backend development
@@ -574,6 +623,7 @@ CREATE INDEX idx_library_isbn ON library(isbn);
 ##### Decision Point 3: Connections Table
 
 **Schema:**
+
 ```sql
 CREATE TABLE connections (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -597,12 +647,14 @@ CREATE INDEX idx_connections_status ON connections(status);
 ```
 
 **Key Features:**
+
 - **Unique constraint:** Uses `LEAST`/`GREATEST` to prevent duplicate connections regardless of user order
 - **Composite indexes:** Fast lookups for "all connections for user X"
 - **Status check constraint:** Enforces valid enum values at database level
 - **Nullable timestamps:** `accepted_at` and `rejected_at` only set when applicable
 
 **Query Pattern for "User X's Connections":**
+
 ```sql
 SELECT * FROM connections
 WHERE (user_id_1 = ? OR user_id_2 = ?)
@@ -616,6 +668,7 @@ WHERE (user_id_1 = ? OR user_id_2 = ?)
 **Decision:** Use Flyway for schema versioning
 
 **Rationale:**
+
 - Version-controlled schema changes
 - Automated migration on application startup
 - Safe production deployments (can rollback if needed)
@@ -624,11 +677,13 @@ WHERE (user_id_1 = ? OR user_id_2 = ?)
 **Location:** `src/main/resources/db/migration/`
 
 **Naming Convention:**
+
 - `V1__initial_schema.sql` (two underscores after version)
 - `V2__add_book_ratings.sql`
 - `V3__add_indexes.sql`
 
 **Spring Boot Integration:**
+
 ```yaml
 # application.yml
 spring:
@@ -652,11 +707,13 @@ Should contain all CREATE TABLE statements for users, books, book_authors, book_
 Use YAML for configuration: `src/main/resources/application.yml`
 
 **Profiles:**
+
 - `application.yml` - default/shared config
 - `application-dev.yml` - local development
 - `application-prod.yml` - production (GCP Cloud Run)
 
 **Environment Variables for Secrets:**
+
 ```yaml
 spring:
   datasource:
@@ -678,6 +735,7 @@ jwt:
 
 **GCP Secret Manager Integration:**
 Use Spring Cloud GCP to fetch secrets:
+
 ```xml
 <dependency>
     <groupId>com.google.cloud</groupId>
@@ -686,6 +744,7 @@ Use Spring Cloud GCP to fetch secrets:
 ```
 
 **Never Commit:**
+
 - Database passwords
 - OAuth client secrets
 - JWT signing keys
@@ -700,6 +759,7 @@ Use `.env` files for local development (added to `.gitignore`).
 ### 1. N+1 Query Problem in JPA
 
 **Problem:**
+
 ```java
 List<User> users = userRepository.findAll();
 for (User user : users) {
@@ -709,6 +769,7 @@ for (User user : users) {
 
 **Solution:**
 Use `@EntityGraph` or JOIN FETCH:
+
 ```java
 @Query("SELECT u FROM User u LEFT JOIN FETCH u.books WHERE u.id = :id")
 User findByIdWithBooks(@Param("id") String id);
@@ -719,6 +780,7 @@ Or configure `@OneToMany(fetch = FetchType.LAZY)` and use JOIN FETCH in queries.
 ### 2. Entity vs DTO Confusion
 
 **Wrong:**
+
 ```java
 @GetMapping("/users/{id}")
 public User getUser(@PathVariable String id) {
@@ -727,6 +789,7 @@ public User getUser(@PathVariable String id) {
 ```
 
 **Right:**
+
 ```java
 @GetMapping("/users/{id}")
 public UserResponse getUser(@PathVariable String id) {
@@ -735,11 +798,13 @@ public UserResponse getUser(@PathVariable String id) {
 }
 ```
 
-**Why:** Entities may contain sensitive data, lazy-loaded collections (causes serialization issues), or internal database structure.
+**Why:** Entities may contain sensitive data, lazy-loaded collections (causes serialization issues), or internal
+database structure.
 
 ### 3. Missing @Transactional
 
 **Problem:** Multiple writes without transaction boundary:
+
 ```java
 public void addBookAndNotifyFriends(Book book) {
     libraryRepository.save(book);  // Write 1
@@ -749,6 +814,7 @@ public void addBookAndNotifyFriends(Book book) {
 ```
 
 **Solution:**
+
 ```java
 @Transactional
 public void addBookAndNotifyFriends(Book book) {
@@ -759,11 +825,13 @@ public void addBookAndNotifyFriends(Book book) {
 ### 4. Hardcoded Configuration
 
 **Bad:**
+
 ```java
 String dbUrl = "jdbc:postgresql://localhost:5432/bookclub";
 ```
 
 **Good:**
+
 ```java
 @Value("${spring.datasource.url}")
 private String dbUrl;
@@ -776,12 +844,14 @@ Or use `@ConfigurationProperties` for grouped settings.
 **Problem:** Querying without indexes causes full table scans (slow at scale)
 
 **Solution:** Add indexes for:
+
 - Foreign keys (usually indexed automatically)
 - WHERE clause columns (e.g., `isbn`, `status`)
 - ORDER BY columns
 - JOIN columns
 
 **Example:**
+
 ```sql
 CREATE INDEX idx_library_user_isbn ON user_library(user_id, isbn);
 ```
@@ -789,6 +859,7 @@ CREATE INDEX idx_library_user_isbn ON user_library(user_id, isbn);
 ### 6. Leaking Exception Details
 
 **Problem:**
+
 ```java
 catch (SQLException e) {
     throw new RuntimeException(e.getMessage());  // Leaks database details!
@@ -796,6 +867,7 @@ catch (SQLException e) {
 ```
 
 **Solution:** Use custom exceptions and global exception handler:
+
 ```java
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -874,18 +946,21 @@ public class GlobalExceptionHandler {
 ## Learning Resources
 
 ### Phase 1: Java Fundamentals (if needed)
+
 - **Records** (Java 14+): Immutable data classes
 - **Streams API**: Functional programming (`map`, `filter`, `collect`)
 - **Optional**: Null safety
 - **CompletableFuture**: Async patterns
 
 ### Phase 2: Spring Core
+
 - **Dependency Injection**: `@Autowired`, constructor injection
 - **Component Scanning**: `@Component`, `@Service`, `@Repository`
 - **Configuration**: `@Value`, `@ConfigurationProperties`
 - **Profiles**: `@Profile`, `application-{profile}.yml`
 
 ### Phase 3: Spring Data JPA
+
 - **Entity Mapping**: `@Entity`, `@Id`, `@Column`, `@Table`
 - **Relationships**: `@ManyToOne`, `@OneToMany`, `@ManyToMany`, `@JoinColumn`
 - **Repository Methods**: Query derivation (e.g., `findByIsbn`)
@@ -893,12 +968,14 @@ public class GlobalExceptionHandler {
 - **Lazy vs Eager Loading**: `FetchType.LAZY`, `@EntityGraph`
 
 ### Phase 4: Spring Security
+
 - **SecurityFilterChain**: Define protected/public endpoints
 - **OAuth2 Client**: Google OAuth integration
 - **JWT**: Token structure, signing, validation
 - **Authentication vs Authorization**: Who you are vs what you can do
 
 ### Phase 5: Testing
+
 - **JUnit 5**: `@Test`, `@BeforeEach`, lifecycle hooks
 - **Mockito**: `@Mock`, `@InjectMocks`, `when()...thenReturn()`
 - **AssertJ**: Fluent assertions (`assertThat(x).isEqualTo(y)`)
@@ -906,6 +983,7 @@ public class GlobalExceptionHandler {
 - **Testcontainers**: Docker-based integration testing
 
 ### Recommended Documentation
+
 - **Spring Boot Reference:** https://docs.spring.io/spring-boot/docs/current/reference/html/
 - **Spring Data JPA:** https://docs.spring.io/spring-data/jpa/docs/current/reference/html/
 - **Spring Security OAuth2:** https://docs.spring.io/spring-security/reference/servlet/oauth2/index.html
@@ -916,9 +994,11 @@ public class GlobalExceptionHandler {
 ## Next Steps: Getting Started
 
 ### Step 1: Schema Design (Do This First!)
+
 Before writing any code, finalize the PostgreSQL schema:
 
 **Tasks:**
+
 1. Draw ERD (Entity-Relationship Diagram) with tables, columns, relationships
 2. Decide: Normalized books table vs denormalized library table
 3. Define all indexes
@@ -927,37 +1007,42 @@ Before writing any code, finalize the PostgreSQL schema:
 **Tool Suggestion:** Use https://dbdiagram.io to visualize schema
 
 **Questions to Answer:**
+
 - How to handle `authors` array? (TEXT[] or separate table?)
 - How to handle `genres` array? (TEXT[] or separate table?)
 - What indexes are needed for query performance?
 
 ### Step 2: Spring Boot Project Initialization
+
 Use **Spring Initializr** (https://start.spring.io):
 
 **Settings:**
+
 - **Build Tool:** Maven
 - **Language:** Java
 - **Java Version:** 17 or 21 (LTS)
 - **Spring Boot Version:** 3.2.x (latest stable)
 - **Packaging:** Jar
 - **Dependencies:**
-  - Spring Web
-  - Spring Data JPA
-  - PostgreSQL Driver
-  - Spring Security
-  - OAuth2 Client
-  - Validation
-  - Flyway Migration
-  - Lombok (optional, reduces boilerplate)
+    - Spring Web
+    - Spring Data JPA
+    - PostgreSQL Driver
+    - Spring Security
+    - OAuth2 Client
+    - Validation
+    - Flyway Migration
+    - Lombok (optional, reduces boilerplate)
 
 Download and extract to `backend/` directory.
 
 ### Step 3: OpenAPI Specification
+
 Start with ONE endpoint to learn the pattern:
 
 **File:** `backend/src/main/resources/openapi.yaml`
 
 **First endpoint to define:**
+
 ```yaml
 openapi: 3.0.3
 info:
@@ -1023,7 +1108,9 @@ components:
 Expand to other endpoints after validating this pattern works.
 
 ### Step 4: Configure OpenAPI Codegen
+
 Add to `pom.xml`:
+
 ```xml
 <plugin>
     <groupId>org.openapitools</groupId>
@@ -1064,6 +1151,7 @@ Run: `mvn generate-sources`
 **This is your template for all other endpoints.**
 
 ### Step 6: Authentication Setup
+
 1. Configure Google OAuth2 client in `application.yml`
 2. Create `SecurityConfig.java` with `SecurityFilterChain`
 3. Implement JWT token generation utility
@@ -1071,7 +1159,9 @@ Run: `mvn generate-sources`
 5. Test OAuth flow with Postman before integrating Flutter
 
 ### Step 7: Complete All Endpoints
+
 Repeat Step 5 pattern for:
+
 - List library books (GET)
 - Add connection (POST)
 - List connections (GET)
@@ -1079,6 +1169,7 @@ Repeat Step 5 pattern for:
 - Get user profile (GET)
 
 ### Step 8: Docker & Deployment
+
 1. Create `Dockerfile` (multi-stage build)
 2. Test locally with Docker Compose (app + PostgreSQL)
 3. Deploy to GCP Cloud Run
