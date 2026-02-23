@@ -1,0 +1,24 @@
+# Build artifacts
+  build/
+  target/
+  *.class
+
+  # Gradle
+  .gradle/
+
+  # Git
+  .git/
+  .gitignore
+
+  # IDE
+  .idea/
+  .vscode/
+  *.iml
+
+  # Docs
+  *.md
+  README.md
+
+  # Env files
+  .env
+  *.properties
