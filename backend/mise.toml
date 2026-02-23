@@ -6,4 +6,16 @@ java = "25"
 description = "Build the Java backend"
 run = "./gradlew build"
 
+[tasks.build-docker]
+description = "Build a new docker image"
+run = "docker build --platform linux/amd64 -t europe-west3-docker.pkg.dev/bookclub-392420/bookclub-be-repo/bookclub-backend:latest ."
 
+[tasks.push-docker]
+description = "Push docker image to GCP Artifactory"
+depends = ["build-docker"]
+run = "docker push europe-west3-docker.pkg.dev/bookclub-392420/bookclub-be-repo/bookclub-backend:latest"
+
+[tasks.deploy]
+description = "Deploy to GCP Run"
+depends = ["push-docker"]
+run = "gcloud run deploy bookclub-backend --image europe-west3-docker.pkg.dev/bookclub-392420/bookclub-be-repo/bookclub-backend:latest --platform managed --region europe-west3 --allow-unauthenticated"
