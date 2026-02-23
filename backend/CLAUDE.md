@@ -174,7 +174,7 @@ direct-access architecture with a traditional 3-tier application stack.
 
 **Tooling:**
 
-- **Java:** `openapi-generator-maven-plugin` in `pom.xml`
+- **Java:** `org.openapi.generator` Gradle plugin in `build.gradle`
     - Generates Spring Boot controller interfaces
     - Generates model POJOs with Jackson annotations
     - Controllers implement generated interfaces
@@ -908,29 +908,29 @@ public class GlobalExceptionHandler {
 
 3. **Run Application:**
    ```bash
-   ./mvnw spring-boot:run
+   ./gradlew bootRun
    ```
 
 4. **Run Tests:**
    ```bash
-   ./mvnw test                    # All tests
-   ./mvnw test -Dtest=LibraryServiceTest  # Specific test
+   ./gradlew test                    # All tests
+   ./gradlew test --tests LibraryServiceTest  # Specific test
    ```
 
 5. **Generate Code from OpenAPI:**
    ```bash
-   ./mvnw generate-sources
+   ./gradlew openApiGenerate
    ```
 
 ### Iterative Development Process
 
 1. **Update OpenAPI spec** (`src/main/resources/openapi.yaml`)
-2. **Run `mvn generate-sources`** to regenerate interfaces/models
+2. **Run `./gradlew openApiGenerate`** to regenerate interfaces/models
 3. **Implement controller** methods (implement generated interface)
 4. **Implement service** business logic
 5. **Write unit tests** for service
 6. **Write integration test** with Testcontainers
-7. **Run tests:** `mvn test`
+7. **Run tests:** `./gradlew test`
 8. **Test locally** via Postman/curl
 
 ### Database Schema Changes
@@ -940,54 +940,6 @@ public class GlobalExceptionHandler {
 3. **Restart app** (Flyway runs migration automatically)
 4. **Update JPA entities** to match schema
 5. **Commit migration file** to version control
-
----
-
-## Learning Resources
-
-### Phase 1: Java Fundamentals (if needed)
-
-- **Records** (Java 14+): Immutable data classes
-- **Streams API**: Functional programming (`map`, `filter`, `collect`)
-- **Optional**: Null safety
-- **CompletableFuture**: Async patterns
-
-### Phase 2: Spring Core
-
-- **Dependency Injection**: `@Autowired`, constructor injection
-- **Component Scanning**: `@Component`, `@Service`, `@Repository`
-- **Configuration**: `@Value`, `@ConfigurationProperties`
-- **Profiles**: `@Profile`, `application-{profile}.yml`
-
-### Phase 3: Spring Data JPA
-
-- **Entity Mapping**: `@Entity`, `@Id`, `@Column`, `@Table`
-- **Relationships**: `@ManyToOne`, `@OneToMany`, `@ManyToMany`, `@JoinColumn`
-- **Repository Methods**: Query derivation (e.g., `findByIsbn`)
-- **JPQL**: Java Persistence Query Language
-- **Lazy vs Eager Loading**: `FetchType.LAZY`, `@EntityGraph`
-
-### Phase 4: Spring Security
-
-- **SecurityFilterChain**: Define protected/public endpoints
-- **OAuth2 Client**: Google OAuth integration
-- **JWT**: Token structure, signing, validation
-- **Authentication vs Authorization**: Who you are vs what you can do
-
-### Phase 5: Testing
-
-- **JUnit 5**: `@Test`, `@BeforeEach`, lifecycle hooks
-- **Mockito**: `@Mock`, `@InjectMocks`, `when()...thenReturn()`
-- **AssertJ**: Fluent assertions (`assertThat(x).isEqualTo(y)`)
-- **Spring Boot Test**: `@SpringBootTest`, `@WebMvcTest`, `@DataJpaTest`
-- **Testcontainers**: Docker-based integration testing
-
-### Recommended Documentation
-
-- **Spring Boot Reference:** https://docs.spring.io/spring-boot/docs/current/reference/html/
-- **Spring Data JPA:** https://docs.spring.io/spring-data/jpa/docs/current/reference/html/
-- **Spring Security OAuth2:** https://docs.spring.io/spring-security/reference/servlet/oauth2/index.html
-- **OpenAPI Generator:** https://openapi-generator.tech/docs/generators/spring/
 
 ---
 
@@ -1014,26 +966,25 @@ Before writing any code, finalize the PostgreSQL schema:
 
 ### Step 2: Spring Boot Project Initialization
 
-Use **Spring Initializr** (https://start.spring.io):
+**Current Setup:**
 
-**Settings:**
-
-- **Build Tool:** Maven
+- **Build Tool:** Gradle
 - **Language:** Java
-- **Java Version:** 17 or 21 (LTS)
-- **Spring Boot Version:** 3.2.x (latest stable)
+- **Java Version:** 25
+- **Spring Boot Version:** 4.0.x
 - **Packaging:** Jar
-- **Dependencies:**
-    - Spring Web
-    - Spring Data JPA
-    - PostgreSQL Driver
-    - Spring Security
-    - OAuth2 Client
-    - Validation
-    - Flyway Migration
-    - Lombok (optional, reduces boilerplate)
 
-Download and extract to `backend/` directory.
+**Key Dependencies** (already configured in `build.gradle`):
+- Spring Web MVC
+- Spring Data JPA
+- PostgreSQL Driver
+- Spring Security (commented out initially)
+- OAuth2 Client (commented out initially)
+- Validation
+- Flyway Migration
+- Spring Boot Actuator (for health checks)
+
+The project has been initialized. No action needed unless adding new dependencies.
 
 ### Step 3: OpenAPI Specification
 
@@ -1109,34 +1060,39 @@ Expand to other endpoints after validating this pattern works.
 
 ### Step 4: Configure OpenAPI Codegen
 
-Add to `pom.xml`:
+Add the OpenAPI Generator plugin to `build.gradle`:
 
-```xml
-<plugin>
-    <groupId>org.openapitools</groupId>
-    <artifactId>openapi-generator-maven-plugin</artifactId>
-    <version>7.2.0</version>
-    <executions>
-        <execution>
-            <goals>
-                <goal>generate</goal>
-            </goals>
-            <configuration>
-                <inputSpec>${project.basedir}/src/main/resources/openapi.yaml</inputSpec>
-                <generatorName>spring</generatorName>
-                <apiPackage>com.bookclub.api</apiPackage>
-                <modelPackage>com.bookclub.api.model</modelPackage>
-                <configOptions>
-                    <interfaceOnly>true</interfaceOnly>
-                    <useSpringBoot3>true</useSpringBoot3>
-                </configOptions>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
+```gradle
+plugins {
+    id 'org.openapi.generator' version '7.2.0'
+}
+
+openApiGenerate {
+    generatorName = 'spring'
+    inputSpec = "$projectDir/src/main/resources/openapi.yaml".toString()
+    outputDir = "$buildDir/generated".toString()
+    apiPackage = 'com.bookclub.api'
+    modelPackage = 'com.bookclub.api.model'
+    configOptions = [
+        interfaceOnly: 'true',
+        useSpringBoot3: 'true'
+    ]
+}
+
+// Make generated sources available to compile
+sourceSets {
+    main {
+        java {
+            srcDir "$buildDir/generated/src/main/java"
+        }
+    }
+}
+
+// Generate before compiling
+compileJava.dependsOn tasks.openApiGenerate
 ```
 
-Run: `mvn generate-sources`
+Run: `./gradlew openApiGenerate`
 
 ### Step 5: Implement First Endpoint
 
