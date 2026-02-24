@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.0.3'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.openapi.generator' version '7.9.0'
 }
 
 group = 'com.bookclub'
@@ -27,6 +28,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.flywaydb:flyway-database-postgresql'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.swagger.core.v3:swagger-annotations:2.2.20'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-flyway-test'
@@ -43,3 +48,29 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+openApiGenerate {
+	generatorName = 'spring'
+	inputSpec = "$projectDir/../openapi/api.yaml"
+	outputDir = "$buildDir/generated"
+	apiPackage = 'com.bookclub.api'
+	modelPackage = 'com.bookclub.api.model'
+	configOptions = [
+			interfaceOnly: 'true',           // Generate interfaces, not implementations
+			useSpringBoot3: 'true',          // Use Spring Boot 3+ annotations
+			useTags: 'true',                 // Organize by OpenAPI tags
+			skipDefaultInterface: 'true',     // Avoid duplicate default methods
+			documentationProvider: 'none'     // Skip Swagger UI generation
+	]
+}
+
+// Make generated code available to your project
+sourceSets {
+	main {
+		java {
+			srcDir "$buildDir/generated/src/main/java"
+		}
+	}
+}
+
+compileJava.dependsOn tasks.openApiGenerate
