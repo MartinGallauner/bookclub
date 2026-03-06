@@ -29,8 +29,113 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HealthResponse'
+
+
+  /api/auth/google:
+    post:
+      summary: Authenticate with Google OAuth 2.0
+      description: |
+        Exchanges a Google authorization code for a JWT token.
+        
+        Flow:
+        1. Frontend redirects user to Google OAuth consent screen
+        2. User approves, Google redirects back with authorization code
+        3. Frontend sends code to this endpoint
+        4. Backend validates code with Google, creates/updates user, returns JWT
+      operationId: loginWithGoogle
+      tags:
+        - Auth
+      security: [ ]  # This endpoint doesn't require authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoogleLoginRequest'
+      responses:
+        '200':
+          description: Successfully authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          description: Invalid or expired authorization code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
 components:
   schemas:
+    GoogleLoginRequest:
+      type: object
+      required:
+        - code
+      properties:
+        code:
+          type: string
+          description: Authorization code from Google OAuth flow
+          example: "4/0AfJohXmT9..."
+        redirectUri:
+          type: string
+          format: uri
+          description: The redirect URI used in the OAuth flow (must match)
+          example: "http://localhost:8080/auth/callback"
+
+    AuthResponse:
+      type: object
+      required:
+        - token
+        - tokenType
+        - expiresIn
+        - user
+      properties:
+        token:
+          type: string
+          description: JWT access token
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        tokenType:
+          type: string
+          enum: [ Bearer ]
+          description: Token type (always "Bearer")
+          example: Bearer
+        expiresIn:
+          type: integer
+          description: Token lifetime in seconds (7 days = 604800)
+          example: 604800
+        user:
+          $ref: '#/components/schemas/UserProfile'
+
+    UserProfile:
+      type: object
+      required:
+        - id
+        - email
+      properties:
+        id:
+          type: string
+          description: User's unique identifier
+          example: "user_123456"
+        email:
+          type: string
+          format: email
+          description: User's email address
+          example: "martin.gallauner@example.com"
+        displayName:
+          type: string
+          nullable: true
+          description: User's display name
+          example: "Martin Gallauner"
+        photoUrl:
+          type: string
+          format: uri
+          nullable: true
+          description: URL to user's profile photo
+          example: "https://lh3.googleusercontent.com/..."
+
     HealthResponse:
       type: object
       required:
@@ -45,3 +150,42 @@ components:
           format: date-time
           example: '2025-02-24T10:30:00Z'
 
+    ErrorResponse:
+      type: object
+      required:
+        - timestamp
+        - status
+        - error
+        - message
+        - path
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: When the error occurred
+          example: '2025-02-24T10:30:00Z'
+        status:
+          type: integer
+          description: HTTP status code
+          example: 400
+        error:
+          type: string
+          description: HTTP status text
+          example: Bad Request
+        message:
+          type: string
+          description: Detailed error message
+          example: Invalid ISBN format
+        path:
+          type: string
+          description: API path that caused the error
+          example: /api/users/123/library
+
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

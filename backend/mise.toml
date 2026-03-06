@@ -2,8 +2,13 @@
 gradle = "latest"
 java = "25"
 
+[tasks.generate]
+description = "Generates api code from the openapi spec"
+run = "./gradlew "
+
 [tasks.build]
 description = "Build the Java backend"
+depends = ["generate"]
 run = "./gradlew build"
 
 [tasks.build-docker]
