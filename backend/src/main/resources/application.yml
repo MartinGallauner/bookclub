@@ -11,6 +11,9 @@ spring:
   flyway:
     enabled: false
 
+google:
+  client-id: ${GOOGLE_CLIENT_ID}
+
 management:
   endpoints:
     web:
