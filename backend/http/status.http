@@ -1,0 +1,4 @@
+### GET request to example server
+GET https://bookclub-backend-1012127955212.europe-west3.run.app/actuator/health
+
+###
