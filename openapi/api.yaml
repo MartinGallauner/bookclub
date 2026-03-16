@@ -73,7 +73,7 @@ components:
     GoogleLoginRequest:
       type: object
       required:
-        - code
+        - idToken
       properties:
         idToken:
           type: string
