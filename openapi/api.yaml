@@ -75,15 +75,11 @@ components:
       required:
         - code
       properties:
-        code:
+        idToken:
           type: string
-          description: Authorization code from Google OAuth flow
-          example: "4/0AfJohXmT9..."
-        redirectUri:
-          type: string
-          format: uri
-          description: The redirect URI used in the OAuth flow (must match)
-          example: "http://localhost:8080/auth/callback"
+          description: A signed JWT issued by Google, used to verify the user's identity on the backend.
+          example: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjFlOWdkazcifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXVkIjoiMTIzNDU2Nzg5MC5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsInN1YiI6IjExMjM0NTY3ODkwMTIzNDU2Nzg5MCIsImVtYWlsIjoibWFydGluQGV4YW1wbGUuY29tIiwiZXhwIjoxNzQwMDAwMDA
+  wfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 
     AuthResponse:
       type: object
