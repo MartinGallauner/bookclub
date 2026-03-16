@@ -1,4 +1,4 @@
-package com.bookclub.bookclubbackend;
+package com.bookclub;
 
 import org.springframework.boot.SpringApplication;
 
