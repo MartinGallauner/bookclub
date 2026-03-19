@@ -9,7 +9,7 @@ spring:
     username: dev
     password: dev
   flyway:
-    enabled: false
+    enabled: true
 
 google:
   client-id: ${GOOGLE_CLIENT_ID}
