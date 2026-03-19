@@ -2,25 +2,33 @@
 gradle = "latest"
 java = "25"
 
+[env]
+_.file =".env"
+
 [tasks.generate]
 description = "Generates api code from the openapi spec"
-run = "./gradlew "
+run = "./gradlew openApiGenerate"
 
 [tasks.build]
 description = "Build the Java backend"
 depends = ["generate"]
 run = "./gradlew build"
 
+[tasks.start]
+description = "Run the backend locally"
+run = "./gradlew bootRun"
+
 [tasks.build-docker]
 description = "Build a new docker image"
-run = "docker build --platform linux/amd64 -t europe-west3-docker.pkg.dev/bookclub-392420/bookclub-be-repo/bookclub-backend:latest ."
+run = "docker build --platform linux/amd64 -f backend/Dockerfile -t europe-west3-docker.pkg.dev/bookclub-6c433/bookclub-be-repo/bookclub-backend:latest ."
+dir = "{{config_root}}/.."
 
 [tasks.push-docker]
 description = "Push docker image to GCP Artifactory"
 depends = ["build-docker"]
-run = "docker push europe-west3-docker.pkg.dev/bookclub-392420/bookclub-be-repo/bookclub-backend:latest"
+run = "docker push europe-west3-docker.pkg.dev/bookclub-6c433/bookclub-be-repo/bookclub-backend:latest"
 
 [tasks.deploy]
 description = "Deploy to GCP Run"
 depends = ["push-docker"]
-run = "gcloud run deploy bookclub-backend --image europe-west3-docker.pkg.dev/bookclub-392420/bookclub-be-repo/bookclub-backend:latest --platform managed --region europe-west3 --allow-unauthenticated"
+run = "gcloud run deploy bookclub-backend --image europe-west3-docker.pkg.dev/bookclub-6c433/bookclub-be-repo/bookclub-backend:latest --platform managed --project bookclub-6c433 --region europe-west3 --allow-unauthenticated"

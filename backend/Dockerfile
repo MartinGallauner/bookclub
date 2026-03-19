@@ -1,12 +1,13 @@
 # Stage 1 - Build
 FROM eclipse-temurin:25-jdk AS builder
 WORKDIR /app
-COPY gradlew gradlew.bat ./
-COPY gradle ./gradle
+COPY openapi/api.yaml /openapi/api.yaml
+COPY backend/gradlew backend/gradlew.bat ./
+COPY backend/gradle ./gradle
+COPY backend/build.gradle backend/settings.gradle ./
+COPY backend/src src
 RUN chmod +x ./gradlew
-COPY build.gradle settings.gradle ./
 RUN ./gradlew dependencies --no-daemon
-COPY src src
 RUN ./gradlew build  -x test --no-daemon
 
 # Stage 2 - Runtime
