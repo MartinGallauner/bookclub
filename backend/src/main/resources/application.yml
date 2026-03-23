@@ -4,10 +4,6 @@ server:
 spring:
   application:
     name: backend
-  datasource:
-    url:
-    username: dev
-    password: dev
   flyway:
     enabled: true
 

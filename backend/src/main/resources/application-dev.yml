@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql:///postgres?cloudSqlInstance=bookclub-6c433:europe-west3:bookclub-postgres&socketFactory=com.google.cloud.sql.postgres.SocketFactory
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
