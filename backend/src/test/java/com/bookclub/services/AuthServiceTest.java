@@ -77,7 +77,8 @@ public class AuthServiceTest {
         Assertions.assertEquals("fancyjwttoken", authResponse.getToken());
         verify(verifier, times(1)).verify(anyString());
 
-        Optional<UserEntity> newUser = userRepository.findById(user.getId());
+        Optional<UserEntity> persistedUser = userRepository.findById(user.getId());
+        Assertions.assertTrue(persistedUser.isPresent());
 
 
 

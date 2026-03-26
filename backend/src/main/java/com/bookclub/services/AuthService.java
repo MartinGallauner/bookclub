@@ -2,6 +2,8 @@ package com.bookclub.services;
 
 import com.bookclub.api.model.AuthResponse;
 import com.bookclub.api.model.UserProfile;
+import com.bookclub.persistence.UserEntity;
+import com.bookclub.persistence.UserRepository;
 import com.google.api.client.json.webtoken.JsonWebSignature;
 import com.google.api.client.json.webtoken.JsonWebToken;
 import com.google.auth.oauth2.TokenVerifier;
@@ -11,9 +13,11 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final TokenVerifier tokenVerifier;
+    private final UserRepository userRepository;
 
-    public AuthService(TokenVerifier tokenVerifier) {
+    public AuthService(TokenVerifier tokenVerifier, UserRepository userRepository) {
         this.tokenVerifier = tokenVerifier;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -30,13 +34,13 @@ public class AuthService {
             throw new TokenVerifier.VerificationException(e.getMessage());
         }
 
-        JsonWebToken.Payload payload = jws.getPayload();
-
+        UserEntity user = UserEntity.fromJws(jws);
+        user = userRepository.save(user);
 
         return new AuthResponse().user(new UserProfile()
-                        .id(payload.getSubject())
-                        .email(payload.get("email").toString())
-                        .displayName(jws.getPayload().get("name").toString()))
+                        .id(user.id)
+                        .email(user.email)
+                        .displayName(user.displayName))
                         .token("fancyjwttoken");
     }
 }
