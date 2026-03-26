@@ -12,5 +12,5 @@ public class UserEntity {
     public String id;
     public String displayName;
     public String photoUrl;
-
+    public String email;
 }
