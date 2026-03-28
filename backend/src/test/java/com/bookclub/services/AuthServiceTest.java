@@ -7,6 +7,7 @@ import com.bookclub.persistence.UserRepository;
 import com.google.api.client.json.webtoken.JsonWebSignature;
 import com.google.api.client.json.webtoken.JsonWebToken;
 import com.google.auth.oauth2.TokenVerifier;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -60,20 +61,18 @@ public class AuthServiceTest {
         //given
         String idToken = "idToken";
 
-        JsonWebToken.Payload payload = new JsonWebToken.Payload();
-        payload.setSubject("google-uid-123");
-        payload.set("email", "test@example.com");
-        payload.set("name", "Test User");
+        JsonWebToken.Payload payload = createPayload("google-uid-123", "Mister Mock", "mistermock@gmail.com");
         when(jws.getPayload()).thenReturn(payload);
         when(tokenVerifier.verify(anyString())).thenReturn(jws);
 
         //when
         AuthResponse authResponse = authService.authenticate(idToken);
 
-
         //then
         UserProfile user = authResponse.getUser();
-        Assertions.assertEquals("Test User", user.getDisplayName().get());
+        Assertions.assertEquals("google-uid-123", user.getId());
+        Assertions.assertEquals("Mister Mock", user.getDisplayName().get());
+        Assertions.assertEquals("mistermock@gmail.com", user.getEmail());
 
         verify(tokenVerifier, times(1)).verify(anyString());
 
@@ -82,12 +81,21 @@ public class AuthServiceTest {
         Assertions.assertEquals(3, token.length);
         String tokenPayload = new String(Base64.getUrlDecoder().decode(token[1]));
         Assertions.assertTrue(tokenPayload.contains("google-uid-123"));
+        Assertions.assertTrue(tokenPayload.contains("mistermock@gmail.com"));
 
         Optional<UserEntity> persistedUser = userRepository.findById(user.getId());
         Assertions.assertTrue(persistedUser.isPresent());
 
 
 
+    }
+
+    private static JsonWebToken.@NonNull Payload createPayload(String userId, String name, String email) {
+        JsonWebToken.Payload payload = new JsonWebToken.Payload();
+        payload.setSubject(userId);
+        payload.set("name", name);
+        payload.set("email", email);
+        return payload;
     }
 
 
