@@ -85,18 +85,13 @@ public class AuthServiceTest {
 
         Optional<UserEntity> persistedUser = userRepository.findById(user.getId());
         Assertions.assertTrue(persistedUser.isPresent());
-
-
-
     }
 
-    private static JsonWebToken.@NonNull Payload createPayload(String userId, String name, String email) {
+    private static JsonWebToken.Payload createPayload(String userId, String name, String email) {
         JsonWebToken.Payload payload = new JsonWebToken.Payload();
         payload.setSubject(userId);
         payload.set("name", name);
         payload.set("email", email);
         return payload;
     }
-
-
 }
