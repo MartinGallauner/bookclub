@@ -1,13 +1,13 @@
-package com.bookclub.services;
+package com.bookclub;
 
 import com.bookclub.api.model.AuthResponse;
 import com.bookclub.api.model.UserProfile;
 import com.bookclub.persistence.UserEntity;
 import com.bookclub.persistence.UserRepository;
+import com.bookclub.services.AuthService;
 import com.google.api.client.json.webtoken.JsonWebSignature;
 import com.google.api.client.json.webtoken.JsonWebToken;
 import com.google.auth.oauth2.TokenVerifier;
-import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @Testcontainers
-public class AuthServiceTest {
+public class AuthIntegrationTest {
 
     @Container
     static PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:15-alpine");
