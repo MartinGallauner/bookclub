@@ -59,14 +59,11 @@ public class AuthServiceTest {
     @Test
     public void TestNewUserLogin() throws TokenVerifier.VerificationException {
         //given
-        String idToken = "idToken";
-
-        JsonWebToken.Payload payload = createPayload("google-uid-123", "Mister Mock", "mistermock@gmail.com");
-        when(jws.getPayload()).thenReturn(payload);
+        when(jws.getPayload()).thenReturn(createPayload("google-uid-123", "Mister Mock", "mistermock@gmail.com"));
         when(tokenVerifier.verify(anyString())).thenReturn(jws);
 
         //when
-        AuthResponse authResponse = authService.authenticate(idToken);
+        AuthResponse authResponse = authService.authenticate("tokenFromGoogle");
 
         //then
         UserProfile user = authResponse.getUser();
