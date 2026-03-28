@@ -11,10 +11,10 @@ import java.util.Date;
 @Service
 public class TokenService {
 
-    @Value("${JWT_SECRET}")
+    @Value("${jwt.secret}")
     private String secret;
 
-    @Value("${JWT_EXPIRATION_MS}")
+    @Value("${jwt.expiration-ms}")
     private long expirationInMs;
 
     /**
