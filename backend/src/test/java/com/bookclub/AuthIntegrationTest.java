@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -82,6 +83,15 @@ public class AuthIntegrationTest {
 
         Optional<UserEntity> persistedUser = userRepository.findById(user.getId());
         Assertions.assertTrue(persistedUser.isPresent());
+    }
+
+    @DisplayName("User authenticates with invalid token")
+    @Test
+    public void TestNewUserLoginWithInvalidToken() throws TokenVerifier.VerificationException {
+        //given
+        when(tokenVerifier.verify("invalidToken")).thenThrow(new TokenVerifier.VerificationException("invalid token"));
+
+        Assertions.assertThrows(TokenVerifier.VerificationException.class, () -> authService.authenticate("invalidToken"));
     }
 
     private static JsonWebToken.Payload createPayload(String userId, String name, String email) {
