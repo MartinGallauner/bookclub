@@ -1,0 +1,6 @@
+###
+POST {{baseUrl}}/api/auth/google
+#Accept: application/json
+#Content-Type: application/json
+#
+####

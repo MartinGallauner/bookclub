@@ -1,4 +1,4 @@
-### GET request to example server
-GET https://bookclub-backend-618692359814.europe-west3.run.app//actuator/health
+### GET request to status endpoint
+GET {{baseUrl}}/actuator/health
 
 ###
