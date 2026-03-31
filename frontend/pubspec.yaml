@@ -42,6 +42,8 @@ dependencies:
   flutter_secure_storage: ^10.0.0
   json_annotation: ^4.11.0
   dio:  ^5.9.2
+  bookclub_api:
+    path: lib/generated/api
 
 dev_dependencies:
   flutter_test:
