@@ -18,6 +18,7 @@ run = "flutter analyze"
 description = "Upgrades Flutter and loads required dependencies."
 run = """
   flutter upgrade
+  flutter pub upgrade
   flutter pub get
   """
 
