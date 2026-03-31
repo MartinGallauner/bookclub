@@ -6,7 +6,9 @@ url = 'https://storage.googleapis.com/flutter_infra_release/releases/stable/linu
 [linux-x64]
 url = 'https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_{{ version | replace(from="-stable", to="") }}-stable.tar.xz'
 """, url = 'https://storage.googleapis.com/flutter_infra_release/releases/stable/{{ os() }}/flutter_{{ os() }}{{ arch(x64="", arm64="_arm64") }}_{{ version | replace(from="-stable", to="") }}-stable.zip', version_json_path = ".releases[?channel=stable].version", version_list_url = "https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json" }
+java = "25"
 
+'npm:@openapitools/openapi-generator-cli' = "latest"
 [tasks.analyze]
 description = "Runs flutters static code analyzer"
 run = "flutter analyze"
@@ -15,13 +17,25 @@ run = "flutter analyze"
 description = "Loads specified dependencies"
 run = "flutter pub get"
 
+[tasks.generate]
+description = "Generates Dart API client from OpenAPI spec"
+run = """
+    openapi-generator-cli generate \
+      -i ../openapi/api.yaml \
+      -g dart-dio \
+      -o lib/generated/api \
+      --additional-properties=pubName=bookclub_api
+  """
+
+
 [tasks.test]
 description = "Run flutter tests"
-depends = ['dependencies', 'analyze']
+depends = ['dependencies', 'analyze', 'generate']
 run = "flutter test"
 
 [tasks.start]
 description = "Starts the app locally for Chrome"
+depends = ['test']
 run = "flutter run -d web-server --web-port=8080 --dart-define=GOOGLE_BOOKS_API_KEY=$GOOGLE_BOOKS_API_KEY"
 
 [tasks.build]
