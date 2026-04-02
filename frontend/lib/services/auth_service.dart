@@ -16,17 +16,21 @@ class AuthService {
 
   Future<UserProfile> signInWithGoogle() async {
     //sign in to Google
-
+    final account = await googleSignIn.authenticate();
 
     //extract token google-auth-token
+    final idToken = account.authentication.idToken;
 
     //call the backend with google-auth-token
+    var loginRequest = GoogleLoginRequest((b) => b.idToken = idToken);
+    var loginResponse = await apiClient.authApi.loginWithGoogle(googleLoginRequest: loginRequest);
 
-
+    AuthResponse authResponse = loginResponse.data!;
     //Store backend token
+    apiClient.setToken(authResponse.token);
 
     //return UserProfile from AuthResponse
-    return UserProfile();
+    return authResponse.user;
   }
 
   void signOut() {

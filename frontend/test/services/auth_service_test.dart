@@ -27,7 +27,8 @@ void main() {
         googleLoginRequest: any(named: 'googleLoginRequest'),
       )).thenAnswer((_) async => Response(
         data: AuthResponse((b) => b
-          ..token = 'fake-jwt'
+          ..token = 'mock-google-token'
+          ..tokenType = AuthResponseTokenTypeEnum.bearer
           ..expiresIn = 3600
           ..user = (UserProfileBuilder()
             ..id = 'test-user-id'
@@ -52,6 +53,8 @@ void main() {
       when(() => mockGoogleSignInAccount.authentication).thenReturn(mockGoogleSignInAuthentication);
 
       final mockGoogleSignIn = MockGoogleSignIn();
+      when(() => mockGoogleSignIn.authenticate()).thenAnswer((_) async => mockGoogleSignInAccount);
+
       final authService = AuthService(mockApiClient, mockGoogleSignIn);
 
       var result = await authService.signInWithGoogle();
