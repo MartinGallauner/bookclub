@@ -25,12 +25,15 @@ run = """
 [tasks.generate]
 description = "Generates Dart API client from OpenAPI spec."
 run = """
-    openapi-generator-cli generate \
-      -i ../openapi/api.yaml \
-      -g dart-dio \
-      -o lib/generated/api \
-      --additional-properties=pubName=bookclub_api
-  """
+      openapi-generator-cli generate \
+        -i ../openapi/api.yaml \
+        -g dart-dio \
+        -o generated_api \
+        --additional-properties=pubName=bookclub_api
+      sed -i "s/sdk: '>=2.18.0 <4.0.0'/sdk: '>=3.0.0 <4.0.0'/" generated_api/pubspec.yaml
+      cd generated_api && dart pub get && dart run build_runner clean && dart run build_runner build
+      cd - && flutter pub get
+    """
 
 
 [tasks.test]

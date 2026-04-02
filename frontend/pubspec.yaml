@@ -45,7 +45,7 @@ dependencies:
   cloud_firestore: ^6.1.2
   dio:  ^5.9.2
   bookclub_api:
-    path: lib/generated/api
+    path: generated_api
 
 dev_dependencies:
   flutter_test:

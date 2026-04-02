@@ -52,7 +52,7 @@ packages:
   bookclub_api:
     dependency: "direct main"
     description:
-      path: "lib/generated/api"
+      path: generated_api
       relative: true
     source: path
     version: "1.0.0"

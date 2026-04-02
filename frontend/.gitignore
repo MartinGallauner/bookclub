@@ -35,6 +35,9 @@ env.json
 /build/
 /coverage/
 
+# Generated Code
+generated_api/
+
 # Symbolication related
 app.*.symbols
 
