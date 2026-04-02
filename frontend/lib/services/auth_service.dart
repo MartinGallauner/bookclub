@@ -1,60 +1,39 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:bookclub_api/bookclub_api.dart';
 import 'package:frontend/models/profile.dart';
+import 'package:frontend/services/api_client.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   /// This class provides service functions for everything concerned with (firebase) authentication
   /// TODO By now it also holds code regarding handling of Profiles. That's something I want to extract in the future
-  final FirebaseAuth firebaseAuth;
-  final FirebaseFirestore firebaseFirestore;
 
-  AuthService(this.firebaseAuth, this.firebaseFirestore);
+  final ApiClient apiClient;
+  final GoogleSignIn googleSignIn;
 
-  Future<UserCredential> signInWithGoogle() async {
-    final credential = await firebaseAuth.signInWithPopup(GoogleAuthProvider());
-    final user = credential.user;
+  AuthService(this.apiClient, this.googleSignIn);
 
-    //TODO can user be null ?
-    //get profile
-    Profile? profile = await fetchProfile(user!.uid);
+  Future<UserProfile> signInWithGoogle() async {
+    //sign in to Google
 
-    if (profile == null) {
-      await firebaseFirestore.collection('users').doc(user.uid).set({
-        'uid': user.uid,
-        'email': user.email,
-        'displayName': user.displayName,
-        'photoURL': user.photoURL,
-        'createdAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
-    }
-    return credential; //todo consider returning a profile instead of credentials
+
+    //extract token google-auth-token
+
+    //call the backend with google-auth-token
+
+
+    //Store backend token
+
+    //return UserProfile from AuthResponse
+    return UserProfile();
   }
 
   void signOut() {
-    firebaseAuth.signOut();
   }
 
-  Stream<User?> authStateChanges() {
-    return firebaseAuth.authStateChanges();
-  }
 
   Future<Profile?> fetchProfile(String uid) async {
-    var profileDoc = await firebaseFirestore.collection('users').doc(uid).get();
 
-    if (!profileDoc.exists) {
-      return null;
-    }
-    var data = profileDoc.data()!;
-    return Profile(
-      uid: data['uid'],
-      email: data['email'],
-      displayName: data['displayName'],
-      photoURL: data['photoURL'],
-      updatedAt: data['updatedAt'].toDate(),
-      createdAt: data['createdAt'].toDate(),
-    );
   }
 }

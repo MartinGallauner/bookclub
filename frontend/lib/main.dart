@@ -34,7 +34,7 @@ class App extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider(create: (_) =>
-            AuthService(FirebaseAuth.instance, FirebaseFirestore.instance)),
+            AuthService()),
         ChangeNotifierProxyProvider<AuthService, AppState>(
           create: (context) => AppState(context.read<AuthService>()),
           update: (context, authService, previous) =>

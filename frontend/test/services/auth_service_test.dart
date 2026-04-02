@@ -1,47 +1,69 @@
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:bookclub_api/bookclub_api.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/models/profile.dart';
+import 'package:frontend/services/api_client.dart';
 import 'package:frontend/services/auth_service.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockFirebaseAuth extends Mock implements FirebaseAuth {}
-class MockUserCredential extends Mock implements UserCredential {}
-class MockUser extends Mock implements User {}
-class FakeAuthProvider extends Fake implements AuthProvider {}
+class MockGoogleSignIn extends Mock implements GoogleSignIn {}
+class MockApiClient extends Mock implements ApiClient {}
+class MockAuthAPI extends Mock implements AuthApi {}
+class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount {}
+class MockGoogleSignInAuthentication extends Mock implements GoogleSignInAuthentication {}
+
+
 
 void main() {
   setUpAll(() {
-    registerFallbackValue(FakeAuthProvider());
+    registerFallbackValue(GoogleLoginRequest((b) => b.idToken = ''));
   });
-
   group('Auth Service', () {
-    test('new signup, create new profile', () async {
-      final mockAuth = MockFirebaseAuth();
-      final authService = AuthService(mockAuth, FakeFirebaseFirestore());
+    test('signInWithGoogle returns UserProfile on success', () async {
 
-      final mockUser = MockUser();
-      final mockUserCredential = MockUserCredential();
+      final mockAuthApi = MockAuthAPI();
+      when(() => mockAuthApi.loginWithGoogle(
+        googleLoginRequest: any(named: 'googleLoginRequest'),
+      )).thenAnswer((_) async => Response(
+        data: AuthResponse((b) => b
+          ..token = 'fake-jwt'
+          ..expiresIn = 3600
+          ..user = (UserProfileBuilder()
+            ..id = 'test-user-id'
+            ..email = 'test@example.com'
+            ..displayName = 'Test User'
+          )
+        ),
+        requestOptions: RequestOptions(),
+        statusCode: 200,
+      ));
 
-      when(() => mockUser.uid).thenReturn('test-uid-123');
-      when(() => mockUser.email).thenReturn('test@example.com');
-      when(() => mockUser.displayName).thenReturn('Test User');
-      when(() => mockUser.photoURL).thenReturn('https://example.com/photo.jpg');
-      when(() => mockUserCredential.user).thenReturn(mockUser);
-      when(() => mockAuth.signInWithPopup(any()))
-          .thenAnswer((_) async => mockUserCredential);
 
-      Profile? profileBefore = await authService.fetchProfile('test-uid-123');
-      expect(profileBefore, isNull);
 
-      await authService.signInWithGoogle();
-      Profile? profile = await authService.fetchProfile('test-uid-123');
 
-      expect(profile, isNotNull);
-      expect(profile?.uid, equals('test-uid-123'));
-      expect(profile?.email, equals('test@example.com'));
-      expect(profile?.displayName, equals('Test User'));
-      expect(profile?.photoURL, equals('https://example.com/photo.jpg'));
+      final mockApiClient = MockApiClient();
+      when(() => mockApiClient.authApi).thenReturn(mockAuthApi);
+
+      final mockGoogleSignInAuthentication = MockGoogleSignInAuthentication();
+      when(() => mockGoogleSignInAuthentication.idToken).thenReturn("fake-id-token");
+
+      final mockGoogleSignInAccount = MockGoogleSignInAccount();
+      when(() => mockGoogleSignInAccount.authentication).thenReturn(mockGoogleSignInAuthentication);
+
+      final mockGoogleSignIn = MockGoogleSignIn();
+      final authService = AuthService(mockApiClient, mockGoogleSignIn);
+
+      var result = await authService.signInWithGoogle();
+
+      expect(result.id, equals('test-user-id'));
+      expect(result.email, equals('test@example.com'));
+
     });
+
+    test('signInWithGoogle throws if Google sign-in returns null', () async {
+
+    });
+
   });
 }
