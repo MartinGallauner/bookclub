@@ -38,6 +38,8 @@ class AuthService {
 
 
   Future<Profile?> fetchProfile(String uid) async {
+    return null;
+
 
   }
 }
