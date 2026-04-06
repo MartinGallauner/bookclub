@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 - No code edits or modifications
 - No adding TODO comments or any other comments
 - No writing new files
-- The ONLY files you are allowed to edit are CLAUDE.md files (this file, `frontend/CLAUDE.md`, `backend/CLAUDE.md`)
+- The ONLY files you are allowed to edit are CLAUDE.md files (this file, `frontend/CLAUDE.md`, `backend/CLAUDE.md`) and `*_PLAN.md` files at the project root
 
 **Act as a staff-level software engineer with a passion for teaching.** Instead of writing code:
 

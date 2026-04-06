@@ -176,6 +176,39 @@ JWT_SECRET_KEY=your-signing-secret
 
 ---
 
+## Step 4: GET /api/users/me — Session Restoration
+
+### 4a: Update OpenAPI Spec (`openapi/api.yaml`)
+
+Add `GET /api/users/me` path:
+- `operationId`: `getCurrentUser`
+- Tags: `Users`
+- No `security: []` override — JWT required
+- `200` response: `UserProfile`
+- `401` response: `ErrorResponse`
+
+Regenerate after: `./gradlew openApiGenerate`
+
+### 4b: Backend Implementation
+
+- Controller method implementing the generated `getCurrentUser` interface
+- Read authenticated user ID from Spring Security context (`SecurityContextHolder`)
+- Call user service/repository to fetch `UserProfile` by ID
+- Return `UserProfile` DTO
+
+### 4c: Flutter — Startup Session Check
+
+In `AppState` (or `main.dart`), on app startup:
+1. Read JWT from `FlutterSecureStorage`
+2. If token exists, call `usersApi.getCurrentUser()` (generated client)
+3. On success: call `appState.login(response.data.user)` — restores session silently
+4. On 401: token expired — delete it from storage, stay on `LoginPage`
+5. If no token: stay on `LoginPage`
+
+This replaces the `authStateChanges()` stream that Firebase provided.
+
+---
+
 ## What's Left After This (Next Phase)
 
 - Migrate `LibraryService` from Firestore to REST API (`/api/users/{userId}/library`)

@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - No code edits or modifications
 - No adding TODO comments or any other comments
 - No writing new files
-- The ONLY file you are allowed to edit is this CLAUDE.md file
+- The ONLY files you are allowed to edit are CLAUDE.md files and `*_PLAN.md` files at the project root
 
 **Act as a staff-level software engineer with a passion for teaching.** Instead of writing code:
 
