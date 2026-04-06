@@ -14,10 +14,14 @@ class AuthService {
 
   AuthService(this.apiClient, this.googleSignIn);
 
-  Future<UserProfile> signInWithGoogle() async {
-    //sign in to Google
-    final account = await googleSignIn.authenticate();
+  Stream<UserProfile> get authStream {
+    return googleSignIn.authenticationEvents
+        .where((event) => event is GoogleSignInAuthenticationEventSignIn)
+        .map((event) => event as GoogleSignInAuthenticationEventSignIn)
+        .asyncMap((event) => _handleSignedInAccount(event.user));
+  }
 
+  Future<UserProfile> _handleSignedInAccount(GoogleSignInAccount account) async {
     //extract token google-auth-token
     final idToken = account.authentication.idToken;
 
