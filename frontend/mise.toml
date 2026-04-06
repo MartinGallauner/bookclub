@@ -4,6 +4,9 @@ java = "25" # used for openapi gen
 'npm:@openapitools/openapi-generator-cli' = "latest"
 'npm:firebase-tools' = "latest"
 
+[env]
+_.file = ".env"
+
 [tasks.analyze]
 description = "Runs flutters static code analyzer"
 run = "flutter analyze"
@@ -37,13 +40,12 @@ run = "flutter test"
 
 [tasks.start]
 description = "Starts the app locally for Chrome"
-depends = ['test']
-run = "flutter run -d web-server --web-port=8080 --dart-define=API_BASE_URL=$API_BASE_URL --dart-define=GOOGLE_BOOKS_API_KEY=$GOOGLE_BOOKS_API_KEY"
+run = "flutter run -d web-server --web-port=8080 --dart-define=API_BASE_URL=$API_BASE_URL --dart-define=GOOGLE_BOOKS_API_KEY=$GOOGLE_BOOKS_API_KEY --dart-define=GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID"
 
 [tasks.build]
 description = "Builds the app for WEB"
 depends = ['test']
-run = "flutter build web --dart-define=API_BASE_URL=$API_BASE_URL --dart-define=GOOGLE_BOOKS_API_KEY=$GOOGLE_BOOKS_API_KEY"
+run = "flutter build web --dart-define=API_BASE_URL=$API_BASE_URL --dart-define=GOOGLE_BOOKS_API_KEY=$GOOGLE_BOOKS_API_KEY --dart-define=GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID"
 
 [tasks.deploy]
 description = "Deploys the WEB app"
