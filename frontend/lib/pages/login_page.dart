@@ -19,14 +19,24 @@ class LoginPage extends StatelessWidget {
             return Column(
               children: [
                 Text("Please login"),
-                renderButton(),
-                Text(snapshot.error.toString(), style: TextStyle(color: Colors.red)),
+                renderButton(
+                  configuration: GSIButtonConfiguration(
+                    type: GSIButtonType.standard,
+                    theme: GSIButtonTheme.filledBlue,
+                    size: GSIButtonSize.large,
+                  ),
+                ),
+                Text(
+                  snapshot.error.toString(),
+                  style: TextStyle(color: Colors.red),
+                ),
               ],
             );
           }
 
           if (snapshot.hasData) {
-            WidgetsBinding.instance.addPostFrameCallback((_) { //makes sure to run the callback only when finished loading the page.
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              //makes sure to run the callback only when finished loading the page.
               context.read<AppState>().login(snapshot.data!);
             });
           }
@@ -34,7 +44,13 @@ class LoginPage extends StatelessWidget {
           return Column(
             children: [
               Text("Please login"),
-              renderButton(),
+              renderButton(
+                configuration: GSIButtonConfiguration(
+                  type: GSIButtonType.standard,
+                  theme: GSIButtonTheme.filledBlue,
+                  size: GSIButtonSize.large,
+                ),
+              ),
             ],
           );
         },
