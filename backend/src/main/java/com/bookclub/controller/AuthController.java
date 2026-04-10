@@ -8,6 +8,7 @@ import com.google.auth.oauth2.TokenVerifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class AuthController implements AuthApi {
@@ -23,7 +24,7 @@ public class AuthController implements AuthApi {
         try {
             return ResponseEntity.ok(authService.authenticate(googleLoginRequest.getIdToken()));
         } catch (TokenVerifier.VerificationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
     }
 }
