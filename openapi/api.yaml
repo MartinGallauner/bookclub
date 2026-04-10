@@ -110,6 +110,8 @@ components:
       required:
         - id
         - email
+        - displayName
+        - photoUrl
       properties:
         id:
           type: string
@@ -122,13 +124,11 @@ components:
           example: "martin.gallauner@example.com"
         displayName:
           type: string
-          nullable: true
           description: User's display name
           example: "Martin Gallauner"
         photoUrl:
           type: string
           format: uri
-          nullable: true
           description: URL to user's profile photo
           example: "https://lh3.googleusercontent.com/..."
 
