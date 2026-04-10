@@ -3,6 +3,7 @@ package com.bookclub.config;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,5 +20,10 @@ public class OpenApiConfig {
                         .contact(new Contact()
                                 .name("Martin Gallauner")
                                 .email("martin.gallauner@pmme")));
+    }
+
+    @Bean
+    public JsonNullableModule jsonNullableModule() {
+        return new JsonNullableModule();
     }
 }
