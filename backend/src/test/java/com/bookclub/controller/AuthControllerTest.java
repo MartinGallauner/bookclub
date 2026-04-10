@@ -1,6 +1,8 @@
 package com.bookclub.controller;
 
 import com.bookclub.api.model.AuthResponse;
+import com.bookclub.api.model.UserProfile;
+import com.bookclub.config.OpenApiConfig;
 import com.bookclub.config.SecurityConfig;
 import com.bookclub.services.AuthService;
 import com.google.auth.oauth2.TokenVerifier;
@@ -14,11 +16,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.net.URI;
+
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @WebMvcTest(AuthController.class)
-@Import({SecurityConfig.class, GlobalExceptionHandler.class})
+@Import({SecurityConfig.class, GlobalExceptionHandler.class, OpenApiConfig.class})
 public class AuthControllerTest {
 
     @Autowired
@@ -32,13 +36,25 @@ public class AuthControllerTest {
 
     @Test
     public void TestAuthSuccessful() throws Exception {
-        when(authService.authenticate(anyString())).thenReturn(new AuthResponse());
+
+        UserProfile user = new UserProfile()
+                .id("42")
+                .displayName("Mock User")
+                .photoUrl(URI.create("https://upload.wikimedia.org/wikipedia/en/7/73/Trollface.png"))
+                .email("mockuser@mail.com");
+
+        when(authService.authenticate(anyString())).thenReturn(new AuthResponse("token", AuthResponse.TokenTypeEnum.BEARER, 1234, user));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/google")
                         .header("Authorization", "Bearer token")
                         .header("Content-Type", "application/json")
                         .content("{\"idToken\":\"testToken\"}"))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.token").value("token"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tokenType").value("Bearer"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.displayName").value("Mock User"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.email").value("mockuser@mail.com"));
     }
 
     @Test

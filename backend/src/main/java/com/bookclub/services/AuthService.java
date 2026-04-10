@@ -8,6 +8,8 @@ import com.google.api.client.json.webtoken.JsonWebSignature;
 import com.google.auth.oauth2.TokenVerifier;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+
 @Service
 public class AuthService {
 
@@ -42,7 +44,11 @@ public class AuthService {
         return new AuthResponse().user(new UserProfile()
                         .id(user.id)
                         .email(user.email)
-                        .displayName(user.displayName))
-                        .token(token);
+                        .displayName(user.displayName)
+                        .photoUrl(user.photoUrl != null ? URI.create(user.photoUrl) : null))
+                .token(token)
+                .tokenType(AuthResponse.TokenTypeEnum.BEARER)
+                .expiresIn(604800); // 7 days in seconds
+
     }
 }

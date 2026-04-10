@@ -69,7 +69,7 @@ public class AuthIntegrationTest {
         //then
         UserProfile user = authResponse.getUser();
         Assertions.assertEquals("google-uid-123", user.getId());
-        Assertions.assertEquals("Mister Mock", user.getDisplayName().get());
+        Assertions.assertEquals("Mister Mock", user.getDisplayName());
         Assertions.assertEquals("mistermock@gmail.com", user.getEmail());
 
         verify(tokenVerifier, times(1)).verify(anyString());
